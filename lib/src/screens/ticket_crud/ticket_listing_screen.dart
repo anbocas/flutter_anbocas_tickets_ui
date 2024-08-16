@@ -17,12 +17,12 @@ class TicketListingScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TicketsScreenState createState() => _TicketsScreenState();
+  TicketsScreenState createState() => TicketsScreenState();
 }
 
-class _TicketsScreenState extends State<TicketListingScreen> {
-  final _ticketsApi = AnbocasRequestPlugin.ticket;
-  final _eventApi = AnbocasRequestPlugin.event;
+class TicketsScreenState extends State<TicketListingScreen> {
+  final _ticketsApi = AnbocasTicketsApi.ticket;
+  final _eventApi = AnbocasTicketsApi.event;
   final ValueNotifier<List<SingleTicketByEvent>> _ticketsNotifier =
       ValueNotifier([]);
   final ValueNotifier<bool> _isLoadingNotifier = ValueNotifier(true);
@@ -47,7 +47,7 @@ class _TicketsScreenState extends State<TicketListingScreen> {
     }
   }
 
-  final ValueNotifier<EventModel?> _eventDetails = ValueNotifier(null);
+  final ValueNotifier<AnbocasEventModel?> _eventDetails = ValueNotifier(null);
   DateTime? eventEndDate = DateTime.now();
 
   Future<void> _fetchEvents() async {
@@ -252,7 +252,7 @@ class __TicketDialogState extends State<_TicketDialog> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final api = AnbocasRequestPlugin.ticket;
+      final api = AnbocasTicketsApi.ticket;
 
       if (widget.ticket == null) {
         await api.createTicket(
