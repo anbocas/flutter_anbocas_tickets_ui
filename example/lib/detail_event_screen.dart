@@ -1,12 +1,13 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailEventScreen extends StatefulWidget {
-  final EventModel model;
+  final AnbocasEventModel model;
   const DetailEventScreen({
     Key? key,
     required this.model,
@@ -34,7 +35,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
   @override
   void didChangeDependencies() {
     AnbocasTickets.instance.config(
-      apikey: '3|M2CkK1wMsAGlx2NXiqvMAlH0kTyDwq0elK1CbouC181cd6b0',
+      apikey: dotenv.env['API_KEY'] ?? "",
     );
     super.didChangeDependencies();
   }
@@ -134,7 +135,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                       height: 20,
                     ),
                     (widget.model.getLocationType() ==
-                            TicketLocationType.virtual)
+                            EventLocationType.virtual)
                         ? Row(
                             children: [
                               Container(
@@ -249,17 +250,19 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                   //       eventId: widget.model.id!,
                   //       context: context,
                   //     ),
-                  onPressed: () => AnbocasTickets.instance.launchBookingFlow(
-                        eventId: widget.model.id!,
-                        context: context,
-                        allowGroupTicket:
-                            widget.model.groupTicketingAllowed == 1,
-                        userMetaData: UserConfig(
-                            name: "Saurabh Kumar",
-                            email: "saurabhTester35@gmail.com",
-                            phone: "9304678898",
-                            countryCode: "+91"),
-                      ),
+                  // onPressed: () => AnbocasTickets.instance.launchBookingFlow(
+                  //       eventId: widget.model.id!,
+                  //       context: context,
+                  //       allowGroupTicket:
+                  //           widget.model.groupTicketingAllowed == 1,
+                  //       userMetaData: UserConfig(
+                  //           name: "Saurabh Kumar",
+                  //           email: "saurabhTester35@gmail.com",
+                  //           phone: "9304678898",
+                  //           countryCode: "+91"),
+                  //     ),
+                  onPressed: () => AnbocasTickets.instance.manageAttendees(
+                      context: context, eventId: widget.model.id ?? ""),
                   child: const Text(
                     "Buy Ticket",
                     style: TextStyle(

@@ -1,25 +1,32 @@
 name: anbocas_tickets_ui
-description: Anbocas Tickets UI Plugin offers a comprehensive pre-built UI toolkit for seamless integration of ticket purchasing, check-ins, and event management workflows into your application. Easily enhance your platform with our ready-to-use components designed for a smooth user experience. 
+description: Anbocas Tickets UI Plugin offers a comprehensive pre-built UI
+  toolkit for seamless integration of ticket purchasing, check-ins, and event
+  management workflows into your application. Easily enhance your platform with
+  our ready-to-use components designed for a smooth user experience.
 version: 0.0.1
 homepage: https://github.com/anbocas/flutter_anbocas_tickets_ui
+publish_to: none
 
 environment:
   sdk: ">=3.1.5 <4.0.0"
   flutter: ">=3.3.0"
 
 dependencies:
+  anbocas_tickets_api:
+    path: D:/Projects/FCTS/anbocas_tickets_api
+  country_code_picker: ^3.0.0
+  dio: ^5.4.3+1
+  eventify: ^1.0.1
   flutter:
     sdk: flutter
-  anbocas_tickets_api: ^0.0.1
-  country_code_picker: ^3.0.0
-  eventify: ^1.0.1
-  dio: ^5.4.3+1
   flutter_widget_from_html: ^0.15.0
   intl: ^0.19.0
+  mobile_scanner: ^4.0.1
   qr_flutter: ^4.1.0
   quill_html_editor: ^2.2.8
   razorpay_flutter: ^1.3.6
   webview_flutter: ^4.5.0
+  qr_scanner_overlay: ^0.0.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0

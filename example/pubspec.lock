@@ -4,10 +4,9 @@ packages:
   anbocas_tickets_api:
     dependency: "direct main"
     description:
-      name: anbocas_tickets_api
-      sha256: "01c843e2ab10538fe0f69aa8b3c19c7f28b0011812bb981eefdd0a8293870a1a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "D:\\Projects\\FCTS\\anbocas_tickets_api"
+      relative: false
+    source: path
     version: "0.0.1"
   anbocas_tickets_ui:
     dependency: "direct main"
@@ -486,6 +485,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+  mobile_scanner:
+    dependency: transitive
+    description:
+      name: mobile_scanner
+      sha256: "827765afbd4792ff3fd105ad593821ac0f6d8a7d352689013b07ee85be336312"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   nested:
     dependency: transitive
     description:
@@ -670,6 +677,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  qr_scanner_overlay:
+    dependency: transitive
+    description:
+      name: qr_scanner_overlay
+      sha256: b65dc54dd96ca248e5d7e5d3b810e151145facc0190c281dfcfe61a22a5e3eb3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   quill_html_editor:
     dependency: transitive
     description:
