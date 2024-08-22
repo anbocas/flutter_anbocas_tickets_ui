@@ -62,7 +62,7 @@ class EventAttendeesCount extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'CHECK IN',
+                    'CHECKED IN',
                     textAlign: TextAlign.center,
                     style: theme.bodyStyle,
                   ),
@@ -91,7 +91,7 @@ class EventAttendeesCount extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: Text(
-                      'NOT CHECK IN',
+                      'NOT CHECKED',
                       textAlign: TextAlign.center,
                       style: theme.bodyStyle,
                     ),

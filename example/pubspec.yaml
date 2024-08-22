@@ -15,7 +15,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   anbocas_tickets_api:
-    path: D:\Projects\FCTS\anbocas_tickets_api
+    path: ../../anbocas_tickets_api
   flutter:
     sdk: flutter
   intl:

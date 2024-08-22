@@ -4,8 +4,8 @@ packages:
   anbocas_tickets_api:
     dependency: "direct main"
     description:
-      path: "D:\\Projects\\FCTS\\anbocas_tickets_api"
-      relative: false
+      path: "../../anbocas_tickets_api"
+      relative: true
     source: path
     version: "0.0.1"
   anbocas_tickets_ui:

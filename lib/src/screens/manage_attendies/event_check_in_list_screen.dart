@@ -41,6 +41,22 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
     }
   }
 
+  void launchScanner() async {
+    final response = await Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (ctx, __, ___) => ScanQrScreen(
+          checkInOptions: CheckInOptions.ticket,
+          eventId: widget.eventId,
+        ),
+      ),
+    );
+
+    if (response != null) {
+      _fetchCheckInAttendees();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +79,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                 Icons.qr_code,
                 color: theme.iconColor!,
               ),
-              onPressed: () => showScanPicker(context),
+              onPressed: () => launchScanner(),
             ),
           ],
         ),
@@ -79,7 +95,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                   builder: (context, response, child) {
                     return (response == null)
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+                            padding: const EdgeInsets.only(top: 30.0),
                             child: Center(
                               child: Text(
                                 "Unable to fetch Attendees",
@@ -92,7 +108,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                               if (response.status != null)
                                 Padding(
                                   padding:
-                                      EdgeInsets.fromLTRB(22.h, 0, 22.h, 15.v),
+                                      EdgeInsets.fromLTRB(22.h, 0, 30.h, 15.v),
                                   child: EventAttendeesCount(
                                       totalGuests:
                                           response.status!.all.toString(),
@@ -123,6 +139,13 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                   response.data[index];
                                               return ListTile(
                                                 contentPadding: EdgeInsets.zero,
+                                                trailing: Icon(
+                                                  Icons.check_circle,
+                                                  color:
+                                                      guest.checkInTime != null
+                                                          ? Colors.green
+                                                          : Colors.grey,
+                                                ),
                                                 title: Text(
                                                   guest.name ?? "",
                                                   maxLines: 2,
@@ -135,7 +158,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                   ),
                                                 ),
                                                 subtitle: Text(
-                                                  guest.email ?? "",
+                                                  guest.checkInTime ?? '',
                                                   style: theme.smallLabelStyle,
                                                 ),
                                               );
@@ -155,58 +178,60 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
             }));
   }
 
-  static void showScanPicker(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: theme.secondaryBgColor,
-        builder: (context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text("Scan Order", style: theme.bodyStyle),
-                leading: const Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (ctx, __, ___) => const ScanQrScreen(
-                        checkInOptions: CheckInOptions.order,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const Divider(),
-              ListTile(
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (ctx, __, ___) => const ScanQrScreen(
-                        checkInOptions: CheckInOptions.ticket,
-                      ),
-                    ),
-                  );
-                },
-                title: Text("Scan Ticket", style: theme.bodyStyle),
-                leading: const Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              )
-            ],
-          );
-        });
-  }
+  // static void showScanPicker(BuildContext context, String eventId) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       backgroundColor: theme.secondaryBgColor,
+  //       builder: (context) {
+  //         return Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             ListTile(
+  //               title: Text("Scan Order", style: theme.bodyStyle),
+  //               leading: const Icon(
+  //                 Icons.arrow_forward,
+  //                 color: Colors.white,
+  //               ),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   PageRouteBuilder(
+  //                     pageBuilder: (ctx, __, ___) => ScanQrScreen(
+  //                       checkInOptions: CheckInOptions.order,
+  //                       eventId: eventId,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //             const Divider(),
+  //             ListTile(
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 Navigator.push(
+  //                   context,
+  //                   PageRouteBuilder(
+  //                     pageBuilder: (ctx, __, ___) => ScanQrScreen(
+  //                       checkInOptions: CheckInOptions.ticket,
+  //                       eventId: eventId,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //               title: Text("Scan Ticket", style: theme.bodyStyle),
+  //               leading: const Icon(
+  //                 Icons.arrow_forward,
+  //                 color: Colors.white,
+  //               ),
+  //             ),
+  //             const SizedBox(
+  //               height: 30,
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 
   Icon _iconBack(Color color) =>
       Theme.of(context).platform == TargetPlatform.iOS

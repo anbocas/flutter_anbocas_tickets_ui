@@ -1,3 +1,4 @@
+import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -12,19 +13,41 @@ enum CheckInOptions {
   const CheckInOptions({required this.name});
 }
 
-class ScanQrScreen extends StatelessWidget {
+class ScanQrScreen extends StatefulWidget {
   const ScanQrScreen({
     super.key,
     required this.checkInOptions,
+    required this.eventId,
   });
 
   final CheckInOptions checkInOptions;
+  final String eventId;
+
+  @override
+  State<ScanQrScreen> createState() => _ScanQrScreenState();
+}
+
+class _ScanQrScreenState extends State<ScanQrScreen> {
+  final _eventApi = AnbocasTicketsApi.event;
+  late MobileScannerController cameraController;
+
+  @override
+  void initState() {
+    cameraController = MobileScannerController(
+      returnImage: true,
+      detectionSpeed: DetectionSpeed.noDuplicates,
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cameraController = MobileScannerController(
-      returnImage: true,
-    );
     return Scaffold(
         body: SizedBox(
       width: double.infinity,
@@ -37,9 +60,43 @@ class ScanQrScreen extends StatelessWidget {
               controller: cameraController,
               onDetect: (capture) {
                 final barcode = capture.barcodes.firstOrNull?.rawValue;
+                debugPrint(barcode);
                 if (barcode == null) {
                   return;
                 }
+
+                _handleScanResult(barcode, (message, statusCode) {
+                  if (statusCode == 200) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        message ?? '',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      backgroundColor: Colors.green,
+                    ));
+                    Navigator.pop(context, {});
+                  } else if (statusCode == 201) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        message ?? '',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      backgroundColor: Colors.amber,
+                    ));
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          message ?? '',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                });
               },
               overlay: QRScannerOverlay(),
             ),
@@ -70,7 +127,7 @@ class ScanQrScreen extends StatelessWidget {
                       valueListenable: cameraController.torchState,
                     ),
                   ),
-                  SizedBox()
+                  const SizedBox(),
                 ],
               ),
             ),
@@ -78,5 +135,17 @@ class ScanQrScreen extends StatelessWidget {
         ],
       ),
     ));
+  }
+
+  void _handleScanResult(String barcode,
+      Function(String? onScanned, int statusCode) onScanned) async {
+    try {
+      final response =
+          await _eventApi.checkIn(code: barcode, eventId: widget.eventId);
+
+      onScanned(response!.message, response.statusCode);
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {}
   }
 }
