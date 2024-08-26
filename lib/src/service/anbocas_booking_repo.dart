@@ -30,7 +30,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     if (resp.data['data'] != null) {
       DateTime now = DateTime.now();
       var ticketResp = TicketResponse.fromJson(resp.data['data']);
-      List<SingleTickets> validTickets = [];
+      List<SingleTicket> validTickets = [];
       validTickets.clear();
       for (var ticket in ticketResp.tickets) {
         DateTime? availableFrom = ticket.availableFrom != null
@@ -54,7 +54,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   }
 
   Future<OrderResponse?> placeOrder(
-      {required List<SingleTickets> selectedTickets,
+      {required List<SingleTicket> selectedTickets,
       String? coupon,
       required String name,
       String? phone,
@@ -109,7 +109,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   }
 
   Future<OrderResponse?> getCalculateAmount({
-    required List<SingleTickets> selectedTickets,
+    required List<SingleTicket> selectedTickets,
     String? coupon,
   }) async {
     List<Map<String, dynamic>> selectedTicket = [];

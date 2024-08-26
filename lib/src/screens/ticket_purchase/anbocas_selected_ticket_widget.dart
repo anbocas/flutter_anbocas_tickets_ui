@@ -34,7 +34,7 @@ class _AnbocasSelectedTicketWidgetState
   ValueNotifier<double> totalPrice = ValueNotifier(0.00);
   ValueNotifier<double> totalFee = ValueNotifier(0.00);
   ValueNotifier<double> discountPrice = ValueNotifier(0.00);
-  List<SingleTickets> selectedTickets = [];
+  List<SingleTicket> selectedTickets = [];
   final AnbocasBookingRepo? _booking = AnbocasServiceManager().bookingRepo;
 
   @override
@@ -190,25 +190,28 @@ class _AnbocasSelectedTicketWidgetState
                                     ValueListenableBuilder(
                                         valueListenable: totalFee,
                                         builder: (context, value, child) {
-                                          return Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "Platform Fee",
-                                                style:
-                                                    theme.labelStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color:
-                                                      theme.secondaryTextColor,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
-                                                style: theme.labelStyle,
-                                              )
-                                            ],
-                                          );
+                                          return value > 0
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Convenience Fee",
+                                                      style: theme.labelStyle
+                                                          ?.copyWith(
+                                                        fontSize: 15.fSize,
+                                                        color: theme
+                                                            .secondaryTextColor,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
+                                                      style: theme.labelStyle,
+                                                    )
+                                                  ],
+                                                )
+                                              : const SizedBox.shrink();
                                         }),
                                     SizedBox(
                                       height: 8.v,

@@ -90,7 +90,7 @@ class PriceBreakDownWidget extends StatelessWidget with StringHelperMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Platform Fee",
+                            "Convenience Fee",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15.fSize,

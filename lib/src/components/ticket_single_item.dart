@@ -20,7 +20,7 @@ class TicketItemWidget extends StatefulWidget {
       this.onBuyItemPressed,
       this.onItemSelect});
 
-  final SingleTickets element;
+  final SingleTicket element;
   final bool isSelected;
   final bool showBuyButton;
   final bool showDeleteIcon;
@@ -161,9 +161,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                             IconWithCircleBackground(
                                 icon: Icons.remove,
                                 onPressed: () {
-                                  if (quantity.value >
-                                          widget.element.minQtyPerOrder &&
-                                      widget.isSelected == true) {
+                                  if (widget.isSelected == true) {
                                     quantity.value--;
                                     widget.onQuantityChanged(quantity.value);
                                   }
@@ -188,9 +186,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                             ),
                             IconWithCircleBackground(
                                 onPressed: () {
-                                  if (widget.element.maxQtyPerOrder >
-                                          quantity.value &&
-                                      widget.isSelected == true) {
+                                  if (widget.isSelected == true) {
                                     quantity.value++;
                                     widget.onQuantityChanged(quantity.value);
                                   }

@@ -214,7 +214,7 @@ abstract class AnbocasTicketBookingState
   }
 
   ValueNotifier<TicketResponse?> tickets = ValueNotifier(null);
-  List<SingleTickets> selectedTickets = [];
+  List<SingleTicket> selectedTickets = [];
 
   Future<void> _fetchingBooking() async {
     try {

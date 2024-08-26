@@ -1,7 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:anbocas_tickets_ui/src/model/event_guest.dart';
 import 'package:anbocas_tickets_ui/src/model/event_response.dart';
+import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/single_company.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
+import 'package:eventify/eventify.dart';
 
 class OrderResponse {
   OrderData? data;
@@ -38,7 +41,6 @@ class OrderData {
   double convenienceTax = 0.0;
   double totalConvenienceFee = 0.0;
   double pgFee = 0.0;
-  double organiserPgFee = 0.0;
   double parentOrganiserCommission = 0.0;
   double totalPayable = 0.0;
   String? userId;
@@ -48,7 +50,8 @@ class OrderData {
   String? currencyId;
   int? isGuestCheckout;
   String? status;
-  List<SingleTickets>? tickets;
+  late List<OrderTicket> tickets;
+  List<EventGuest>? guests;
   EventResponse? event;
   Company? company;
   Payment? payment;
@@ -140,16 +143,6 @@ class OrderData {
           json["pg_fee"] != null ? double.tryParse(json["pg_fee"]) ?? 0.0 : 0.0;
     }
 
-    if (json["organiser_pg_fee"] is double || json["organiser_pg_fee"] is int) {
-      organiserPgFee = json["organiser_pg_fee"] is int
-          ? (json["organiser_pg_fee"] as int).toDouble()
-          : json["organiser_pg_fee"];
-    } else if (json["organiser_pg_fee"] is String) {
-      organiserPgFee = json["organiser_pg_fee"] != null
-          ? double.tryParse(json["organiser_pg_fee"]) ?? 0.0
-          : 0.0;
-    }
-
     if (json["parent_organiser_commission"] is double ||
         json["parent_organiser_commission"] is int) {
       parentOrganiserCommission = json["parent_organiser_commission"] is int
@@ -194,9 +187,16 @@ class OrderData {
     }
     if (json["tickets"] is List) {
       tickets = json["tickets"] == null
-          ? null
+          ? []
           : (json["tickets"] as List)
-              .map((e) => SingleTickets.fromJson(e))
+              .map((e) => OrderTicket.fromJson(e))
+              .toList();
+    }
+    if (json["guests"] is List) {
+      guests = json["guests"] == null
+          ? null
+          : (json["guests"] as List)
+              .map((e) => EventGuest.fromJson(e))
               .toList();
     }
     if (json["event"] is Map) {
@@ -225,9 +225,7 @@ class OrderData {
     data["convenience_fee"] = convenienceFee;
     data["convenience_tax"] = convenienceTax;
     data["total_convenience_fee"] = totalConvenienceFee;
-    data["total_convenience_fee"] = totalConvenienceFee;
     data["pg_fee"] = pgFee;
-    data["organiser_pg_fee"] = organiserPgFee;
     data["parent_organiser_commission"] = parentOrganiserCommission;
     data["total_payable"] = totalPayable;
     data["user_id"] = userId;
@@ -237,10 +235,8 @@ class OrderData {
     data["is_guest_checkout"] = isGuestCheckout;
     data["status"] = status;
     data["currency_id"] = currencyId;
-    if (tickets != null) {
-      data["tickets"] = tickets?.map((e) => e.toJson()).toList();
-    }
-    if (event != null) {
+    data["tickets"] = tickets.map((e) => e.toJson()).toList();
+      if (event != null) {
       data["event"] = event?.toJson();
     }
     if (company != null) {
@@ -249,6 +245,35 @@ class OrderData {
     if (payment != null) {
       data["payment"] = payment?.toJson();
     }
+    return data;
+  }
+
+  Map<String, dynamic> trimmedPayload() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["order_number"] = orderNumber;
+    data["sub_total"] = subTotal;
+    data["discount_amount"] = discountAmount;
+    data["total_payable"] = totalPayable;
+    data["name"] = name;
+    data["email"] = email;
+    data["phone"] = phone;
+    if (tickets != null) {
+      data["tickets"] = tickets
+          ?.map((e) => {
+                'name': e.singleTicket?.name,
+                'price': e.singleTicket?.price,
+                'quantity': e.quantity,
+                'codes': guests
+                    ?.where((eg) => eg.orderTicketId == e.id)
+                    .map(
+                      (m) => m.code,
+                    )
+                    .toList(),
+              })
+          .toList();
+    }
+    data["event_name"] = event?.name;
+
     return data;
   }
 

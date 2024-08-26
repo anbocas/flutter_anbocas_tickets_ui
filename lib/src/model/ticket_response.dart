@@ -27,7 +27,7 @@ class TicketResponse {
   int? groupTicketingAllowed;
   int? commission;
   String? status;
-  List<SingleTickets> tickets = [];
+  List<SingleTicket> tickets = [];
   Company? company;
 
   TicketLocationType getLocationType() {
@@ -136,7 +136,7 @@ class TicketResponse {
 
     if (json["tickets"] is List) {
       tickets = (json["tickets"] as List)
-          .map((e) => SingleTickets.fromJson(e))
+          .map((e) => SingleTicket.fromJson(e))
           .toList();
     }
     if (json["company"] is Map) {
@@ -178,7 +178,7 @@ class TicketResponse {
   }
 
   TicketResponse copyWithSelectedTickets({
-    required List<SingleTickets> tickets,
+    required List<SingleTicket> tickets,
   }) {
     return TicketResponse(
         id: id,
@@ -207,7 +207,7 @@ class TicketResponse {
   }
 
   TicketResponse copyWith({
-    List<SingleTickets>? tickets,
+    List<SingleTicket>? tickets,
   }) {
     return TicketResponse(
       id: id,

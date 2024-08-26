@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class AnbocasBookingSuccessScreen extends StatefulWidget {
   final OrderData orderDetails;
@@ -37,6 +36,7 @@ class _AnbocasBookingSuccessScreenState
   final AnbocasBookingRepo? _booking = AnbocasServiceManager().bookingRepo;
   final ValueNotifier<String> _statusNotifier =
       ValueNotifier<String>('PENDING');
+  OrderData? updateOrderResponse;
 
   @override
   void initState() {
@@ -55,17 +55,21 @@ class _AnbocasBookingSuccessScreenState
       final status = await _fetchStatus();
       _statusNotifier.value = status;
 
-      // log(status + " !Q!Q");
-
       if (status == 'COMPLETED' || status == 'FAILED') {
+        // fire eventBookingSuccess event if order is completed
+        if (status == 'COMPLETED') {
+          if (mounted) {
+            setState(() {});
+            AnbocasEventManager().emit(AnbocasEventManager.eventBookingSuccess,
+                updateOrderResponse?.trimmedPayload());
+          }
+        }
         break;
       }
 
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(seconds: 2));
     }
   }
-
-  OrderData? updateOrderResponse;
 
   Future<String> _fetchStatus() async {
     final orderDetails =
@@ -82,12 +86,6 @@ class _AnbocasBookingSuccessScreenState
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (updateOrderResponse != null &&
-            updateOrderResponse?.status == "COMPLETED") {
-          AnbocasEventManager().emit(AnbocasEventManager.eventBookingSuccess,
-              updateOrderResponse?.toJson());
-        }
-
         Navigator.pop(context);
         Navigator.pop(context);
 
@@ -104,12 +102,6 @@ class _AnbocasBookingSuccessScreenState
             centerTitle: true,
             leading: IconButton(
               onPressed: () {
-                if (updateOrderResponse != null &&
-                    updateOrderResponse?.status == "COMPLETED") {
-                  AnbocasEventManager().emit(
-                      AnbocasEventManager.eventBookingSuccess,
-                      updateOrderResponse?.toJson());
-                }
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
@@ -292,17 +284,17 @@ class _AnbocasBookingSuccessScreenState
                                 SizedBox(
                                   width: 10.h,
                                 ),
-                                QrImageView(
-                                  data: widget.orderDetails.id.toString(),
-                                  version: QrVersions.auto,
-                                  dataModuleStyle: QrDataModuleStyle(
-                                      dataModuleShape: QrDataModuleShape.square,
-                                      color: theme.iconColor),
-                                  eyeStyle: QrEyeStyle(
-                                      eyeShape: QrEyeShape.square,
-                                      color: theme.iconColor),
-                                  size: 120.0.adaptSize,
-                                ),
+                                // QrImageView(
+                                //   data: widget.orderDetails.id.toString(),
+                                //   version: QrVersions.auto,
+                                //   dataModuleStyle: QrDataModuleStyle(
+                                //       dataModuleShape: QrDataModuleShape.square,
+                                //       color: theme.iconColor),
+                                //   eyeStyle: QrEyeStyle(
+                                //       eyeShape: QrEyeShape.square,
+                                //       color: theme.iconColor),
+                                //   size: 120.0.adaptSize,
+                                // ),
                               ],
                             ),
                             SizedBox(
@@ -466,81 +458,91 @@ class _AnbocasBookingSuccessScreenState
                             SizedBox(
                               height: 10.v,
                             ),
-                            ...widget.ticketResponse.tickets
-                                .map((e) => Padding(
-                                      padding: EdgeInsets.only(bottom: 10.0.v),
-                                      child: ClipPath(
-                                        clipper: TicketCardClipper(radius: 15),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 15.v, horizontal: 20.h),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: theme.secondaryBgColor,
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                            if (updateOrderResponse != null)
+                              ...updateOrderResponse!.tickets
+                                  .map((e) => Padding(
+                                        padding:
+                                            EdgeInsets.only(bottom: 10.0.v),
+                                        child: ClipPath(
+                                          clipper:
+                                              TicketCardClipper(radius: 15),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 15.v,
+                                                horizontal: 20.h),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: theme.secondaryBgColor,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            e.singleTicket
+                                                                    ?.name ??
+                                                                "",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: theme
+                                                                .bodyStyle
+                                                                ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize:
+                                                                  16.fSize,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.v,
+                                                          ),
+                                                          HtmlWidget(
+                                                            e.description ?? "",
+                                                            textStyle: theme
+                                                                .smallLabelStyle,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10.h,
+                                                    ),
+                                                    Column(
                                                       children: [
                                                         Text(
-                                                          e.name ?? "",
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: theme.bodyStyle
-                                                              ?.copyWith(
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            fontSize: 16.fSize,
-                                                          ),
-                                                        ),
+                                                            e.quantity
+                                                                .toString(),
+                                                            style: theme
+                                                                .bodyStyle),
                                                         SizedBox(
-                                                          height: 10.v,
+                                                          height: 2.v,
                                                         ),
-                                                        HtmlWidget(
-                                                          e.description ?? "",
-                                                          textStyle: theme
-                                                              .smallLabelStyle,
-                                                        ),
+                                                        Text("Total Ticket ",
+                                                            style: theme
+                                                                .smallLabelStyle),
                                                       ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10.h,
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                          e.selectedQuantity
-                                                              .toString(),
-                                                          style:
-                                                              theme.bodyStyle),
-                                                      SizedBox(
-                                                        height: 2.v,
-                                                      ),
-                                                      Text("Total Ticket ",
-                                                          style: theme
-                                                              .smallLabelStyle),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ))
-                                .toList(),
+                                      ))
+                                  .toList(),
                           ],
                         ),
                       ),
@@ -582,23 +584,6 @@ class _AnbocasBookingSuccessScreenState
                                   ),
                                   SizedBox(
                                     height: 5.v,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Platform Fee",
-                                        style: theme.labelStyle?.copyWith(
-                                          fontSize: 15.fSize,
-                                          color: theme.secondaryTextColor,
-                                        ),
-                                      ),
-                                      Text(
-                                        "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(widget.orderDetails.totalConvenienceFee.toString())}",
-                                        style: theme.labelStyle,
-                                      )
-                                    ],
                                   ),
                                   if (widget.orderDetails.discountAmount != 0.0)
                                     const SizedBox(
@@ -680,13 +665,6 @@ class _AnbocasBookingSuccessScreenState
                         EdgeInsets.symmetric(horizontal: 24.h, vertical: 20.v),
                     child: CustomButton(
                         onPressedCallback: () {
-                          if (updateOrderResponse != null &&
-                              updateOrderResponse?.status == "COMPLETED") {
-                            AnbocasEventManager().emit(
-                                AnbocasEventManager.eventBookingSuccess,
-                                updateOrderResponse?.toJson());
-                          }
-                          // Navigator.popUntil(context, ModalRoute.withName('/'));
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },

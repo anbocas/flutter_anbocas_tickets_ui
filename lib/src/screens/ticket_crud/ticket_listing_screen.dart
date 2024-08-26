@@ -17,10 +17,10 @@ class TicketListingScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TicketsScreenState createState() => _TicketsScreenState();
+  TicketsScreenState createState() => TicketsScreenState();
 }
 
-class _TicketsScreenState extends State<TicketListingScreen> {
+class TicketsScreenState extends State<TicketListingScreen> {
   final _ticketsApi = AnbocasTicketsApi.ticket;
   final _eventApi = AnbocasTicketsApi.event;
   final ValueNotifier<List<SingleTicketByEvent>> _ticketsNotifier =
@@ -159,9 +159,26 @@ class _TicketsScreenState extends State<TicketListingScreen> {
                                 fontSize: 16.fSize,
                               ),
                             ),
-                            subtitle: HtmlWidget(
-                              ticket.description ?? "",
-                              textStyle: theme.smallLabelStyle,
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Avl: ${ticket.getAvailable()}/${ticket.getCapacity()}',
+                                ),
+                                Text(
+                                  'Open: ${ticket.getAvailableFrom()}',
+                                ),
+                                Text(
+                                  'Closes: ${ticket.getAvailableTo()}',
+                                ),
+                              ],
+                            ),
+                            leading: Text(
+                              '${index + 1}.',
+                              style: theme.bodyStyle?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14.fSize,
+                              ),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,

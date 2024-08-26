@@ -231,43 +231,99 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(Colors.black),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+            child: Column(
+              children: [
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.black),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        minimumSize: WidgetStateProperty.all<Size>(
+                            const Size(double.infinity, 50)),
                       ),
-                    ),
-                    minimumSize: WidgetStateProperty.all<Size>(
-                        const Size(double.infinity, 50)),
-                  ),
-                  // onPressed: () => AnbocasTickets.instance.manageTickets(
-                  //       eventId: widget.model.id!,
-                  //       context: context,
-                  //     ),
-                  // onPressed: () => AnbocasTickets.instance.launchBookingFlow(
-                  //       eventId: widget.model.id!,
-                  //       context: context,
-                  //       allowGroupTicket:
-                  //           widget.model.groupTicketingAllowed == 1,
-                  //       userMetaData: UserConfig(
-                  //           name: "Saurabh Kumar",
-                  //           email: "saurabhTester35@gmail.com",
-                  //           phone: "9304678898",
-                  //           countryCode: "+91"),
-                  //     ),
-                  onPressed: () => AnbocasTickets.instance.manageAttendees(
-                      context: context, eventId: widget.model.id ?? ""),
-                  child: const Text(
-                    "Buy Ticket",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700, color: Colors.white),
-                  )),
+                      // onPressed: () => AnbocasTickets.instance.manageTickets(
+                      //       eventId: widget.model.id!,
+                      //       context: context,
+                      //     ),
+                      onPressed: () =>
+                          AnbocasTickets.instance.launchBookingFlow(
+                            eventId: widget.model.id!,
+                            context: context,
+                            allowGroupTicket:
+                                widget.model.groupTicketingAllowed == 1,
+                            userMetaData: UserConfig(
+                                name: "Saurabh Kumar",
+                                email: "saurabhTester35@gmail.com",
+                                phone: "9304678898",
+                                countryCode: "+91"),
+                          ),
+                      // onPressed: () => AnbocasTickets.instance.manageAttendees(
+                      //     context: context, eventId: widget.model.id ?? ""),
+                      child: const Text(
+                        "Buy Ticket",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, color: Colors.white),
+                      )),
+                ),
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.black),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        minimumSize: WidgetStateProperty.all<Size>(
+                            const Size(double.infinity, 50)),
+                      ),
+                      onPressed: () => AnbocasTickets.instance.manageTickets(
+                            eventId: widget.model.id!,
+                            context: context,
+                          ),
+                      child: const Text(
+                        "Manage Tickets",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, color: Colors.white),
+                      )),
+                ),
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.black),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        minimumSize: WidgetStateProperty.all<Size>(
+                            const Size(double.infinity, 50)),
+                      ),
+                      onPressed: () => AnbocasTickets.instance.manageAttendees(
+                          context: context, eventId: widget.model.id ?? ""),
+                      child: const Text(
+                        "Manage Attendies",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, color: Colors.white),
+                      )),
+                ),
+              ],
             ))
       ],
     ));
