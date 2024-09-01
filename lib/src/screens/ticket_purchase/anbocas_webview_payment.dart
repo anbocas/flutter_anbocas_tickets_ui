@@ -1,6 +1,6 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
@@ -8,7 +8,7 @@ import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 
 class AnbocasWebviewPayment extends StatefulWidget {
   final OrderData orderDetails;
-  final TicketResponse selectedTickets;
+  final AnbocasEventResponse selectedTickets;
   final String webUrl;
   const AnbocasWebviewPayment({
     Key? key,

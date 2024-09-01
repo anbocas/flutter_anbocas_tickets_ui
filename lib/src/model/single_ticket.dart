@@ -13,7 +13,7 @@ class SingleTicket {
   int maxQtyPerOrder = 10;
   String? status;
   String? formattedPrice;
-  int selectedQuantity = 1;
+  int selectedQuantity = 0;
 
   SingleTicket.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {

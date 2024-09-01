@@ -3,6 +3,7 @@ import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +24,45 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
   @override
   void initState() {
     anbocas.on(AnbocasEventManager.eventBookingSuccess, handleBookingSuccess);
+
+    AnbocasTickets.instance.config(
+      apikey: dotenv.env['API_KEY'] ?? "",
+      customThemeConfig: AnbocasCustomTheme(
+        backgroundColor: Colors.grey,
+        accentColor: Colors.red,
+        secondaryBgColor: Colors.grey,
+        secondaryTextColor: Colors.purple,
+        headingStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
+        subHeadingStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.green, fontSize: 16),
+        bodyStyle: GoogleFonts.poppins()
+            .copyWith(color: Colors.blueGrey, fontSize: 14),
+        labelStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
+        buttonStyle: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          minimumSize: WidgetStateProperty.all<Size>(
+            const Size(double.infinity, 50),
+          ),
+        ),
+        textFormFieldConfig: AnbocasTextFormFieldConfig(
+            style: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 14),
+            hintStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            labelStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white))),
+      ),
+    );
+
     super.initState();
   }
 
@@ -34,9 +74,6 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
 
   @override
   void didChangeDependencies() {
-    AnbocasTickets.instance.config(
-      apikey: dotenv.env['API_KEY'] ?? "",
-    );
     super.didChangeDependencies();
   }
 
@@ -257,8 +294,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           AnbocasTickets.instance.launchBookingFlow(
                             eventId: widget.model.id!,
                             context: context,
-                            allowGroupTicket:
-                                widget.model.groupTicketingAllowed == 1,
+                            allowGroupTicket: true,
                             userMetaData: UserConfig(
                                 name: "Saurabh Kumar",
                                 email: "saurabhTester35@gmail.com",

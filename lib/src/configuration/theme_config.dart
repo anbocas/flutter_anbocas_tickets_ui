@@ -1,3 +1,4 @@
+import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:flutter/material.dart';
 
 class AnbocasCustomTheme {
@@ -31,6 +32,11 @@ class AnbocasCustomTheme {
       fontSize: 14,
       fontWeight: FontWeight.w500,
     ),
+    this.hintStyle = const TextStyle(
+      color: Colors.white,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    ),
     this.smallLabelStyle = const TextStyle(
       fontSize: 12,
       height: 1.2,
@@ -38,6 +44,7 @@ class AnbocasCustomTheme {
     ),
     ButtonStyle? buttonStyle,
     this.themeData,
+    this.textFormFieldConfig = const AnbocasTextFormFieldConfig(),
   }) : buttonStyle = buttonStyle ?? _defaultButtonStyle;
 
   Color? backgroundColor;
@@ -53,9 +60,11 @@ class AnbocasCustomTheme {
   TextStyle? subHeadingStyle;
   TextStyle? bodyStyle;
   TextStyle? labelStyle;
+  TextStyle? hintStyle;
   TextStyle? smallLabelStyle;
   ButtonStyle? buttonStyle;
   ThemeData? themeData;
+  AnbocasTextFormFieldConfig textFormFieldConfig;
 
   static final ButtonStyle _defaultButtonStyle = ButtonStyle(
     backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
@@ -128,4 +137,43 @@ class AnbocasCustomTheme {
       ),
     );
   }
+}
+
+class AnbocasTextFormFieldConfig {
+  const AnbocasTextFormFieldConfig({
+    this.cursorColor = Colors.black,
+    this.fillColor = Colors.transparent,
+    this.labelStyle = const TextStyle(color: Colors.black, fontSize: 12),
+    this.hintStyle = const TextStyle(color: Colors.grey, fontSize: 14),
+    this.style = const TextStyle(color: Colors.black, fontSize: 14),
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+    this.border = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 1.0),
+    ),
+    this.errorBorder = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 1.0),
+    ),
+    this.focusedBorder = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 1.0),
+    ),
+    this.inputBorder = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 1.0),
+    ),
+    this.enabledBorder = const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 1.0),
+    ),
+  });
+
+  final Color? cursorColor;
+  final Color? fillColor;
+  final TextStyle labelStyle;
+  final TextStyle hintStyle;
+  final TextStyle style;
+  final EdgeInsetsGeometry contentPadding;
+  final InputBorder border;
+  final InputBorder? focusedBorder;
+  final InputBorder? errorBorder;
+  final InputBorder? inputBorder;
+  final InputBorder? enabledBorder;
 }

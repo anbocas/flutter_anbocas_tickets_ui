@@ -4,7 +4,7 @@ import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
 
 enum TicketLocationType { virtual, inPerson }
 
-class TicketResponse {
+class AnbocasEventResponse {
   String? id;
   String? categoryId;
   String? companyId;
@@ -38,7 +38,7 @@ class TicketResponse {
     }
   }
 
-  TicketResponse({
+  AnbocasEventResponse({
     this.id,
     this.categoryId,
     this.companyId,
@@ -65,7 +65,7 @@ class TicketResponse {
     this.company,
   });
 
-  TicketResponse.fromJson(Map<String, dynamic> json) {
+  AnbocasEventResponse.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
       id = json["id"];
     }
@@ -177,10 +177,10 @@ class TicketResponse {
     return _data;
   }
 
-  TicketResponse copyWithSelectedTickets({
+  AnbocasEventResponse copyWithSelectedTickets({
     required List<SingleTicket> tickets,
   }) {
-    return TicketResponse(
+    return AnbocasEventResponse(
         id: id,
         categoryId: categoryId,
         companyId: companyId,
@@ -206,10 +206,10 @@ class TicketResponse {
         company: company);
   }
 
-  TicketResponse copyWith({
+  AnbocasEventResponse copyWith({
     List<SingleTicket>? tickets,
   }) {
-    return TicketResponse(
+    return AnbocasEventResponse(
       id: id,
       categoryId: categoryId,
       companyId: companyId,

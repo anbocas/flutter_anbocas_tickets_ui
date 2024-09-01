@@ -2,7 +2,7 @@ import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/coupon_model.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_service.dart';
 import 'package:dio/dio.dart';
 
@@ -20,7 +20,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     Map<String, String>? apiHeaders,
   }) : super(dio: dio, baseUrl: baseUrl, apiHeaders: apiHeaders);
 
-  Future<TicketResponse?> getBookingTicket({
+  Future<AnbocasEventResponse?> getEventById({
     required String eventId,
   }) async {
     var resp = await doGet("$_ticketsUrl/$eventId",
@@ -29,7 +29,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     info("$eventId -- ${resp.data}");
     if (resp.data['data'] != null) {
       DateTime now = DateTime.now();
-      var ticketResp = TicketResponse.fromJson(resp.data['data']);
+      var ticketResp = AnbocasEventResponse.fromJson(resp.data['data']);
       List<SingleTicket> validTickets = [];
       validTickets.clear();
       for (var ticket in ticketResp.tickets) {

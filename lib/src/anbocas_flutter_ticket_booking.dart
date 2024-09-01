@@ -13,13 +13,22 @@ class AnbocasTickets {
 
   factory AnbocasTickets() => instance;
 
+  String baseUrl = 'https://api.anbocas.com';
+
   void config({
     required String apikey,
+    ApiMode apiMode = ApiMode.sandbox,
     AnbocasCustomTheme? customThemeConfig,
   }) {
     final serviceManager = AnbocasServiceManager();
-    serviceManager.initializeBookingRepo(
-        "https://sandbox-api.anbocas.com", apikey);
+
+    if (apiMode == ApiMode.sandbox) {
+      baseUrl = 'https://sandbox-api.anbocas.com';
+    } else {
+      baseUrl = 'https://api.anbocas.com';
+    }
+    
+    serviceManager.initializeBookingRepo(baseUrl, apikey);
     theme.updateConfig(customThemeConfig);
     AnbocasTicketsApi.instance?.config(token: apikey, enableLog: true);
   }

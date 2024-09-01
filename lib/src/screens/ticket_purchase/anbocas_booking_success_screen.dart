@@ -6,18 +6,20 @@ import 'package:anbocas_tickets_ui/src/components/ticket_card_clipper.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/qr_fullview.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class AnbocasBookingSuccessScreen extends StatefulWidget {
   final OrderData orderDetails;
 
-  final TicketResponse ticketResponse;
+  final AnbocasEventResponse ticketResponse;
   const AnbocasBookingSuccessScreen({
     Key? key,
     required this.orderDetails,
@@ -97,7 +99,7 @@ class _AnbocasBookingSuccessScreenState
             backgroundColor: theme.backgroundColor,
             title: Text(
               "Order Summary",
-              style: theme.headingStyle?.copyWith(fontWeight: FontWeight.w400),
+              style: theme.headingStyle,
             ),
             centerTitle: true,
             leading: IconButton(
@@ -130,33 +132,28 @@ class _AnbocasBookingSuccessScreenState
                                       SizedBox(
                                         height: 10.v,
                                       ),
-                                      Image.asset(
-                                          "packages/anbocas_tickets_ui/assets/check.png"),
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 90.adaptSize,
+                                      ),
                                       SizedBox(
                                         height: 20.v,
                                       ),
                                       RichText(
                                         text: TextSpan(
                                           text: "Congratulations! Your order",
-                                          style: theme.bodyStyle?.copyWith(
-                                              fontSize: 15.fSize,
-                                              color: theme.secondaryTextColor),
+                                          style: theme.bodyStyle,
                                           children: [
                                             TextSpan(
                                               text:
                                                   " (${widget.orderDetails.orderNumber}) ",
-                                              style: theme.bodyStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color: Colors.orange,
-                                                  fontWeight: FontWeight.w700),
+                                              style: theme.bodyStyle,
                                             ),
                                             TextSpan(
                                                 text:
                                                     "has been placed successfully.",
-                                                style: theme.bodyStyle?.copyWith(
-                                                    fontSize: 15.fSize,
-                                                    color: theme
-                                                        .secondaryTextColor)),
+                                                style: theme.bodyStyle),
                                           ],
                                         ),
                                         textAlign: TextAlign.center,
@@ -178,9 +175,7 @@ class _AnbocasBookingSuccessScreenState
                                       ),
                                       Text(
                                         "Unfortunately, your order has failed.",
-                                        style: theme.bodyStyle?.copyWith(
-                                            fontSize: 15.fSize,
-                                            color: theme.secondaryTextColor),
+                                        style: theme.bodyStyle,
                                         textAlign: TextAlign.center,
                                       ),
                                     ],
@@ -198,9 +193,7 @@ class _AnbocasBookingSuccessScreenState
                                         ),
                                         Text(
                                           "Order Status Pending",
-                                          style: theme.bodyStyle?.copyWith(
-                                              fontSize: 15.fSize,
-                                              color: theme.secondaryTextColor),
+                                          style: theme.bodyStyle,
                                           textAlign: TextAlign.center,
                                         ),
                                       ],
@@ -234,12 +227,8 @@ class _AnbocasBookingSuccessScreenState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        widget.ticketResponse.name ?? "",
-                                        style: theme.subHeadingStyle?.copyWith(
-                                          fontSize: 20.fSize,
-                                        ),
-                                      ),
+                                      Text(widget.ticketResponse.name ?? "",
+                                          style: theme.subHeadingStyle),
                                       SizedBox(
                                         height: 5.v,
                                       ),
@@ -260,41 +249,23 @@ class _AnbocasBookingSuccessScreenState
                                                     ),
                                                   ),
                                                   TextSpan(
-                                                      text: widget
-                                                              .ticketResponse
-                                                              .location ??
-                                                          "",
-                                                      style: theme.bodyStyle
-                                                          ?.copyWith(
-                                                              fontSize:
-                                                                  15.fSize,
-                                                              color: theme
-                                                                  .secondaryTextColor)),
+                                                    text: widget.ticketResponse
+                                                            .location ??
+                                                        "",
+                                                    style: theme.bodyStyle,
+                                                  ),
                                                 ],
                                               ),
                                             )
                                           : Text(
                                               widget.ticketResponse.venue ?? "",
-                                              style: theme.bodyStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color: Colors.grey)),
+                                              style: theme.bodyStyle),
                                     ],
                                   ),
                                 ),
                                 SizedBox(
                                   width: 10.h,
                                 ),
-                                // QrImageView(
-                                //   data: widget.orderDetails.id.toString(),
-                                //   version: QrVersions.auto,
-                                //   dataModuleStyle: QrDataModuleStyle(
-                                //       dataModuleShape: QrDataModuleShape.square,
-                                //       color: theme.iconColor),
-                                //   eyeStyle: QrEyeStyle(
-                                //       eyeShape: QrEyeShape.square,
-                                //       color: theme.iconColor),
-                                //   size: 120.0.adaptSize,
-                                // ),
                               ],
                             ),
                             SizedBox(
@@ -310,7 +281,7 @@ class _AnbocasBookingSuccessScreenState
                                     children: [
                                       Container(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 10.h, vertical: 1),
+                                            horizontal: 10.h, vertical: 2.v),
                                         decoration: BoxDecoration(
                                             color: theme.secondaryBgColor,
                                             borderRadius:
@@ -318,23 +289,20 @@ class _AnbocasBookingSuccessScreenState
                                               top: Radius.circular(5),
                                             )),
                                         child: Text(
-                                          DateFormatter.formatMonth(
+                                            DateFormatter.formatMonth(
+                                                DateTime.parse(widget
+                                                        .ticketResponse
+                                                        .startDate ??
+                                                    "")),
+                                            style: theme.labelStyle),
+                                      ),
+                                      Text(
+                                          DateFormatter.formatDay(
                                               DateTime.parse(widget
                                                       .ticketResponse
                                                       .startDate ??
                                                   "")),
-                                          style: theme.bodyStyle?.copyWith(
-                                              height: 1,
-                                              color: theme.primaryTextColor),
-                                        ),
-                                      ),
-                                      Text(
-                                        DateFormatter.formatDay(DateTime.parse(
-                                            widget.ticketResponse.startDate ??
-                                                "")),
-                                        style: theme.bodyStyle?.copyWith(
-                                            fontWeight: FontWeight.w700),
-                                      )
+                                          style: theme.bodyStyle)
                                     ],
                                   ),
                                 ),
@@ -342,11 +310,9 @@ class _AnbocasBookingSuccessScreenState
                                   width: 10.h,
                                 ),
                                 Text(
-                                  DateFormatter.formatTime(DateTime.parse(
-                                      widget.ticketResponse.startDate ?? "")),
-                                  style: theme.bodyStyle
-                                      ?.copyWith(fontWeight: FontWeight.w700),
-                                )
+                                    DateFormatter.formatTime(DateTime.parse(
+                                        widget.ticketResponse.startDate ?? "")),
+                                    style: theme.bodyStyle)
                               ],
                             ),
                             const SizedBox(
@@ -359,13 +325,14 @@ class _AnbocasBookingSuccessScreenState
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                        padding: EdgeInsets.all(8.adaptSize),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.h, vertical: 8.v),
                                         decoration: BoxDecoration(
                                             color: theme.iconColor,
                                             borderRadius:
                                                 BorderRadius.circular(5)),
                                         child: Icon(
-                                          Icons.group,
+                                          Icons.video_chat_sharp,
                                           color: theme.secondaryBgColor,
                                         ),
                                       ),
@@ -377,12 +344,8 @@ class _AnbocasBookingSuccessScreenState
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "Meeting link",
-                                              style: theme.bodyStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  fontWeight: FontWeight.w700),
-                                            ),
+                                            Text("Meeting link",
+                                                style: theme.bodyStyle),
                                             GestureDetector(
                                               onLongPress: () async {
                                                 await Clipboard.setData(ClipboardData(
@@ -395,14 +358,10 @@ class _AnbocasBookingSuccessScreenState
                                                             "Link Copied"));
                                               },
                                               child: Text(
-                                                widget.ticketResponse
-                                                        .meetingLink ??
-                                                    "N/A",
-                                                style:
-                                                    theme.bodyStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                ),
-                                              ),
+                                                  widget.ticketResponse
+                                                          .meetingLink ??
+                                                      "N/A",
+                                                  style: theme.bodyStyle),
                                             ),
                                           ],
                                         ),
@@ -412,7 +371,8 @@ class _AnbocasBookingSuccessScreenState
                                 : Row(
                                     children: [
                                       Container(
-                                        padding: EdgeInsets.all(8.adaptSize),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.h, vertical: 8.v),
                                         decoration: BoxDecoration(
                                             color: theme.iconColor,
                                             borderRadius:
@@ -427,11 +387,9 @@ class _AnbocasBookingSuccessScreenState
                                       ),
                                       Expanded(
                                         child: Text(
-                                          widget.ticketResponse.location ?? "",
-                                          style: theme.bodyStyle?.copyWith(
-                                              fontSize: 15.fSize,
-                                              fontWeight: FontWeight.w700),
-                                        ),
+                                            widget.ticketResponse.location ??
+                                                "",
+                                            style: theme.bodyStyle),
                                       )
                                     ],
                                   ),
@@ -444,11 +402,7 @@ class _AnbocasBookingSuccessScreenState
                                 SizedBox(
                                   width: 10.h,
                                 ),
-                                Text("Tickets",
-                                    style: theme.bodyStyle?.copyWith(
-                                        fontSize: 15.fSize,
-                                        color: theme.accentColor,
-                                        fontWeight: FontWeight.w700)),
+                                Text("Tickets", style: theme.bodyStyle),
                                 SizedBox(
                                   width: 10.h,
                                 ),
@@ -460,86 +414,90 @@ class _AnbocasBookingSuccessScreenState
                             ),
                             if (updateOrderResponse != null)
                               ...updateOrderResponse!.tickets
-                                  .map((e) => Padding(
-                                        padding:
-                                            EdgeInsets.only(bottom: 10.0.v),
-                                        child: ClipPath(
-                                          clipper:
-                                              TicketCardClipper(radius: 15),
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 15.v,
-                                                horizontal: 20.h),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: theme.secondaryBgColor,
-                                            ),
-                                            child: Column(
+                                  .asMap()
+                                  .entries
+                                  .map((e) => Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 15.v, horizontal: 12.h),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: theme.secondaryBgColor,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            e.singleTicket
-                                                                    ?.name ??
-                                                                "",
-                                                            maxLines: 2,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: theme
-                                                                .bodyStyle
-                                                                ?.copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize:
-                                                                  16.fSize,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10.v,
-                                                          ),
-                                                          HtmlWidget(
-                                                            e.description ?? "",
-                                                            textStyle: theme
-                                                                .smallLabelStyle,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10.h,
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            e.quantity
-                                                                .toString(),
-                                                            style: theme
-                                                                .bodyStyle),
-                                                        SizedBox(
-                                                          height: 2.v,
-                                                        ),
-                                                        Text("Total Ticket ",
-                                                            style: theme
-                                                                .smallLabelStyle),
-                                                      ],
-                                                    )
-                                                  ],
+                                                Text(
+                                                  "${e.key + 1}. ",
+                                                  style: theme.subHeadingStyle,
                                                 ),
+                                                Expanded(
+                                                  child: Text(
+                                                      e.value.singleTicket
+                                                              ?.name ??
+                                                          "",
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: theme
+                                                          .subHeadingStyle),
+                                                ),
+                                                SizedBox(
+                                                  width: 10.h,
+                                                ),
+                                                Text("${e.value.quantity}x",
+                                                    style:
+                                                        theme.subHeadingStyle),
                                               ],
                                             ),
-                                          ),
+                                            Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.start,
+                                              alignment: WrapAlignment.start,
+                                              runAlignment: WrapAlignment.start,
+                                              children: updateOrderResponse!
+                                                  // .guests
+                                                  .ticketGuests(e.value.id!)
+                                                  .map((guest) => InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      QrFullview(
+                                                                          ticketCode:
+                                                                              guest)));
+                                                        },
+                                                        child: SizedBox(
+                                                          width: 70,
+                                                          child: QrImageView(
+                                                            data: guest,
+                                                            version:
+                                                                QrVersions.auto,
+                                                            dataModuleStyle: QrDataModuleStyle(
+                                                                dataModuleShape:
+                                                                    QrDataModuleShape
+                                                                        .square,
+                                                                color: theme
+                                                                    .accentColor),
+                                                            eyeStyle: QrEyeStyle(
+                                                                eyeShape:
+                                                                    QrEyeShape
+                                                                        .square,
+                                                                color: theme
+                                                                    .accentColor),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList(),
+                                            ),
+                                          ],
                                         ),
                                       ))
                                   .toList(),
@@ -549,6 +507,7 @@ class _AnbocasBookingSuccessScreenState
                       SizedBox(
                         height: 20.v,
                       ),
+                      const Divider(),
                       Container(
                         width: double.infinity,
                         color: theme.secondaryBgColor,
@@ -558,12 +517,10 @@ class _AnbocasBookingSuccessScreenState
                               padding: EdgeInsets.symmetric(
                                   horizontal: 24.0.h, vertical: 10.v),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Price Overview",
-                                      style: theme.bodyStyle?.copyWith(
-                                          fontSize: 15.fSize,
-                                          color: theme.accentColor,
-                                          fontWeight: FontWeight.w700)),
+                                  Text("Payment Overview:",
+                                      style: theme.subHeadingStyle),
                                   SizedBox(
                                     height: 20.v,
                                   ),
@@ -573,32 +530,22 @@ class _AnbocasBookingSuccessScreenState
                                     children: [
                                       Text(
                                         "Sub Total",
-                                        style: theme.bodyStyle?.copyWith(
-                                          color: theme.secondaryTextColor,
-                                        ),
+                                        style: theme.labelStyle,
                                       ),
                                       Text(
                                           "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(widget.orderDetails.subTotal.toString())}",
-                                          style: theme.bodyStyle)
+                                          style: theme.labelStyle)
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 5.v,
-                                  ),
-                                  if (widget.orderDetails.discountAmount != 0.0)
+                                  if (widget.orderDetails.discountAmount > 0.0)
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                  if (widget.orderDetails.discountAmount != 0.0)
+                                  if (widget.orderDetails.discountAmount > 0.0)
                                     Row(
                                       children: [
-                                        Text(
-                                          "Coupon : ",
-                                          style: theme.labelStyle?.copyWith(
-                                            fontSize: 15.fSize,
-                                            color: theme.secondaryTextColor,
-                                          ),
-                                        ),
+                                        Text("Coupon : ",
+                                            style: theme.labelStyle),
                                         if (widget.orderDetails.coupon != null)
                                           Chip(
                                             label: Text(widget
@@ -640,13 +587,8 @@ class _AnbocasBookingSuccessScreenState
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        "Total Amount Paid",
-                                        style: theme.labelStyle?.copyWith(
-                                          fontSize: 15.fSize,
-                                          color: theme.secondaryTextColor,
-                                        ),
-                                      ),
+                                      Text("Total Amount Paid",
+                                          style: theme.labelStyle),
                                       Text(
                                         "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(widget.orderDetails.totalPayable.toString())}",
                                         style: theme.labelStyle,
@@ -660,15 +602,15 @@ class _AnbocasBookingSuccessScreenState
                     ],
                   ),
                 ),
-                Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 24.h, vertical: 20.v),
-                    child: CustomButton(
-                        onPressedCallback: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        centerText: "Back to Event")),
+                // Padding(
+                //     padding:
+                //         EdgeInsets.symmetric(horizontal: 24.h, vertical: 20.v),
+                //     child: CustomButton(
+                //         onPressedCallback: () {
+                //           Navigator.pop(context);
+                //           Navigator.pop(context);
+                //         },
+                //         centerText: "Back to Event")),
               ],
             ),
           )),

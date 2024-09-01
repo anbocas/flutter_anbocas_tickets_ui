@@ -11,12 +11,12 @@ import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 
 class AnbocasSelectedTicketWidget extends StatefulWidget {
-  final TicketResponse ticketResponse;
+  final AnbocasEventResponse ticketResponse;
   final String eventId;
   const AnbocasSelectedTicketWidget(
       {Key? key, required this.ticketResponse, required this.eventId})
@@ -52,6 +52,7 @@ class _AnbocasSelectedTicketWidgetState
   }
 
   ValueNotifier<bool> isLoading = ValueNotifier(false);
+
   void fetchCalculatedAmount() async {
     selectedTickets.asMap().forEach((key, value) {
       info(value.selectedQuantity.toString());
@@ -111,6 +112,7 @@ class _AnbocasSelectedTicketWidgetState
               itemBuilder: (context, index) {
                 var element = selectedTickets[index];
                 return TicketItemWidget(
+                  
                   isSelected: true,
                   element: element,
                   showDeleteIcon: true,
@@ -128,7 +130,7 @@ class _AnbocasSelectedTicketWidgetState
                       }
                     });
                   },
-                  onQuantityChanged: (int newQuantity) {
+                  onQuantityChanged: (newQuantity, ticketId) {
                     element.selectedQuantity = newQuantity;
                     fetchCalculatedAmount();
                   },
@@ -140,64 +142,119 @@ class _AnbocasSelectedTicketWidgetState
                 );
               },
             )),
-            ValueListenableBuilder(
-                valueListenable: isLoading,
-                builder: (context, loading, child) {
-                  return loading == true
-                      ? SizedBox(
-                          height: 100.v,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: theme.accentColor,
+            Visibility(
+              visible: selectedTickets.isNotEmpty,
+              child: ValueListenableBuilder(
+                  valueListenable: isLoading,
+                  builder: (context, loading, child) {
+                    return loading == true
+                        ? SizedBox(
+                            height: 100.v,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: theme.accentColor,
+                              ),
                             ),
-                          ),
-                        )
-                      : Container(
-                          width: double.infinity,
-                          color: theme.secondaryBgColor,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 24.0.h, vertical: 20.v),
-                                child: Column(
-                                  children: [
-                                    ValueListenableBuilder(
-                                        valueListenable: itemsTotal,
-                                        builder: (context, value, child) {
-                                          return Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "Sub Total",
-                                                style:
-                                                    theme.labelStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color:
-                                                      theme.secondaryTextColor,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            color: theme.secondaryBgColor,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 24.0.h, vertical: 20.v),
+                                  child: Column(
+                                    children: [
+                                      ValueListenableBuilder(
+                                          valueListenable: itemsTotal,
+                                          builder: (context, value, child) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Sub Total",
+                                                  style: theme.labelStyle
+                                                      ?.copyWith(
+                                                    fontSize: 15.fSize,
+                                                    color: theme
+                                                        .secondaryTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                  "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
-                                                  style: theme.labelStyle)
-                                            ],
-                                          );
-                                        }),
-                                    SizedBox(
-                                      height: 8.v,
-                                    ),
-                                    ValueListenableBuilder(
-                                        valueListenable: totalFee,
-                                        builder: (context, value, child) {
-                                          return value > 0
-                                              ? Row(
+                                                Text(
+                                                    "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
+                                                    style: theme.labelStyle)
+                                              ],
+                                            );
+                                          }),
+                                      SizedBox(
+                                        height: 8.v,
+                                      ),
+                                      ValueListenableBuilder(
+                                          valueListenable: totalFee,
+                                          builder: (context, value, child) {
+                                            return value > 0
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Convenience Fee",
+                                                        style: theme.labelStyle
+                                                            ?.copyWith(
+                                                          fontSize: 15.fSize,
+                                                          color: theme
+                                                              .secondaryTextColor,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
+                                                        style: theme.labelStyle,
+                                                      )
+                                                    ],
+                                                  )
+                                                : const SizedBox.shrink();
+                                          }),
+                                      SizedBox(
+                                        height: 8.v,
+                                      ),
+                                      appliedCoupon == null
+                                          ? InkWell(
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                    context: context,
+                                                    isScrollControlled: true,
+                                                    useSafeArea: true,
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    builder: (context) {
+                                                      return AddCouponWidget(
+                                                        eventId: widget.eventId,
+                                                        totalAmount:
+                                                            totalPrice.value,
+                                                        validatedCoupon:
+                                                            (String value,
+                                                                double price) {
+                                                          appliedCoupon = value;
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          fetchCalculatedAmount();
+                                                        },
+                                                      );
+                                                    });
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.0.v),
+                                                child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      "Convenience Fee",
+                                                      "Add Coupon",
                                                       style: theme.labelStyle
                                                           ?.copyWith(
                                                         fontSize: 15.fSize,
@@ -205,177 +262,128 @@ class _AnbocasSelectedTicketWidgetState
                                                             .secondaryTextColor,
                                                       ),
                                                     ),
-                                                    Text(
-                                                      "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
-                                                      style: theme.labelStyle,
-                                                    )
-                                                  ],
-                                                )
-                                              : const SizedBox.shrink();
-                                        }),
-                                    SizedBox(
-                                      height: 8.v,
-                                    ),
-                                    appliedCoupon == null
-                                        ? InkWell(
-                                            onTap: () {
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  isScrollControlled: true,
-                                                  useSafeArea: true,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  builder: (context) {
-                                                    return AddCouponWidget(
-                                                      eventId: widget.eventId,
-                                                      totalAmount:
-                                                          totalPrice.value,
-                                                      validatedCoupon:
-                                                          (String value,
-                                                              double price) {
-                                                        appliedCoupon = value;
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        fetchCalculatedAmount();
-                                                      },
-                                                    );
-                                                  });
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 5.0.v),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "Add Coupon",
-                                                    style: theme.labelStyle
-                                                        ?.copyWith(
-                                                      fontSize: 15.fSize,
-                                                      color: theme
-                                                          .secondaryTextColor,
+                                                    SizedBox(
+                                                      width: 10.h,
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10.h,
-                                                  ),
-                                                  Icon(
-                                                    Icons.add,
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: theme
+                                                          .secondaryIconColor,
+                                                      size: 18.adaptSize,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          : Row(
+                                              children: [
+                                                Text(
+                                                  "Coupon : ",
+                                                  style: theme.labelStyle
+                                                      ?.copyWith(
+                                                    fontSize: 15.fSize,
                                                     color: theme
-                                                        .secondaryIconColor,
-                                                    size: 18.adaptSize,
+                                                        .secondaryTextColor,
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        : Row(
-                                            children: [
-                                              Text(
-                                                "Coupon : ",
-                                                style:
-                                                    theme.labelStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color:
-                                                      theme.secondaryTextColor,
                                                 ),
-                                              ),
-                                              Chip(
-                                                label: Text(
-                                                    appliedCoupon.toString()),
-                                                deleteIcon: Icon(Icons.close,
-                                                    color: theme.iconColor),
-                                                onDeleted: () {
-                                                  appliedCoupon = null;
-                                                  fetchCalculatedAmount();
-                                                },
-                                                deleteIconColor: Colors.white,
-                                                backgroundColor:
-                                                    theme.accentColor,
-                                                shape: RoundedRectangleBorder(
-                                                  side: const BorderSide(
-                                                      color: Colors
-                                                          .black), // Border color
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          16.0),
+                                                Chip(
+                                                  label: Text(
+                                                      appliedCoupon.toString()),
+                                                  deleteIcon: Icon(Icons.close,
+                                                      color: theme.iconColor),
+                                                  onDeleted: () {
+                                                    appliedCoupon = null;
+                                                    fetchCalculatedAmount();
+                                                  },
+                                                  deleteIconColor: Colors.white,
+                                                  backgroundColor:
+                                                      theme.accentColor,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: const BorderSide(
+                                                        color: Colors
+                                                            .black), // Border color
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16.0),
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                width: 10.h,
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                "- ${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(discountPrice.value.toString())}",
-                                                style: theme.labelStyle,
-                                              )
-                                            ],
-                                          )
-                                  ],
+                                                SizedBox(
+                                                  width: 10.h,
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  "- ${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(discountPrice.value.toString())}",
+                                                  style: theme.labelStyle,
+                                                )
+                                              ],
+                                            )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              DecoratedBox(
-                                  decoration: BoxDecoration(
-                                      color: theme.secondaryBgColor
-                                          ?.withAlpha(80)),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 24.h, vertical: 10.v),
-                                    child: ValueListenableBuilder(
-                                        valueListenable: totalPrice,
-                                        builder: (context, value, child) {
-                                          return Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "Total Payable",
-                                                style:
-                                                    theme.labelStyle?.copyWith(
-                                                  fontSize: 15.fSize,
-                                                  color:
-                                                      theme.secondaryTextColor,
+                                DecoratedBox(
+                                    decoration: BoxDecoration(
+                                        color: theme.secondaryBgColor
+                                            ?.withAlpha(80)),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24.h, vertical: 10.v),
+                                      child: ValueListenableBuilder(
+                                          valueListenable: totalPrice,
+                                          builder: (context, value, child) {
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  "Total Payable",
+                                                  style: theme.labelStyle
+                                                      ?.copyWith(
+                                                    fontSize: 15.fSize,
+                                                    color: theme
+                                                        .secondaryTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              Text(
-                                                "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
-                                                style: theme.labelStyle,
-                                              )
-                                            ],
-                                          );
-                                        }),
-                                  )),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 24.h, vertical: 20.v),
-                                child: CustomButton(
-                                    onPressedCallback: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AnbocasPaymentWidget(
-                                                    appliedCouponCode:
-                                                        appliedCoupon,
-                                                    selectedTickets: widget
-                                                        .ticketResponse
-                                                        .copyWithSelectedTickets(
-                                                            tickets:
-                                                                selectedTickets),
-                                                    itemTotal: totalPrice.value,
-                                                    totalFee: totalFee.value,
-                                                    discountPrice:
-                                                        discountPrice.value,
-                                                    totalPrice:
-                                                        totalPrice.value,
-                                                  )),
-                                        ),
-                                    centerText: "Checkout"),
-                              ),
-                            ],
-                          ),
-                        );
-                })
+                                                Text(
+                                                  "${widget.ticketResponse.company?.currency?.symbol ?? "\u20B9"} ${changePrice(value.toString())}",
+                                                  style: theme.labelStyle,
+                                                )
+                                              ],
+                                            );
+                                          }),
+                                    )),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 24.h, vertical: 20.v),
+                                  child: CustomButton(
+                                      onPressedCallback: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AnbocasPaymentWidget(
+                                                      appliedCouponCode:
+                                                          appliedCoupon,
+                                                      eventResponse: widget
+                                                          .ticketResponse
+                                                          .copyWithSelectedTickets(
+                                                              tickets:
+                                                                  selectedTickets),
+                                                      itemTotal:
+                                                          totalPrice.value,
+                                                      totalFee: totalFee.value,
+                                                      discountPrice:
+                                                          discountPrice.value,
+                                                      totalPrice:
+                                                          totalPrice.value,
+                                                    )),
+                                          ),
+                                      centerText: "Checkout"),
+                                ),
+                              ],
+                            ),
+                          );
+                  }),
+            )
           ],
         ));
   }

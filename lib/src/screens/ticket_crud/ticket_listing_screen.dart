@@ -27,6 +27,9 @@ class TicketsScreenState extends State<TicketListingScreen> {
       ValueNotifier([]);
   final ValueNotifier<bool> _isLoadingNotifier = ValueNotifier(true);
 
+  final ValueNotifier<AnbocasEventModel?> _eventDetails = ValueNotifier(null);
+  DateTime? eventEndDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -46,9 +49,6 @@ class TicketsScreenState extends State<TicketListingScreen> {
       _isLoadingNotifier.value = false;
     }
   }
-
-  final ValueNotifier<AnbocasEventModel?> _eventDetails = ValueNotifier(null);
-  DateTime? eventEndDate = DateTime.now();
 
   Future<void> _fetchEvents() async {
     try {
@@ -73,15 +73,13 @@ class TicketsScreenState extends State<TicketListingScreen> {
   Future<void> _addOrUpdateTicket({SingleTicketByEvent? ticket}) async {
     final result = await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => ScaffoldMessenger(
         child: Builder(builder: (context) {
-          return Scaffold(
-            backgroundColor: Colors.transparent,
-            body: _TicketDialog(
-              ticket: ticket,
-              eventId: widget.eventId,
-              eventDateTime: eventEndDate!,
-            ),
+          return _TicketDialog(
+            ticket: ticket,
+            event: _eventDetails.value!,
+            eventDateTime: eventEndDate!,
           );
         }),
       ),
@@ -151,26 +149,17 @@ class TicketsScreenState extends State<TicketListingScreen> {
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              ticket.name ?? "",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.bodyStyle?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16.fSize,
-                              ),
-                            ),
+                                '${ticket.name}  (${ticket.getCurrentAvailablity()})',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.subHeadingStyle),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Avl: ${ticket.getAvailable()}/${ticket.getCapacity()}',
-                                ),
-                                Text(
-                                  'Open: ${ticket.getAvailableFrom()}',
-                                ),
-                                Text(
-                                  'Closes: ${ticket.getAvailableTo()}',
-                                ),
+                                Text('Open: ${ticket.getAvailableFrom()}',
+                                    style: theme.labelStyle),
+                                Text('Closes: ${ticket.getAvailableTo()}',
+                                    style: theme.labelStyle),
                               ],
                             ),
                             leading: Text(
@@ -183,21 +172,25 @@ class TicketsScreenState extends State<TicketListingScreen> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                IconButton(
-                                  icon: Icon(
+                                InkWell(
+                                  child: Icon(
                                     Icons.edit,
-                                    color: theme.iconColor!,
+                                    size: 18,
+                                    color: theme.iconColor,
                                   ),
-                                  onPressed: () =>
+                                  onTap: () =>
                                       _addOrUpdateTicket(ticket: ticket),
                                 ),
-                                IconButton(
-                                  icon: Icon(
+                                SizedBox(
+                                  width: 10.h,
+                                ),
+                                InkWell(
+                                  child: const Icon(
                                     Icons.delete,
-                                    color: theme.iconColor!,
+                                    size: 18,
+                                    color: Colors.red,
                                   ),
-                                  onPressed: () =>
-                                      _deleteTicket(ticket.id ?? ""),
+                                  onTap: () => _deleteTicket(ticket.id ?? ""),
                                 ),
                               ],
                             ),
@@ -230,12 +223,12 @@ class TicketsScreenState extends State<TicketListingScreen> {
 }
 
 class _TicketDialog extends StatefulWidget {
-  final String eventId;
+  final AnbocasEventModel event;
   final DateTime eventDateTime;
   final SingleTicketByEvent? ticket;
 
   _TicketDialog(
-      {this.ticket, required this.eventId, required this.eventDateTime});
+      {this.ticket, required this.event, required this.eventDateTime});
 
   @override
   __TicketDialogState createState() => __TicketDialogState();
@@ -250,7 +243,9 @@ class __TicketDialogState extends State<_TicketDialog> {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _availableFrom = TextEditingController();
   final TextEditingController _availableTo = TextEditingController();
-  String? _selectedStatus;
+  DateTime? availableFrom;
+  DateTime? availableTo;
+  String? _selectedStatus = 'AVAILABLE';
 
   @override
   void initState() {
@@ -260,9 +255,14 @@ class __TicketDialogState extends State<_TicketDialog> {
       _description.text = widget.ticket?.description ?? "";
       _capacity.text = widget.ticket!.capacity.toString();
       _price.text = widget.ticket!.price.toString();
-      _selectedStatus = widget.ticket?.status;
-      _availableFrom.text = widget.ticket?.availableFrom ?? "";
-      _availableTo.text = widget.ticket?.availableTo ?? "";
+      _selectedStatus = widget.ticket!.status;
+      _availableFrom.text = widget.ticket?.availableFrom ?? '';
+      _availableTo.text = widget.ticket?.availableTo ?? '';
+    }
+
+    if (widget.ticket == null) {
+      _availableFrom.text = widget.event.startDate ?? '';
+      _availableTo.text = widget.event.endDate ?? '';
     }
   }
 
@@ -273,7 +273,7 @@ class __TicketDialogState extends State<_TicketDialog> {
 
       if (widget.ticket == null) {
         await api.createTicket(
-          eventId: widget.eventId,
+          eventId: widget.event.id!,
           name: _name.text,
           description: _description.text,
           capacity: _capacity.text,
@@ -297,9 +297,6 @@ class __TicketDialogState extends State<_TicketDialog> {
       Navigator.of(context).pop(true);
     }
   }
-
-  DateTime? availableFrom;
-  DateTime? availableTo;
 
   Future<void> _pickDateTime({
     required TextEditingController controller,
@@ -384,6 +381,7 @@ class __TicketDialogState extends State<_TicketDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: theme.secondaryBgColor,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Container(
         width: 450,
@@ -406,13 +404,13 @@ class __TicketDialogState extends State<_TicketDialog> {
                   formCtr: _name,
                   labelText: "Ticket Name",
                   filled: false,
-                  style: theme.bodyStyle?.copyWith(color: Colors.black),
+                  // style: theme.bodyStyle?.copyWith(color: Colors.black),
                   hintText: "Type Here",
                   fieldValidator: (newValue) {
                     if (newValue == null || newValue.isEmpty) {
                       return "name is required";
                     }
-                    if (newValue.length < 5) {
+                    if (newValue.length < 3) {
                       return "Ticket name should be long";
                     }
                     return null;
@@ -421,37 +419,49 @@ class __TicketDialogState extends State<_TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
-                AnbocasFormField(
-                  formCtr: _capacity,
-                  filled: false,
-                  style: theme.bodyStyle?.copyWith(color: Colors.black),
-                  labelText: "Capacity",
-                  hintText: "0",
-                  inputType: TextInputType.number,
-                  fieldValidator: (newValue) {
-                    if (newValue == null || newValue.isEmpty) {
-                      return "Capacity is required";
-                    }
-                    return null;
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnbocasFormField(
+                        formCtr: _capacity,
+                        filled: false,
+                        // style: theme.bodyStyle?.copyWith(color: Colors.black),
+                        labelText: "Capacity",
+                        hintText: "0",
+                        inputType: TextInputType.number,
+                        fieldValidator: (newValue) {
+                          if (newValue == null || newValue.isEmpty) {
+                            return "Capacity is required";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10.h,
+                    ),
+                    Expanded(
+                      child: AnbocasFormField(
+                        formCtr: _price,
+                        filled: false,
+                        // style: theme.bodyStyle?.copyWith(color: Colors.black),
+                        labelText: "Price",
+                        hintText: "0.0",
+                        inputType: TextInputType.number,
+                        fieldValidator: (newValue) {
+                          if (newValue == null || newValue.isEmpty) {
+                            return "Price is required";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 15.v,
-                ),
-                AnbocasFormField(
-                  formCtr: _price,
-                  filled: false,
-                  style: theme.bodyStyle?.copyWith(color: Colors.black),
-                  labelText: "Price",
-                  hintText: "0.0",
-                  inputType: TextInputType.number,
-                  fieldValidator: (newValue) {
-                    if (newValue == null || newValue.isEmpty) {
-                      return "Price is required";
-                    }
-                    return null;
-                  },
-                ),
+                // SizedBox(
+                //   height: 15.v,
+                // ),
+
                 SizedBox(
                   height: 15.v,
                 ),
@@ -461,7 +471,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                     child: AnbocasFormField(
                       formCtr: _availableFrom,
                       filled: false,
-                      style: theme.bodyStyle?.copyWith(color: Colors.black),
+                      // style: theme.bodyStyle?.copyWith(color: Colors.black),
                       labelText: "Available From",
                       hintText: "Select Date",
                       fieldValidator: (newValue) {
@@ -482,7 +492,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                     child: AnbocasFormField(
                       formCtr: _availableTo,
                       filled: false,
-                      style: theme.bodyStyle?.copyWith(color: Colors.black),
+                      // style: theme.bodyStyle?.copyWith(color: Colors.black),
                       labelText: "Available To",
                       hintText: "Select Date",
                       fieldValidator: (newValue) {
@@ -502,7 +512,10 @@ class __TicketDialogState extends State<_TicketDialog> {
                   items: ['AVAILABLE', 'OUT_OF_STOCK'].map((status) {
                     return DropdownMenuItem<String>(
                       value: status,
-                      child: Text(status),
+                      child: Text(
+                        status,
+                        style: theme.textFormFieldConfig.style,
+                      ),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -512,10 +525,8 @@ class __TicketDialogState extends State<_TicketDialog> {
                   },
                   decoration: InputDecoration(
                     labelText: "Status",
-                    labelStyle: theme.labelStyle?.copyWith(
-                      color: theme.secondaryTextColor,
-                    ),
-                    border: const OutlineInputBorder(),
+                    labelStyle: theme.textFormFieldConfig.labelStyle,
+                    border: theme.textFormFieldConfig.border,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -527,11 +538,15 @@ class __TicketDialogState extends State<_TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
-                HtmlTextContainer(
-                    initialText: _description.text,
-                    onSave: (value) {
-                      _description.text = value;
-                    }),
+                AnbocasFormField(
+                  formCtr: _description,
+                  filled: false,
+                  // style: theme.bodyStyle,
+                  labelText: "Description",
+                  maxLines: 4,
+                  inputAction: TextInputAction.newline,
+                  inputType: TextInputType.multiline,
+                ),
                 SizedBox(
                   height: 15.v,
                 ),
@@ -560,89 +575,6 @@ class __TicketDialogState extends State<_TicketDialog> {
       // actions: [
 
       // ],
-    );
-  }
-}
-
-class HtmlTextContainer extends StatefulWidget {
-  final String initialText;
-  final Function(String) onSave;
-  final String hintText;
-  final TextStyle? style;
-  final FormFieldValidator<String>? validator;
-
-  const HtmlTextContainer({
-    super.key,
-    required this.initialText,
-    required this.onSave,
-    this.hintText = "Tap here to add Html Description",
-    this.style,
-    this.validator,
-  });
-
-  @override
-  HtmlTextContainerState createState() => HtmlTextContainerState();
-}
-
-class HtmlTextContainerState extends State<HtmlTextContainer> {
-  String _htmlText = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _htmlText = widget.initialText;
-  }
-
-  void _openHtmlTextEditor() async {
-    FocusManager.instance.primaryFocus?.unfocus();
-    String? result = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => HtmlTextEditorScreen(
-          initialText: _htmlText,
-          onSave: (value) {
-            setState(() {
-              _htmlText = value;
-              widget.onSave(value);
-            });
-          },
-        ),
-      ),
-    );
-
-    if (result != null) {
-      setState(() {
-        _htmlText = result;
-        widget.onSave(result);
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _openHtmlTextEditor,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        width: double.infinity,
-        height: 160.v,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: _htmlText.isEmpty
-            ? Text(
-                widget.hintText,
-                style: theme.labelStyle?.copyWith(
-                  color: theme.secondaryTextColor,
-                ),
-              )
-            : SingleChildScrollView(
-                child: HtmlWidget(
-                  _htmlText,
-                  textStyle: theme.bodyStyle?.copyWith(color: Colors.black),
-                ),
-              ),
-      ),
     );
   }
 }

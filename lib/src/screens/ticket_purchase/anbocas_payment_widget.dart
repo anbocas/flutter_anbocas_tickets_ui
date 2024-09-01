@@ -14,12 +14,12 @@ import 'package:anbocas_tickets_ui/src/components/price_break_down_widget.dart';
 import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 
 class AnbocasPaymentWidget extends StatefulWidget {
-  final TicketResponse selectedTickets;
+  final AnbocasEventResponse eventResponse;
   final double itemTotal;
   final double totalFee;
   final double totalPrice;
@@ -28,7 +28,7 @@ class AnbocasPaymentWidget extends StatefulWidget {
 
   const AnbocasPaymentWidget({
     Key? key,
-    required this.selectedTickets,
+    required this.eventResponse,
     required this.itemTotal,
     required this.totalFee,
     required this.totalPrice,
@@ -75,7 +75,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
       await _booking
           ?.placeOrder(
               coupon: widget.appliedCouponCode,
-              selectedTickets: widget.selectedTickets.tickets,
+              selectedTickets: widget.eventResponse.tickets,
               name: name.text,
               phone:
                   phone.text.isNotEmpty ? _countryDialCode! + phone.text : null,
@@ -101,13 +101,13 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
       lastOrderDetails = order;
       double totalPayable = order.data?.totalPayable ?? 0.00;
       if (totalPayable <= 0) {
-        info("Navigating to Success screen while getting zeo total payable");
+        info("Navigating to Success screen while getting zero total payable");
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => AnbocasBookingSuccessScreen(
-                    ticketResponse: widget.selectedTickets,
+                    ticketResponse: widget.eventResponse,
                     orderDetails: order.data!,
                   )),
         );
@@ -119,7 +119,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                   builder: (context) => AnbocasWebviewPayment(
                         webUrl: order.paymentUrl ?? "",
                         orderDetails: order.data!,
-                        selectedTickets: widget.selectedTickets,
+                        selectedTickets: widget.eventResponse,
                       )));
         } else {
           initiateRazorPay(order.data!);
@@ -137,29 +137,6 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
-    razorpay.open({
-      "key": "rzp_test_kB3PqQHXkqHye6",
-      'amount': (order.totalPayable * 100),
-      'currency': widget.selectedTickets.company?.currency?.code ?? "INR",
-      'name': 'Anbocas Ticket',
-      'description': 'Ticket Booking via Anbocas',
-      'theme': {'color': '#000000'},
-      'retry': {'enabled': true, 'max_count': 1},
-      'send_sms_hash': true,
-      'prefill': {
-        'contact': phone.text,
-        'email': email.text,
-      },
-      'external': {
-        'wallets': ['paytm']
-      },
-      'receipt': order.orderNumber,
-      'notes': {
-        'order_id': order.id,
-        'event_id': order.eventId,
-        'payer_name': name.text,
-      }
-    });
   }
 
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
@@ -177,7 +154,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
       context,
       MaterialPageRoute(
           builder: (context) => AnbocasBookingSuccessScreen(
-                ticketResponse: widget.selectedTickets,
+                ticketResponse: widget.eventResponse,
                 orderDetails: lastOrderDetails!.data!,
               )),
     );
@@ -222,27 +199,23 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                 Expanded(
                   child: ListView(
                     children: [
-                      Text(
-                        widget.selectedTickets.name ?? "",
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.headingStyle?.copyWith(
-                          color: theme.accentColor,
-                        ),
-                      ),
+                      Text(widget.eventResponse.name ?? "",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.subHeadingStyle),
                       SizedBox(
                         height: 5.v,
                       ),
                       Text(
                         DateFormatter.formatDate(DateTime.parse(
-                            widget.selectedTickets.startDate ?? "")),
+                            widget.eventResponse.startDate ?? "")),
                         style: theme.labelStyle,
                       ),
                       SizedBox(
                         height: 5.v,
                       ),
                       Text(
-                        widget.selectedTickets.location ?? "",
+                        widget.eventResponse.location ?? "",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.labelStyle,
@@ -250,7 +223,9 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                       SizedBox(
                         height: 10.v,
                       ),
-                      ...widget.selectedTickets.tickets
+                      ...widget.eventResponse.tickets
+                          .asMap()
+                          .entries
                           .map((e) => Padding(
                                 padding: EdgeInsets.only(bottom: 10.h),
                                 child: Container(
@@ -261,9 +236,15 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                   ),
                                   child: Row(
                                     children: [
+                                      Text(
+                                        "${(e.key + 1)}. ",
+                                        style: theme.bodyStyle?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                       Expanded(
                                         child: Text(
-                                          e.name ?? "",
+                                          e.value.name ?? "",
                                           style: theme.bodyStyle?.copyWith(
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -273,7 +254,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                         width: 10.h,
                                       ),
                                       Text(
-                                        "x${e.selectedQuantity}",
+                                        "x${e.value.selectedQuantity}",
                                         style: theme.bodyStyle,
                                       ),
                                     ],
@@ -301,8 +282,8 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                           if (newValue == null || newValue.isEmpty) {
                             return "name is required";
                           }
-                          if (newValue.length < 5) {
-                            return "full name should be long";
+                          if (newValue.length < 3) {
+                            return "Name should be long enough.";
                           }
                           return null;
                         },
@@ -370,36 +351,36 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                   const TextSpan(text: "\n"),
                                   TextSpan(
                                     text:
-                                        "${widget.selectedTickets.company?.currency?.symbol} ${changePrice(widget.itemTotal.toString())}",
+                                        "${widget.eventResponse.company?.currency?.symbol} ${changePrice(widget.itemTotal.toString())}",
                                     style: theme.subHeadingStyle,
                                   )
                                 ]),
                             textAlign: TextAlign.left,
                           ),
-                          IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    useSafeArea: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) {
-                                      return PriceBreakDownWidget(
-                                        itemTotal: widget.itemTotal,
-                                        totalFee: widget.totalFee,
-                                        totalPrice: widget.totalPrice,
-                                        appliedCouponCode:
-                                            widget.appliedCouponCode,
-                                        currency: widget
-                                            .selectedTickets.company!.currency!,
-                                        discountPrice: widget.discountPrice,
-                                      );
-                                    });
-                              },
-                              icon: Icon(
-                                Icons.info,
-                                color: theme.iconColor,
-                              )),
+                          // IconButton(
+                          //     onPressed: () {
+                          //       showModalBottomSheet(
+                          //           context: context,
+                          //           isScrollControlled: true,
+                          //           useSafeArea: true,
+                          //           backgroundColor: Colors.transparent,
+                          //           builder: (context) {
+                          //             return PriceBreakDownWidget(
+                          //               itemTotal: widget.itemTotal,
+                          //               totalFee: widget.totalFee,
+                          //               totalPrice: widget.totalPrice,
+                          //               appliedCouponCode:
+                          //                   widget.appliedCouponCode,
+                          //               currency: widget
+                          //                   .eventResponse.company!.currency!,
+                          //               discountPrice: widget.discountPrice,
+                          //             );
+                          //           });
+                          //     },
+                          //     icon: Icon(
+                          //       Icons.info,
+                          //       color: theme.iconColor,
+                          //     )),
                           SizedBox(
                             width: 10.h,
                           ),

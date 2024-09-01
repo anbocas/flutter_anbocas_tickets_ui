@@ -51,7 +51,7 @@ class OrderData {
   int? isGuestCheckout;
   String? status;
   late List<OrderTicket> tickets;
-  List<EventGuest>? guests;
+  late List<EventGuest> guests;
   EventResponse? event;
   Company? company;
   Payment? payment;
@@ -194,7 +194,7 @@ class OrderData {
     }
     if (json["guests"] is List) {
       guests = json["guests"] == null
-          ? null
+          ? []
           : (json["guests"] as List)
               .map((e) => EventGuest.fromJson(e))
               .toList();
@@ -236,7 +236,7 @@ class OrderData {
     data["status"] = status;
     data["currency_id"] = currencyId;
     data["tickets"] = tickets.map((e) => e.toJson()).toList();
-      if (event != null) {
+    if (event != null) {
       data["event"] = event?.toJson();
     }
     if (company != null) {
@@ -246,6 +246,15 @@ class OrderData {
       data["payment"] = payment?.toJson();
     }
     return data;
+  }
+
+  List<String> ticketGuests(String ticketId) {
+    return guests
+        .where((eg) => eg.orderTicketId == ticketId)
+        .map(
+          (m) => m.code!,
+        )
+        .toList();
   }
 
   Map<String, dynamic> trimmedPayload() {

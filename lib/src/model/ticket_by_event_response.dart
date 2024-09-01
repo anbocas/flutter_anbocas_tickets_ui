@@ -81,12 +81,22 @@ class SingleTicketByEvent {
     }
     return capacity.toString();
   }
+
+  String getCurrentAvailablity() {
+    if (capacity == -1) {
+      return 'Unlimited';
+    } else {
+      return '${getAvailable()}/${getCapacity()}';
+    }
+  }
+
   String getAvailable() {
     if (available == -1) {
       return 'Unlimited';
     }
     return available.toString();
   }
+
   String getAvailableFrom() {
     if (availableFrom == null) {
       return 'N/A';
@@ -95,6 +105,7 @@ class SingleTicketByEvent {
 
     return DateFormatter.formatDate(dateTime);
   }
+
   String getAvailableTo() {
     if (availableTo == null) {
       return 'N/A';
