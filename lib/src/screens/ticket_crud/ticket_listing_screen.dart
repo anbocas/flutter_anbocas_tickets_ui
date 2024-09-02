@@ -42,7 +42,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
       TicketByEventData tickets = TicketByEventData.fromJson(response);
 
       final tempTickets = tickets.data!;
-      tempTickets.sort((a, b) => a.available.compareTo(b.available));
+      tempTickets.sort((a, b) => b.available.compareTo(a.available));
       _ticketsNotifier.value = tempTickets;
     } catch (e) {
       _isLoadingNotifier.value = false;

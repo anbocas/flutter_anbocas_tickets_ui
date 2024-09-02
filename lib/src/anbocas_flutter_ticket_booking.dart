@@ -28,7 +28,7 @@ class AnbocasTickets {
     } else {
       baseUrl = 'https://api.anbocas.com';
     }
-    
+
     serviceManager.initializeBookingRepo(baseUrl, apikey);
     theme.updateConfig(customThemeConfig);
     AnbocasTicketsApi.instance?.config(token: apikey, enableLog: true);

@@ -179,7 +179,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
           backgroundColor: theme.backgroundColor,
           title: Text(
             "Checkout",
-            style: theme.headingStyle?.copyWith(fontWeight: FontWeight.w400),
+            style: theme.headingStyle,
           ),
           leading: IconButton(
             onPressed: () {
@@ -238,16 +238,12 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                     children: [
                                       Text(
                                         "${(e.key + 1)}. ",
-                                        style: theme.bodyStyle?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
+                                        style: theme.bodyStyle,
                                       ),
                                       Expanded(
                                         child: Text(
                                           e.value.name ?? "",
-                                          style: theme.bodyStyle?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                          style: theme.bodyStyle,
                                         ),
                                       ),
                                       SizedBox(
@@ -265,19 +261,14 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                       SizedBox(
                         height: 10.v,
                       ),
-                      Text(
-                        "Registration Details",
-                        style: theme.bodyStyle?.copyWith(
-                          color: theme.secondaryTextColor,
-                        ),
-                      ),
+                      Text("Booking Details", style: theme.bodyStyle),
                       SizedBox(
-                        height: 10.v,
+                        height: 20.v,
                       ),
                       AnbocasFormField(
                         formCtr: name,
                         labelText: "Name",
-                        hintText: "John doe",
+                        hintText: "Full Name",
                         fieldValidator: (newValue) {
                           if (newValue == null || newValue.isEmpty) {
                             return "name is required";
@@ -344,9 +335,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                           Text.rich(
                             TextSpan(
                                 text: "Total ",
-                                style: theme.subHeadingStyle?.copyWith(
-                                  color: Colors.white,
-                                ),
+                                style: theme.bodyStyle,
                                 children: [
                                   const TextSpan(text: "\n"),
                                   TextSpan(
@@ -393,6 +382,8 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                           child: CircularProgressIndicator(),
                                         )
                                       : CustomButton(
+                                          buttonSize:
+                                              Size(double.maxFinite, 35.h),
                                           centerText: "Pay Now",
                                           onPressedCallback: () {
                                             if (!_formKey.currentState!

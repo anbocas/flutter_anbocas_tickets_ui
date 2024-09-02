@@ -30,9 +30,9 @@ class QrFullview extends StatelessWidget {
               version: QrVersions.auto,
               dataModuleStyle: QrDataModuleStyle(
                   dataModuleShape: QrDataModuleShape.square,
-                  color: theme.accentColor),
+                  color: theme.qrcodeColor),
               eyeStyle: QrEyeStyle(
-                  eyeShape: QrEyeShape.square, color: theme.accentColor),
+                  eyeShape: QrEyeShape.square, color: theme.qrcodeColor),
             ),
           ),
           Text(

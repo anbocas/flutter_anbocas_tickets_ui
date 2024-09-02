@@ -485,13 +485,13 @@ class _AnbocasBookingSuccessScreenState
                                                                     QrDataModuleShape
                                                                         .square,
                                                                 color: theme
-                                                                    .accentColor),
+                                                                    .qrcodeColor),
                                                             eyeStyle: QrEyeStyle(
                                                                 eyeShape:
                                                                     QrEyeShape
                                                                         .square,
                                                                 color: theme
-                                                                    .accentColor),
+                                                                    .qrcodeColor),
                                                           ),
                                                         ),
                                                       ))
