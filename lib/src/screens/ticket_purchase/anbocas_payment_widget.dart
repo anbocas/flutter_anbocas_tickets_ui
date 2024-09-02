@@ -382,8 +382,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                           child: CircularProgressIndicator(),
                                         )
                                       : CustomButton(
-                                          buttonSize:
-                                              Size(double.maxFinite, 35.h),
+                                          
                                           centerText: "Pay Now",
                                           onPressedCallback: () {
                                             if (!_formKey.currentState!

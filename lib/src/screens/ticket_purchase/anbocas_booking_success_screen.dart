@@ -203,7 +203,7 @@ class _AnbocasBookingSuccessScreenState
                               },
                             ),
                             SizedBox(
-                              height: 15.v,
+                              height: 20.v,
                             ),
                             if (widget.ticketResponse.imageUrl != null &&
                                 widget.ticketResponse.imageUrl!
@@ -269,7 +269,7 @@ class _AnbocasBookingSuccessScreenState
                               ],
                             ),
                             SizedBox(
-                              height: 15.v,
+                              height: 20.v,
                             ),
                             Row(
                               children: [
@@ -282,10 +282,9 @@ class _AnbocasBookingSuccessScreenState
                                       Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 10.h, vertical: 2.v),
-                                        decoration: BoxDecoration(
-                                            color: theme.secondaryBgColor,
-                                            borderRadius:
-                                                const BorderRadius.vertical(
+                                        decoration: const BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.vertical(
                                               top: Radius.circular(5),
                                             )),
                                         child: Text(
@@ -302,7 +301,8 @@ class _AnbocasBookingSuccessScreenState
                                                       .ticketResponse
                                                       .startDate ??
                                                   "")),
-                                          style: theme.bodyStyle)
+                                          style: theme.bodyStyle
+                                              ?.copyWith(color: Colors.black))
                                     ],
                                   ),
                                 ),
@@ -315,8 +315,8 @@ class _AnbocasBookingSuccessScreenState
                                     style: theme.bodyStyle)
                               ],
                             ),
-                            const SizedBox(
-                              height: 10,
+                            SizedBox(
+                              height: 10.v,
                             ),
                             (widget.ticketResponse.getLocationType() ==
                                     TicketLocationType.virtual)
@@ -424,6 +424,8 @@ class _AnbocasBookingSuccessScreenState
                                               BorderRadius.circular(10),
                                           color: theme.secondaryBgColor,
                                         ),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 4.h),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -452,9 +454,11 @@ class _AnbocasBookingSuccessScreenState
                                                   width: 10.h,
                                                 ),
                                                 Text("${e.value.quantity}x",
-                                                    style:
-                                                        theme.subHeadingStyle),
+                                                    style: theme.labelStyle),
                                               ],
+                                            ),
+                                            SizedBox(
+                                              height: 10.v,
                                             ),
                                             Wrap(
                                               crossAxisAlignment:

@@ -286,7 +286,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                               ),
                               Expanded(
                                 child: CustomButton(
-                                    buttonSize: Size(double.maxFinite, 35.h),
+                                  
                                     onPressedCallback: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(
