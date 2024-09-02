@@ -51,7 +51,8 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
               if (mounted) {
                 Navigator.pop(context);
                 Navigator.pop(context);
-                Navigator.pushReplacement(
+                Navigator.pop(context);
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => AnbocasBookingSuccessScreen(

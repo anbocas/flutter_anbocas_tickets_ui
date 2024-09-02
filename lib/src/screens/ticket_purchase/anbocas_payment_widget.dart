@@ -204,7 +204,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                           overflow: TextOverflow.ellipsis,
                           style: theme.subHeadingStyle),
                       SizedBox(
-                        height: 5.v,
+                        height: 10.v,
                       ),
                       Text(
                         DateFormatter.formatDate(DateTime.parse(
@@ -212,7 +212,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                         style: theme.labelStyle,
                       ),
                       SizedBox(
-                        height: 5.v,
+                        height: 10.v,
                       ),
                       Text(
                         widget.eventResponse.location ?? "",
@@ -221,7 +221,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                         style: theme.labelStyle,
                       ),
                       SizedBox(
-                        height: 10.v,
+                        height: 20.v,
                       ),
                       ...widget.eventResponse.tickets
                           .asMap()
@@ -259,7 +259,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                               ))
                           .toList(),
                       SizedBox(
-                        height: 10.v,
+                        height: 20.v,
                       ),
                       Text("Booking Details", style: theme.bodyStyle),
                       SizedBox(
@@ -382,7 +382,6 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
                                           child: CircularProgressIndicator(),
                                         )
                                       : CustomButton(
-                                          
                                           centerText: "Pay Now",
                                           onPressedCallback: () {
                                             if (!_formKey.currentState!
