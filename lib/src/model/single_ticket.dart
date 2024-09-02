@@ -7,6 +7,7 @@ class SingleTicket {
   String? description;
   Double? price;
   int capacity = -1;
+  int available = -1;
   String? availableFrom;
   String? availableTo;
   int minQtyPerOrder = 1;
@@ -35,6 +36,9 @@ class SingleTicket {
 
     if (json["capacity"] is int) {
       capacity = json["capacity"];
+    }
+    if (json["available"] is int) {
+      available = json["available"];
     }
     if (json["available_from"] is String) {
       availableFrom = json["available_from"];

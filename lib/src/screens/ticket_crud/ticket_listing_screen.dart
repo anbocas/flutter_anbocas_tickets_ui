@@ -40,7 +40,10 @@ class TicketsScreenState extends State<TicketListingScreen> {
       final response =
           await _ticketsApi.get(eventId: widget.eventId, paginate: false);
       TicketByEventData tickets = TicketByEventData.fromJson(response);
-      _ticketsNotifier.value = tickets.data ?? [];
+
+      final tempTickets = tickets.data!;
+      tempTickets.sort((a, b) => a.available.compareTo(b.available));
+      _ticketsNotifier.value = tempTickets;
     } catch (e) {
       _isLoadingNotifier.value = false;
       debugPrint(e.toString());
@@ -104,7 +107,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
         backgroundColor: theme.backgroundColor,
         title: Text(
           "Tickets",
-          style: theme.headingStyle?.copyWith(fontWeight: FontWeight.w400),
+          style: theme.headingStyle,
         ),
         leading: IconButton(
           onPressed: () {
@@ -394,8 +397,7 @@ class __TicketDialogState extends State<_TicketDialog> {
               children: [
                 Text(
                   widget.ticket == null ? 'Add Ticket' : 'Update Ticket',
-                  style: theme.headingStyle?.copyWith(
-                      fontWeight: FontWeight.w400, color: Colors.black),
+                  style: theme.headingStyle,
                 ),
                 SizedBox(
                   height: 15.v,

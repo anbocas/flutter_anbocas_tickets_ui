@@ -275,10 +275,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                   children: [
                                     Text(
                                       "Total Payable",
-                                      style: theme.labelStyle?.copyWith(
-                                        fontSize: 15.fSize,
-                                        color: theme.secondaryTextColor,
-                                      ),
+                                      style: theme.labelStyle,
                                     ),
                                     Text(
                                       "${ticketResponse?.company?.currency?.symbol ?? "\u20B9"} ${totalPrice.value.toStringAsFixed(2)}",
@@ -372,10 +369,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         backgroundColor: theme.backgroundColor,
-        title: Text(
-          "Book your tickets",
-          style: theme.headingStyle?.copyWith(fontWeight: FontWeight.w400),
-        ),
+        title: Text("Book your tickets", style: theme.headingStyle),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {

@@ -1,4 +1,5 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/components/dottted_line.dart';
 import 'package:anbocas_tickets_ui/src/components/icon_with_circle_background.dart';
@@ -64,18 +65,23 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
       height: 150.v,
       width: double.infinity,
       decoration: BoxDecoration(
-          color: widget.isSelected == true ? theme.accentColor : null),
+          color: widget.isSelected == true
+              ? theme.selectedTicketBorderColor
+              : null),
       child: CustomPaint(
         painter: TicketCardFillPainter(radius: 15, isSelected: true),
         child: ClipPath(
           clipper: TicketCardClipper(radius: 15),
           child: DecoratedBox(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: widget.isSelected == true
-                    ? Border.all(color: theme.accentColor!, width: 2.adaptSize)
-                    : const Border(),
-                color: theme.secondaryBgColor),
+              borderRadius: BorderRadius.circular(10),
+              border: widget.isSelected == true
+                  ? Border.all(
+                      color: theme.selectedTicketBorderColor!,
+                      width: 2.adaptSize)
+                  : const Border(),
+              color: theme.ticketBackgroundColor,
+            ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
@@ -124,67 +130,65 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                   width: double.infinity,
                 ),
               ),
-              Expanded(
-                  child: Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Quantity",
-                          style: theme.bodyStyle?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15.fSize,
-                            color: theme.secondaryTextColor,
+                child: widget.element.available > 0
+                    ? Row(
+                        children: [
+                          Text(
+                            "Quantity",
+                            style: theme.bodyStyle?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15.fSize,
+                              color: theme.secondaryTextColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10.h,
-                        ),
-                        // const Spacer(),
-                        IconWithCircleBackground(
-                            icon: Icons.remove,
-                            onPressed: () {
-                              if (quantity.value > 0) {
-                                quantity.value--;
-                                widget.onQuantityChanged(
-                                    quantity.value, widget.element.id!);
-                              }
-                            },
-                            color: theme.secondaryIconColor!.withOpacity(0.5)),
-                        SizedBox(
-                          width: 10.h,
-                        ),
-                        ValueListenableBuilder<int>(
-                            valueListenable: quantity,
-                            builder: (context, quantity, child) {
-                              return Text(
-                                quantity.toString(),
-                                style: theme.labelStyle?.copyWith(
-                                  color: theme.primaryTextColor,
-                                ),
-                              );
-                            }),
-                        SizedBox(
-                          width: 10.h,
-                        ),
-                        IconWithCircleBackground(
-                            onPressed: () {
-                              if (quantity.value <= 9) {
-                                quantity.value++;
-                                widget.onQuantityChanged(
-                                    quantity.value, widget.element.id!);
-                              }
-                            },
-                            icon: Icons.add,
-                            color: theme.secondaryIconColor!),
-                      ],
-                    ),
-                  ],
-                ),
-              ))
+                          SizedBox(
+                            width: 10.h,
+                          ),
+                          // const Spacer(),
+                          IconWithCircleBackground(
+                              icon: Icons.remove,
+                              onPressed: () {
+                                if (quantity.value > 0) {
+                                  quantity.value--;
+                                  widget.onQuantityChanged(
+                                      quantity.value, widget.element.id!);
+                                }
+                              },
+                              color:
+                                  theme.secondaryIconColor!.withOpacity(0.5)),
+                          SizedBox(
+                            width: 10.h,
+                          ),
+                          ValueListenableBuilder<int>(
+                              valueListenable: quantity,
+                              builder: (context, quantity, child) {
+                                return Text(
+                                  quantity.toString(),
+                                  style: theme.labelStyle?.copyWith(
+                                    color: theme.primaryTextColor,
+                                  ),
+                                );
+                              }),
+                          SizedBox(
+                            width: 10.h,
+                          ),
+                          IconWithCircleBackground(
+                              onPressed: () {
+                                if (quantity.value <= 9) {
+                                  quantity.value++;
+                                  widget.onQuantityChanged(
+                                      quantity.value, widget.element.id!);
+                                }
+                              },
+                              icon: Icons.add,
+                              color: theme.secondaryIconColor!),
+                        ],
+                      )
+                    : Text("Out of Stock",
+                        style: theme.labelStyle?.copyWith(color: Colors.red)),
+              )
             ]),
           ),
         ),
