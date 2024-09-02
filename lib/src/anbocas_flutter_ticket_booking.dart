@@ -3,6 +3,7 @@ import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/screens/manage_attendies/event_check_in_list_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_crud/ticket_listing_screen.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -107,6 +108,30 @@ class AnbocasTickets {
       // log(e.toString());
     }
   }
+
+  //  void viewOrderSummary({
+  //   required BuildContext context,
+  //   required String orderId,
+  // }) {
+  //   try {
+  //     Navigator.push(
+  //       context,
+  //       PageRouteBuilder(
+  //         pageBuilder: (ctx, __, ___) {
+  //           if (MediaQueryHolder().mediaQueryData == null) {
+  //             MediaQueryHolder().initialize(ctx);
+  //           }
+  //           return AnbocasBookingSuccessScreen(
+  //             orderDetails: eventId,
+  //             ticketResponse: ,
+  //           );
+  //         },
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     // log(e.toString());
+  //   }
+  // }
 }
 
 final theme = AnbocasCustomTheme();

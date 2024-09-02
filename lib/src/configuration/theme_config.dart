@@ -44,7 +44,10 @@ class AnbocasCustomTheme {
     ),
     ButtonStyle? buttonStyle,
     this.themeData,
-    this.textFormFieldConfig = const AnbocasTextFormFieldConfig(),
+    this.textFormFieldConfig,
+    this.qrcodeColor = Colors.black,
+    this.ticketBackgroundColor = Colors.grey,
+    this.selectedTicketBorderColor = Colors.blueGrey,
   }) : buttonStyle = buttonStyle ?? _defaultButtonStyle;
 
   Color? backgroundColor;
@@ -64,7 +67,10 @@ class AnbocasCustomTheme {
   TextStyle? smallLabelStyle;
   ButtonStyle? buttonStyle;
   ThemeData? themeData;
-  AnbocasTextFormFieldConfig textFormFieldConfig;
+  Color? ticketBackgroundColor;
+  Color? selectedTicketBorderColor;
+  Color? qrcodeColor;
+  AnbocasTextFormFieldConfig? textFormFieldConfig;
 
   static final ButtonStyle _defaultButtonStyle = ButtonStyle(
     backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
@@ -120,6 +126,8 @@ class AnbocasCustomTheme {
           color: Colors.grey,
         );
     buttonStyle = newConfig?.buttonStyle ?? _defaultButtonStyle;
+    textFormFieldConfig =
+        newConfig?.textFormFieldConfig ?? const AnbocasTextFormFieldConfig();
     themeData = newConfig?.themeData ?? toThemeData();
   }
 

@@ -3,10 +3,9 @@ import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/ticket_by_event_response.dart';
-import 'package:anbocas_tickets_ui/src/screens/ticket_crud/html_text_editor_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
+import 'package:intl/intl.dart';
 
 class TicketListingScreen extends StatefulWidget {
   final String eventId;
@@ -261,7 +260,8 @@ class __TicketDialogState extends State<_TicketDialog> {
     }
 
     if (widget.ticket == null) {
-      _availableFrom.text = widget.event.startDate ?? '';
+      _availableFrom.text =
+          DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now());
       _availableTo.text = widget.event.endDate ?? '';
     }
   }
@@ -514,7 +514,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                       value: status,
                       child: Text(
                         status,
-                        style: theme.textFormFieldConfig.style,
+                        style: theme.textFormFieldConfig?.style,
                       ),
                     );
                   }).toList(),
@@ -525,8 +525,8 @@ class __TicketDialogState extends State<_TicketDialog> {
                   },
                   decoration: InputDecoration(
                     labelText: "Status",
-                    labelStyle: theme.textFormFieldConfig.labelStyle,
-                    border: theme.textFormFieldConfig.border,
+                    labelStyle: theme.textFormFieldConfig?.labelStyle,
+                    border: theme.textFormFieldConfig?.border,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
