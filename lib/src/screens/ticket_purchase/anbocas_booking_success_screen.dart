@@ -239,10 +239,12 @@ class _AnbocasBookingSuccessScreenState
                                               onPressed: () {
                                                 AnbocasEventManager.instance
                                                     .emit(
-                                                  AnbocasEventManager
-                                                      .eventBookingSuccess,
-                                                  widget.referenceEventId,
-                                                );
+                                                        AnbocasEventManager
+                                                            .eventBookingSuccess,
+                                                        {
+                                                      'event_id': widget
+                                                          .referenceEventId,
+                                                    });
                                                 Navigator.pop(context);
                                               },
                                               child: Text(
@@ -602,15 +604,6 @@ class _AnbocasBookingSuccessScreenState
                     ],
                   ),
                 ),
-                // Padding(
-                //     padding:
-                //         EdgeInsets.symmetric(horizontal: 24.h, vertical: 20.v),
-                //     child: CustomButton(
-                //         onPressedCallback: () {
-                //           Navigator.pop(context);
-                //           Navigator.pop(context);
-                //         },
-                //         centerText: "Back to Event")),
               ],
             ),
           )),
