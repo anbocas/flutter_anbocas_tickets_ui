@@ -36,8 +36,8 @@ class AnbocasTickets {
 
   void launchBookingFlow({
     required String eventId,
+    String? referenceEventId,
     required BuildContext context,
-    bool allowGroupTicket = false,
     UserConfig? userMetaData,
   }) {
     try {
@@ -53,7 +53,7 @@ class AnbocasTickets {
             }
             return AnbocasTicketBookingWidget(
               eventId: eventId,
-              allowGroupTicket: allowGroupTicket,
+              referenceEventId: referenceEventId,
             );
           },
         ),

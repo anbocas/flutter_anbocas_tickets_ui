@@ -4,22 +4,23 @@ import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
-import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_payment_widget.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_selected_ticket_widget.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/components/ticket_single_item.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_webview_payment.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
 
 class AnbocasTicketBookingWidget extends StatefulWidget {
-  final bool allowGroupTicket;
   final String eventId;
+  final String? referenceEventId;
   const AnbocasTicketBookingWidget(
-      {Key? key, required this.allowGroupTicket, required this.eventId})
+      {Key? key, required this.eventId, this.referenceEventId})
       : super(key: key);
 
   @override
@@ -37,6 +38,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   ValueNotifier<double> totalFee = ValueNotifier(0.00);
   ValueNotifier<double> discountPrice = ValueNotifier(0.00);
   ValueNotifier<bool> calculatingSummary = ValueNotifier(false);
+  ValueNotifier<bool> placingOrder = ValueNotifier(false);
   AnbocasEventResponse? ticketResponse;
 
   void updateTheValue(OrderResponse order) {
@@ -63,6 +65,70 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     super.dispose();
   }
 
+  void _handleBuyPressed() async {
+    try {
+      placingOrder.value = true;
+      await _booking
+          ?.placeOrder(
+        coupon: appliedCoupon,
+        selectedTickets: selectedTickets,
+        name: userConfig.name ?? '',
+        phone: userConfig.phone,
+        email: userConfig.email ?? '',
+      )
+          .then((order) {
+        if (order != null) {
+          handleNavigationAfterOrder(order);
+        } else {
+          showAlertSnackBar(
+              context, "Something went wrong, Unable to generate order");
+        }
+      }).whenComplete(() => placingOrder.value = false);
+    } catch (e) {
+      // log(e.toString());
+      if (!mounted) return;
+      showAlertSnackBar(context, e.toString());
+      placingOrder.value = false;
+    }
+  }
+
+  void handleNavigationAfterOrder(OrderResponse order) {
+    if (order.data != null) {
+      double totalPayable = order.data?.totalPayable ?? 0.00;
+      if (totalPayable <= 0) {
+        info("Navigating to Success screen while getting zero total payable");
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AnbocasBookingSuccessScreen(
+                    ticketResponse: eventResponse.value!,
+                    orderDetails: order.data!,
+                    referenceEventId: widget.referenceEventId,
+                  )),
+        );
+      } else {
+        if (order.paymentUrl != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AnbocasWebviewPayment(
+                        webUrl: order.paymentUrl ?? "",
+                        orderDetails: order.data!,
+                        selectedTickets: eventResponse.value!,
+                      )));
+        } else {
+          showAlertSnackBar(
+              context, "Something went wrong, Failed to create payment.");
+        }
+      }
+    } else {
+      showAlertSnackBar(
+          context, "Something went wrong, Unable to generate order");
+    }
+  }
+
   void fetchCalculatedAmount() async {
     selectedTickets.asMap().forEach((key, value) {
       info(value.selectedQuantity.toString());
@@ -84,10 +150,11 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     }
   }
 
-  Center _buildLoader() {
+  Widget _buildLoader() {
     return Center(
-        child: CircularProgressIndicator.adaptive(
-      backgroundColor: theme.accentColor,
+        child: CircularProgressIndicator(
+      strokeWidth: 4.adaptSize,
+      backgroundColor: theme.primaryColor,
     ));
   }
 
@@ -117,6 +184,24 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                       children: [
                         Column(
                           children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Total Tickets",
+                                  style: theme.labelStyle?.copyWith(
+                                    fontSize: 15.fSize,
+                                    color: theme.secondaryTextColor,
+                                  ),
+                                ),
+                                Text(
+                                    "${selectedTickets.fold(0, (sum, element) => sum + element.selectedQuantity)}",
+                                    style: theme.labelStyle)
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8.v,
+                            ),
                             ValueListenableBuilder(
                                 valueListenable: itemsTotal,
                                 builder: (context, value, child) {
@@ -219,6 +304,8 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                         ),
                                       ),
                                       Chip(
+                                        padding: EdgeInsets.zero,
+                                        labelStyle: theme.labelStyle,
                                         label: Text(appliedCoupon.toString()),
                                         deleteIcon: Icon(Icons.close,
                                             color: theme.iconColor),
@@ -227,13 +314,13 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                           fetchCalculatedAmount();
                                         },
                                         deleteIconColor: Colors.white,
-                                        backgroundColor: theme.accentColor,
+                                        backgroundColor: theme.primaryColor,
                                         shape: RoundedRectangleBorder(
                                           side: const BorderSide(
                                               color:
                                                   Colors.black), // Border color
                                           borderRadius:
-                                              BorderRadius.circular(16.0),
+                                              BorderRadius.circular(10.0),
                                         ),
                                       ),
                                       SizedBox(
@@ -248,23 +335,8 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                   )
                           ],
                         ),
-                        DecoratedBox(
-                            decoration: BoxDecoration(
-                                color: theme.secondaryBgColor?.withAlpha(80)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.v),
-                              child: ValueListenableBuilder(
-                                  valueListenable: totalPrice,
-                                  builder: (context, value, child) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [],
-                                    );
-                                  }),
-                            )),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.v),
+                          padding: EdgeInsets.only(top: 10.v),
                           child: Row(
                             children: [
                               Expanded(
@@ -285,28 +357,17 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                 ),
                               ),
                               Expanded(
-                                child: CustomButton(
-                                  
-                                    onPressedCallback: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AnbocasPaymentWidget(
-                                                    appliedCouponCode:
-                                                        appliedCoupon,
-                                                    eventResponse: ticketResponse!
-                                                        .copyWithSelectedTickets(
-                                                      tickets: selectedTickets,
-                                                    ),
-                                                    itemTotal: totalPrice.value,
-                                                    totalFee: totalFee.value,
-                                                    discountPrice:
-                                                        discountPrice.value,
-                                                    totalPrice:
-                                                        totalPrice.value,
-                                                  )),
-                                        ),
-                                    centerText: "Next"),
+                                child: ValueListenableBuilder(
+                                    valueListenable: placingOrder,
+                                    builder: (context, isLoading, child) {
+                                      return isLoading
+                                          ? _buildLoader()
+                                          : CustomButton(
+                                              buttonSize: Size.fromHeight(40.v),
+                                              onPressedCallback:
+                                                  _handleBuyPressed,
+                                              centerText: "Buy");
+                                    }),
                               ),
                             ],
                           ),
@@ -369,7 +430,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         backgroundColor: theme.backgroundColor,
-        title: Text("Book your tickets", style: theme.headingStyle),
+        title: Text("Ticket Booking", style: theme.headingStyle),
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
@@ -397,16 +458,12 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                             builder: (context, ticketsResp, child) {
                               return state.eventResponse.value == null
                                   ? const SizedBox.shrink()
-                                  : Text(
-                                      state.eventResponse.value?.name ?? "",
-                                      style: theme.headingStyle?.copyWith(
-                                        color: theme.accentColor,
-                                      ),
-                                    );
+                                  : Text(state.eventResponse.value?.name ?? "",
+                                      style: theme.headingStyle);
                             }),
                       ),
                       SizedBox(
-                        height: 15.v,
+                        height: 25.v,
                       ),
                       ValueListenableBuilder<AnbocasEventResponse?>(
                           valueListenable: state.eventResponse,

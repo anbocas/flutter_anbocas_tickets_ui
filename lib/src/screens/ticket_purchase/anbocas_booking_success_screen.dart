@@ -20,10 +20,12 @@ class AnbocasBookingSuccessScreen extends StatefulWidget {
   final OrderData orderDetails;
 
   final AnbocasEventResponse ticketResponse;
+  final String? referenceEventId;
   const AnbocasBookingSuccessScreen({
     Key? key,
     required this.orderDetails,
     required this.ticketResponse,
+    this.referenceEventId,
   }) : super(key: key);
 
   @override
@@ -227,39 +229,31 @@ class _AnbocasBookingSuccessScreenState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(widget.ticketResponse.name ?? "",
-                                          style: theme.subHeadingStyle),
-                                      SizedBox(
-                                        height: 5.v,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(widget.ticketResponse.name ?? "",
+                                              style: theme.subHeadingStyle),
+                                          if (widget.referenceEventId != null)
+                                            TextButton(
+                                                onPressed: () {
+                                                  AnbocasEventManager().emit(
+                                                    AnbocasEventManager
+                                                        .eventBookingSuccess,
+                                                    widget.referenceEventId,
+                                                  );
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  'View Event',
+                                                  style: theme.labelStyle
+                                                      ?.copyWith(
+                                                          color: theme
+                                                              .primaryColor),
+                                                ))
+                                        ],
                                       ),
-                                      widget.ticketResponse.location != null
-                                          ? RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  WidgetSpan(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right: 8.0.h),
-                                                      child: Icon(
-                                                        Icons.pin_drop,
-                                                        size: 16.adaptSize,
-                                                        color:
-                                                            theme.accentColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: widget.ticketResponse
-                                                            .location ??
-                                                        "",
-                                                    style: theme.bodyStyle,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : Text(
-                                              widget.ticketResponse.venue ?? "",
-                                              style: theme.bodyStyle),
                                     ],
                                   ),
                                 ),
@@ -552,10 +546,11 @@ class _AnbocasBookingSuccessScreenState
                                             style: theme.labelStyle),
                                         if (widget.orderDetails.coupon != null)
                                           Chip(
+                                            labelStyle: theme.labelStyle,
                                             label: Text(widget
                                                 .orderDetails.coupon
                                                 .toString()),
-                                            backgroundColor: theme.accentColor,
+                                            backgroundColor: theme.primaryColor,
                                             shape: RoundedRectangleBorder(
                                               side: const BorderSide(
                                                   color: Colors
@@ -574,9 +569,9 @@ class _AnbocasBookingSuccessScreenState
                                         )
                                       ],
                                     ),
-                                  SizedBox(
-                                    height: 5.v,
-                                  ),
+                                  // SizedBox(
+                                  //   height: 5.v,
+                                  // ),
                                 ],
                               ),
                             ),
@@ -654,8 +649,8 @@ class DateFormatter {
     }
     String hourStr = hour.toString().padLeft(2, '0');
     String minuteStr = dateTime.minute.toString().padLeft(2, '0');
-    String secondStr = dateTime.second.toString().padLeft(2, '0');
-    return '$hourStr:$minuteStr:$secondStr $period';
+    // String secondStr = dateTime.second.toString().padLeft(2, '0');
+    return '$hourStr:$minuteStr $period';
   }
 
   static String formatDate(DateTime dateTime) {

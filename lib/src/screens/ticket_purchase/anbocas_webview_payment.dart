@@ -80,19 +80,23 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
       ..loadRequest(Uri.parse(widget.webUrl));
   }
 
+  void _handleCancel() async {
+    await showAlertDialog(context, "Payment Cancel",
+        "Are you sure want to cancelled the payment process?",
+        okButtonText: "Yes",
+        topIcon: const Icon(
+          Icons.cancel,
+          color: Colors.red,
+        ), okPressed: () {
+      Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await showAlertDialog(context, "Payment Cancel",
-            "Are you sure want to cancelled the payment process?",
-            okButtonText: "Yes",
-            topIcon: const Icon(
-              Icons.cancel,
-              color: Colors.red,
-            ), okPressed: () {
-          Navigator.pop(context);
-        });
+        _handleCancel();
         return false;
       },
       child: Scaffold(
@@ -105,17 +109,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
             ),
             centerTitle: true,
             leading: IconButton(
-              onPressed: () {
-                showAlertDialog(context, "Payment Cancel",
-                    "Are you sure want to cancelled the payment process?",
-                    okButtonText: "Yes",
-                    topIcon: const Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    ), okPressed: () {
-                  Navigator.pop(context);
-                });
-              },
+              onPressed: _handleCancel,
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),

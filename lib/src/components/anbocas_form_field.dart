@@ -23,6 +23,7 @@ class AnbocasFormField extends StatefulWidget {
       this.filled = true,
       this.readOnly = false,
       this.maxLines = 1,
+      this.minLines = 1,
       this.onTap})
       : assert(
             !showCountryPicker ||
@@ -46,6 +47,7 @@ class AnbocasFormField extends StatefulWidget {
   final void Function()? onTap;
   final bool? readOnly;
   final int? maxLines;
+  final int? minLines;
 
   @override
   State<AnbocasFormField> createState() => _AnbocasFormFieldState();

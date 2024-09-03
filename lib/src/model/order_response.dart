@@ -46,7 +46,7 @@ class OrderData {
   String? userId;
   String? name;
   String? email;
-  int? phone;
+  String? phone;
   String? currencyId;
   int? isGuestCheckout;
   String? status;
@@ -173,7 +173,7 @@ class OrderData {
     if (json["email"] is String) {
       email = json["email"];
     }
-    if (json["phone"] is int) {
+    if (json["phone"] is String) {
       phone = json["phone"];
     }
     if (json["is_guest_checkout"] is int) {
@@ -259,6 +259,7 @@ class OrderData {
 
   Map<String, dynamic> trimmedPayload() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data["anbocas_order_id"] = id;
     data["order_number"] = orderNumber;
     data["sub_total"] = subTotal;
     data["discount_amount"] = discountAmount;
@@ -266,21 +267,18 @@ class OrderData {
     data["name"] = name;
     data["email"] = email;
     data["phone"] = phone;
-    if (tickets != null) {
-      data["tickets"] = tickets
-          ?.map((e) => {
-                'name': e.singleTicket?.name,
-                'price': e.singleTicket?.price,
-                'quantity': e.quantity,
-                'codes': guests
-                    ?.where((eg) => eg.orderTicketId == e.id)
-                    .map(
-                      (m) => m.code,
-                    )
-                    .toList(),
-              })
-          .toList();
-    }
+    data["tickets"] = tickets
+        .map((e) => {
+              'name': e.singleTicket?.name,
+              'quantity': e.quantity,
+              'codes': guests
+                  .where((eg) => eg.orderTicketId == e.id)
+                  .map(
+                    (m) => m.code,
+                  )
+                  .toList(),
+            })
+        .toList();
     data["event_name"] = event?.name;
 
     return data;

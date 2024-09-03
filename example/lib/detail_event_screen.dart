@@ -28,20 +28,22 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     AnbocasTickets.instance.config(
       apikey: dotenv.env['API_KEY'] ?? "",
       customThemeConfig: AnbocasCustomTheme(
-        backgroundColor: Colors.grey,
-        accentColor: Colors.red,
+        backgroundColor: Colors.black,
+        primaryColor: const Color(0xFFB71C1C),
+        
         secondaryBgColor: Colors.grey,
-        secondaryTextColor: Colors.purple,
+        secondaryTextColor: Colors.white,
+        qrcodeColor: Colors.white,
         headingStyle:
             GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
         subHeadingStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.green, fontSize: 16),
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 16),
         bodyStyle: GoogleFonts.poppins()
-            .copyWith(color: Colors.blueGrey, fontSize: 14),
+            .copyWith(color: Colors.white, fontSize: 14),
         labelStyle:
             GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
         buttonStyle: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+          backgroundColor: WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
@@ -294,13 +296,14 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           AnbocasTickets.instance.launchBookingFlow(
                             eventId: widget.model.id!,
                             context: context,
-                            allowGroupTicket: true,
                             userMetaData: UserConfig(
                                 name: "Saurabh Kumar",
                                 email: "saurabhTester35@gmail.com",
                                 phone: "9304678898",
                                 countryCode: "+91"),
+                                
                           ),
+                          
                       // onPressed: () => AnbocasTickets.instance.manageAttendees(
                       //     context: context, eventId: widget.model.id ?? ""),
                       child: const Text(

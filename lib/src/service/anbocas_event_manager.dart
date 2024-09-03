@@ -11,6 +11,7 @@ class AnbocasEventManager {
   AnbocasEventManager._internal();
 
   static const String eventBookingSuccess = 'booking.success';
+  static const String viewEvent = 'view.event';
 
   void on(String event, Function handler) {
     cb(event, cont) {

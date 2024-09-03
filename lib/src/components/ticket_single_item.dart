@@ -1,13 +1,11 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
-import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/components/dottted_line.dart';
 import 'package:anbocas_tickets_ui/src/components/icon_with_circle_background.dart';
 import 'package:anbocas_tickets_ui/src/components/ticket_card_clipper.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class TicketItemWidget extends StatefulWidget {
   const TicketItemWidget({
@@ -62,11 +60,11 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
-      height: 150.v,
+      height: 180.v,
       width: double.infinity,
       decoration: BoxDecoration(
           color: widget.isSelected == true
-              ? theme.selectedTicketBorderColor
+              ? theme.ticketCardConfig.selectedTicketCardBorderColor
               : null),
       child: CustomPaint(
         painter: TicketCardFillPainter(radius: 15, isSelected: true),
@@ -77,10 +75,11 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
               borderRadius: BorderRadius.circular(10),
               border: widget.isSelected == true
                   ? Border.all(
-                      color: theme.selectedTicketBorderColor!,
+                      color:
+                          theme.ticketCardConfig.selectedTicketCardBorderColor!,
                       width: 2.adaptSize)
                   : const Border(),
-              color: theme.ticketBackgroundColor,
+              color: theme.ticketCardConfig.ticketCardBackgroundColor,
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -99,25 +98,26 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Text(
-                                widget.element.name ?? "",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.bodyStyle?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16.fSize,
-                                ),
-                              ),
+                              child: Text(widget.element.name ?? "",
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.ticketCardConfig.nameStyle),
                             ),
                             SizedBox(
                               width: 20.h,
                             ),
                             Text(widget.element.formattedPrice ?? "",
-                                style: theme.bodyStyle)
+                                style: theme.ticketCardConfig.priceStyle),
                           ],
                         ),
                         SizedBox(
                           height: 10.v,
+                        ),
+                        Text(
+                          widget.element.description ?? "",
+                          style: theme.ticketCardConfig.labelStyle
+                              .copyWith(overflow: TextOverflow.ellipsis),
+                          maxLines: 2,
                         ),
                       ],
                     ),
@@ -125,70 +125,73 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                 ),
               ),
               CustomPaint(
-                painter: DottedLine(radius: 20),
+                painter: DottedLine(
+                    radius: 20, color: theme.ticketCardConfig.dottedLineColor),
                 child: const SizedBox(
                   width: double.infinity,
                 ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                child: widget.element.available > 0
+                child: (widget.element.available != 0)
                     ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             "Quantity",
-                            style: theme.bodyStyle?.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15.fSize,
-                              color: theme.secondaryTextColor,
-                            ),
+                            style: theme.ticketCardConfig.labelStyle,
                           ),
                           SizedBox(
                             width: 10.h,
                           ),
-                          // const Spacer(),
-                          IconWithCircleBackground(
-                              icon: Icons.remove,
-                              onPressed: () {
-                                if (quantity.value > 0) {
-                                  quantity.value--;
-                                  widget.onQuantityChanged(
-                                      quantity.value, widget.element.id!);
-                                }
-                              },
-                              color:
-                                  theme.secondaryIconColor!.withOpacity(0.5)),
-                          SizedBox(
-                            width: 10.h,
-                          ),
-                          ValueListenableBuilder<int>(
-                              valueListenable: quantity,
-                              builder: (context, quantity, child) {
-                                return Text(
-                                  quantity.toString(),
-                                  style: theme.labelStyle?.copyWith(
-                                    color: theme.primaryTextColor,
-                                  ),
-                                );
-                              }),
-                          SizedBox(
-                            width: 10.h,
-                          ),
-                          IconWithCircleBackground(
-                              onPressed: () {
-                                if (quantity.value <= 9) {
-                                  quantity.value++;
-                                  widget.onQuantityChanged(
-                                      quantity.value, widget.element.id!);
-                                }
-                              },
-                              icon: Icons.add,
-                              color: theme.secondaryIconColor!),
+                          Row(
+                            children: [
+                              IconWithCircleBackground(
+                                  icon: Icons.remove,
+                                  onPressed: () {
+                                    if (quantity.value > 0) {
+                                      quantity.value--;
+                                      widget.onQuantityChanged(
+                                          quantity.value, widget.element.id!);
+                                    }
+                                  },
+                                  color: theme.ticketCardConfig
+                                      .qtyReduceBackgroundColor),
+                              SizedBox(
+                                width: 10.h,
+                              ),
+                              ValueListenableBuilder<int>(
+                                  valueListenable: quantity,
+                                  builder: (context, quantity, child) {
+                                    return Text(
+                                      quantity.toString(),
+                                      style: theme.labelStyle?.copyWith(
+                                        color: theme.primaryTextColor,
+                                      ),
+                                    );
+                                  }),
+                              SizedBox(
+                                width: 10.h,
+                              ),
+                              IconWithCircleBackground(
+                                  onPressed: () {
+                                    if (quantity.value <= 9) {
+                                      quantity.value++;
+                                      widget.onQuantityChanged(
+                                          quantity.value, widget.element.id!);
+                                    }
+                                  },
+                                  icon: Icons.add,
+                                  color: theme
+                                      .ticketCardConfig.qtyAddBackgroundColor),
+                            ],
+                          )
                         ],
                       )
-                    : Text("Out of Stock",
-                        style: theme.labelStyle?.copyWith(color: Colors.red)),
-              )
+                    : Text("Sold Out!",
+                        style: theme.ticketCardConfig.labelStyle
+                            .copyWith(color: theme.errorColor)),
+              ),
             ]),
           ),
         ),

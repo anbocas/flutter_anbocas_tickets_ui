@@ -1,8 +1,11 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
+import 'package:anbocas_tickets_ui/src/helper/common_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/ticket_by_event_response.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:intl/intl.dart';
@@ -248,6 +251,7 @@ class __TicketDialogState extends State<_TicketDialog> {
   DateTime? availableFrom;
   DateTime? availableTo;
   String? _selectedStatus = 'AVAILABLE';
+  final ValueNotifier<bool> _unlimitedCheckbox = ValueNotifier(false);
 
   @override
   void initState() {
@@ -258,14 +262,24 @@ class __TicketDialogState extends State<_TicketDialog> {
       _capacity.text = widget.ticket!.capacity.toString();
       _price.text = widget.ticket!.price.toString();
       _selectedStatus = widget.ticket!.status;
-      _availableFrom.text = widget.ticket?.availableFrom ?? '';
-      _availableTo.text = widget.ticket?.availableTo ?? '';
+
+      availableFrom = DateTime.parse(_availableFrom.text);
+      availableTo = DateTime.parse(_availableTo.text);
+
+      _availableFrom.text =
+          DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);
+      _availableTo.text = DateFormat('yyyy-MM-dd H:mm').format(availableTo!);
     }
 
     if (widget.ticket == null) {
+      availableFrom = DateTime.now();
+      availableTo = DateTime.parse(widget.event.endDate!);
+
+      _capacity.text = '0';
+
       _availableFrom.text =
-          DateFormat('yyyy-MM-dd H:m:s').format(DateTime.now());
-      _availableTo.text = widget.event.endDate ?? '';
+          DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);
+      _availableTo.text = DateFormat('yyyy-MM-dd H:mm').format(availableTo!);
     }
   }
 
@@ -352,12 +366,12 @@ class __TicketDialogState extends State<_TicketDialog> {
   }
 
   Future<void> _pickAvailableTo() async {
-    if (availableFrom == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Please select the available from date first')),
-      );
+    if (_availableFrom.text == '') {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //       backgroundColor: Colors.red,
+      //       content: Text('Please select the available from date first')),
+      // );
       return;
     }
 
@@ -410,7 +424,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                   hintText: "Type Here",
                   fieldValidator: (newValue) {
                     if (newValue == null || newValue.isEmpty) {
-                      return "name is required";
+                      return "Name is required";
                     }
                     if (newValue.length < 3) {
                       return "Ticket name should be long";
@@ -424,46 +438,81 @@ class __TicketDialogState extends State<_TicketDialog> {
                 Row(
                   children: [
                     Expanded(
-                      child: AnbocasFormField(
-                        formCtr: _capacity,
-                        filled: false,
-                        // style: theme.bodyStyle?.copyWith(color: Colors.black),
-                        labelText: "Capacity",
-                        hintText: "0",
-                        inputType: TextInputType.number,
-                        fieldValidator: (newValue) {
-                          if (newValue == null || newValue.isEmpty) {
-                            return "Capacity is required";
-                          }
-                          return null;
-                        },
-                      ),
+                      child: ValueListenableBuilder(
+                          valueListenable: _unlimitedCheckbox,
+                          builder: (context, loading, child) {
+                            return AnbocasFormField(
+                              formCtr: _capacity,
+                              filled: false,
+                              readOnly: _unlimitedCheckbox.value,
+                              // style: theme.bodyStyle?.copyWith(color: Colors.black),
+                              labelText: "Capacity",
+                              hintText: "0",
+                              inputType: const TextInputType.numberWithOptions(
+                                  signed: true),
+                              fieldValidator: (newValue) {
+                                if (newValue == null || newValue.isEmpty) {
+                                  return "Capacity is required";
+                                }
+                                if (newValue == '0') {
+                                  return "Capacity can not be 0";
+                                }
+                                return null;
+                              },
+                            );
+                          }),
                     ),
                     SizedBox(
                       width: 10.h,
                     ),
-                    Expanded(
-                      child: AnbocasFormField(
-                        formCtr: _price,
-                        filled: false,
-                        // style: theme.bodyStyle?.copyWith(color: Colors.black),
-                        labelText: "Price",
-                        hintText: "0.0",
-                        inputType: TextInputType.number,
-                        fieldValidator: (newValue) {
-                          if (newValue == null || newValue.isEmpty) {
-                            return "Price is required";
-                          }
-                          return null;
-                        },
-                      ),
+                    Row(
+                      children: [
+                        ValueListenableBuilder(
+                            valueListenable: _unlimitedCheckbox,
+                            builder: (context, loading, child) {
+                              return Checkbox(
+                                onChanged: (value) {
+                                  _unlimitedCheckbox.value = value!;
+                                  if (value == true) {
+                                    _capacity.text = '-1';
+                                  } else {
+                                    _capacity.text = '0';
+                                  }
+                                },
+                                value: _unlimitedCheckbox.value,
+                                activeColor: theme.primaryColor,
+                              );
+                            }),
+                        Text(
+                          'Unlimited',
+                          style: theme.labelStyle,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                // SizedBox(
-                //   height: 15.v,
-                // ),
+                SizedBox(
+                  height: 15.v,
+                ),
+                AnbocasFormField(
+                  formCtr: _price,
+                  filled: false,
+                  // style: theme.bodyStyle?.copyWith(color: Colors.black),
+                  labelText: "Price",
+                  hintText: "0.0",
+                  inputType:
+                      const TextInputType.numberWithOptions(signed: false),
 
+                  fieldValidator: (newValue) {
+                    if (newValue == null || newValue.isEmpty) {
+                      return "Price is required";
+                    }
+                    if (!isValidPrice(newValue)) {
+                      return "Invalid Price format.";
+                    }
+                    return null;
+                  },
+                ),
                 SizedBox(
                   height: 15.v,
                 ),
@@ -471,6 +520,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                   onTap: () => _pickAvailableFrom(),
                   child: AbsorbPointer(
                     child: AnbocasFormField(
+                      readOnly: true,
                       formCtr: _availableFrom,
                       filled: false,
                       // style: theme.bodyStyle?.copyWith(color: Colors.black),
@@ -492,6 +542,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                   onTap: () => _pickAvailableTo(),
                   child: AbsorbPointer(
                     child: AnbocasFormField(
+                      readOnly: true,
                       formCtr: _availableTo,
                       filled: false,
                       // style: theme.bodyStyle?.copyWith(color: Colors.black),
@@ -509,43 +560,48 @@ class __TicketDialogState extends State<_TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
-                DropdownButtonFormField<String>(
-                  value: _selectedStatus,
-                  items: ['AVAILABLE', 'OUT_OF_STOCK'].map((status) {
-                    return DropdownMenuItem<String>(
-                      value: status,
-                      child: Text(
-                        status,
-                        style: theme.textFormFieldConfig?.style,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedStatus = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Status",
-                    labelStyle: theme.textFormFieldConfig?.labelStyle,
-                    border: theme.textFormFieldConfig?.border,
+                Visibility(
+                  visible: false,
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedStatus,
+                    items: ['AVAILABLE', 'OUT_OF_STOCK'].map((status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(
+                          status,
+                          style: theme.textFormFieldConfig?.style,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedStatus = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Status",
+                      labelStyle: theme.textFormFieldConfig?.labelStyle,
+                      border: theme.textFormFieldConfig?.border,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Status is required";
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Status is required";
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(
-                  height: 15.v,
-                ),
+                // SizedBox(
+                //   height: 15.v,
+                // ),
                 AnbocasFormField(
                   formCtr: _description,
                   filled: false,
                   // style: theme.bodyStyle,
                   labelText: "Description",
                   maxLines: 4,
+                  minLines: 2,
+
                   inputAction: TextInputAction.newline,
                   inputType: TextInputType.multiline,
                 ),
