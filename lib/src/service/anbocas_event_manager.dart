@@ -1,12 +1,8 @@
 import 'package:eventify/eventify.dart';
 
 class AnbocasEventManager {
-  static final AnbocasEventManager _instance = AnbocasEventManager._internal();
+  static final AnbocasEventManager instance = AnbocasEventManager._internal();
   final EventEmitter _eventEmitter = EventEmitter();
-
-  factory AnbocasEventManager() {
-    return _instance;
-  }
 
   AnbocasEventManager._internal();
 

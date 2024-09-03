@@ -112,7 +112,7 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
                 children: [
                   Text(
                     "Enter a coupon code",
-                    style:theme.headingStyle,
+                    style: theme.headingStyle,
                   ),
                   SizedBox(
                     height: 40.v,
@@ -155,8 +155,12 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
                       valueListenable: isLoading,
                       builder: (context, loading, child) {
                         return loading == true
-                            ? const Center(
-                                child: CircularProgressIndicator(),
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 4.adaptSize,
+                                  color: theme.accentColor,
+                                  backgroundColor: Colors.white,
+                                ),
                               )
                             : CustomButton(
                                 centerText: "Apply Coupon",

@@ -19,18 +19,16 @@ class DetailEventScreen extends StatefulWidget {
 }
 
 class _DetailEventScreenState extends State<DetailEventScreen> {
-  final anbocas = AnbocasEventManager();
-
   @override
   void initState() {
-    anbocas.on(AnbocasEventManager.eventBookingSuccess, handleBookingSuccess);
+    AnbocasEventManager.instance
+        .on(AnbocasEventManager.eventBookingSuccess, handleBookingSuccess);
 
     AnbocasTickets.instance.config(
       apikey: dotenv.env['API_KEY'] ?? "",
       customThemeConfig: AnbocasCustomTheme(
         backgroundColor: Colors.black,
         primaryColor: const Color(0xFFB71C1C),
-        
         secondaryBgColor: Colors.grey,
         secondaryTextColor: Colors.white,
         qrcodeColor: Colors.white,
@@ -38,12 +36,13 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
             GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
         subHeadingStyle:
             GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 16),
-        bodyStyle: GoogleFonts.poppins()
-            .copyWith(color: Colors.white, fontSize: 14),
+        bodyStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 14),
         labelStyle:
             GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
         buttonStyle: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
+          backgroundColor:
+              WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0),
@@ -70,7 +69,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
 
   @override
   void dispose() {
-    anbocas.clear();
+    AnbocasEventManager.instance.clear();
     super.dispose();
   }
 
@@ -301,9 +300,8 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                                 email: "saurabhTester35@gmail.com",
                                 phone: "9304678898",
                                 countryCode: "+91"),
-                                
                           ),
-                          
+
                       // onPressed: () => AnbocasTickets.instance.manageAttendees(
                       //     context: context, eventId: widget.model.id ?? ""),
                       child: const Text(

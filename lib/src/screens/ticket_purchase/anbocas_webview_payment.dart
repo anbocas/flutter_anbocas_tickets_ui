@@ -1,6 +1,7 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
+import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -128,6 +129,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                         ? const SizedBox()
                         : Center(
                             child: CircularProgressIndicator(
+                              strokeWidth: 4.adaptSize,
                               color: theme.primaryColor,
                               backgroundColor: Colors.white,
                             ),

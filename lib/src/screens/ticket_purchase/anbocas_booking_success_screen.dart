@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
-import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
-import 'package:anbocas_tickets_ui/src/components/ticket_card_clipper.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
@@ -13,7 +11,6 @@ import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class AnbocasBookingSuccessScreen extends StatefulWidget {
@@ -62,10 +59,11 @@ class _AnbocasBookingSuccessScreenState
       if (status == 'COMPLETED' || status == 'FAILED') {
         // fire eventBookingSuccess event if order is completed
         if (status == 'COMPLETED') {
+          AnbocasEventManager.instance.emit(
+              AnbocasEventManager.eventBookingSuccess,
+              updateOrderResponse?.trimmedPayload());
           if (mounted) {
             setState(() {});
-            AnbocasEventManager().emit(AnbocasEventManager.eventBookingSuccess,
-                updateOrderResponse?.trimmedPayload());
           }
         }
         break;
@@ -91,7 +89,6 @@ class _AnbocasBookingSuccessScreenState
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context);
-
         return true;
       },
       child: Scaffold(
@@ -105,7 +102,6 @@ class _AnbocasBookingSuccessScreenState
             centerTitle: true,
             leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
                 Navigator.pop(context);
               },
               icon: Icon(
@@ -188,7 +184,11 @@ class _AnbocasBookingSuccessScreenState
                                         SizedBox(
                                           height: 10.v,
                                         ),
-                                        const CircularProgressIndicator(),
+                                        CircularProgressIndicator(
+                                          strokeWidth: 4.adaptSize,
+                                          color: theme.accentColor,
+                                          backgroundColor: Colors.white,
+                                        ),
                                         SizedBox(
                                           height: 20.v,
                                         ),
@@ -237,7 +237,8 @@ class _AnbocasBookingSuccessScreenState
                                           if (widget.referenceEventId != null)
                                             TextButton(
                                               onPressed: () {
-                                                AnbocasEventManager().emit(
+                                                AnbocasEventManager.instance
+                                                    .emit(
                                                   AnbocasEventManager
                                                       .eventBookingSuccess,
                                                   widget.referenceEventId,

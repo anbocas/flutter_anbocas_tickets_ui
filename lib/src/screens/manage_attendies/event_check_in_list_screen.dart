@@ -87,7 +87,12 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
             valueListenable: _isLoadingNotifier,
             builder: (context, isLoading, child) {
               if (isLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 4.adaptSize,
+                  color: theme.accentColor,
+                  backgroundColor: Colors.white,
+                ));
               }
 
               return ValueListenableBuilder<EventGuestsResponse?>(

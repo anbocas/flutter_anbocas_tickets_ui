@@ -117,7 +117,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                         webUrl: order.paymentUrl ?? "",
                         orderDetails: order.data!,
                         selectedTickets: eventResponse.value!,
-                         referenceEventId: widget.referenceEventId,
+                        referenceEventId: widget.referenceEventId,
                       )));
         } else {
           showAlertSnackBar(
@@ -155,7 +155,8 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     return Center(
         child: CircularProgressIndicator(
       strokeWidth: 4.adaptSize,
-      backgroundColor: theme.primaryColor,
+      color: theme.accentColor,
+      backgroundColor: Colors.white,
     ));
   }
 
@@ -169,11 +170,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
             return loading == true
                 ? SizedBox(
                     height: 100.v,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: theme.accentColor,
-                      ),
-                    ),
+                    child: _buildLoader(),
                   )
                 : Container(
                     padding:
