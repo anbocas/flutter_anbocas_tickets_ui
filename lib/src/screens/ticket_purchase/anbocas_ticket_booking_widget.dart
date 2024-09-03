@@ -117,6 +117,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                         webUrl: order.paymentUrl ?? "",
                         orderDetails: order.data!,
                         selectedTickets: eventResponse.value!,
+                         referenceEventId: widget.referenceEventId,
                       )));
         } else {
           showAlertSnackBar(

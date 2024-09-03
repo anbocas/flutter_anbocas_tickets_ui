@@ -1,4 +1,5 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,14 @@ class AnbocasWebviewPayment extends StatefulWidget {
   final OrderData orderDetails;
   final AnbocasEventResponse selectedTickets;
   final String webUrl;
-  const AnbocasWebviewPayment({
-    Key? key,
-    required this.orderDetails,
-    required this.selectedTickets,
-    required this.webUrl,
-  }) : super(key: key);
+  final String? referenceEventId;
+  const AnbocasWebviewPayment(
+      {Key? key,
+      required this.orderDetails,
+      required this.selectedTickets,
+      required this.webUrl,
+      this.referenceEventId})
+      : super(key: key);
 
   @override
   State<AnbocasWebviewPayment> createState() => _AnbocasWebviewPaymentState();
@@ -55,10 +58,12 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AnbocasBookingSuccessScreen(
-                            ticketResponse: widget.selectedTickets,
-                            orderDetails: widget.orderDetails,
-                          )),
+                    builder: (context) => AnbocasBookingSuccessScreen(
+                      ticketResponse: widget.selectedTickets,
+                      orderDetails: widget.orderDetails,
+                      referenceEventId: widget.referenceEventId,
+                    ),
+                  ),
                 );
               }
             }
@@ -121,9 +126,9 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                   builder: (context, loader, child) {
                     return loader == false
                         ? const SizedBox()
-                        : const Center(
+                        : Center(
                             child: CircularProgressIndicator(
-                              color: Colors.black,
+                              color: theme.primaryColor,
                               backgroundColor: Colors.white,
                             ),
                           );

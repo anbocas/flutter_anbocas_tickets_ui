@@ -236,21 +236,22 @@ class _AnbocasBookingSuccessScreenState
                                               style: theme.subHeadingStyle),
                                           if (widget.referenceEventId != null)
                                             TextButton(
-                                                onPressed: () {
-                                                  AnbocasEventManager().emit(
-                                                    AnbocasEventManager
-                                                        .eventBookingSuccess,
-                                                    widget.referenceEventId,
-                                                  );
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  'View Event',
-                                                  style: theme.labelStyle
-                                                      ?.copyWith(
-                                                          color: theme
-                                                              .primaryColor),
-                                                ))
+                                              onPressed: () {
+                                                AnbocasEventManager().emit(
+                                                  AnbocasEventManager
+                                                      .eventBookingSuccess,
+                                                  widget.referenceEventId,
+                                                );
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                'View Event',
+                                                style: theme.labelStyle
+                                                    ?.copyWith(
+                                                        color:
+                                                            theme.primaryColor),
+                                              ),
+                                            ),
                                         ],
                                       ),
                                     ],
