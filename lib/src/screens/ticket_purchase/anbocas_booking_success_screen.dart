@@ -91,7 +91,6 @@ class _AnbocasBookingSuccessScreenState
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context);
-        Navigator.pop(context);
 
         return true;
       },
