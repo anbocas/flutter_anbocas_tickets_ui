@@ -53,9 +53,8 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
           onUrlChange: (UrlChange url) {
             if (url.url!.contains("/order")) {
               if (mounted) {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pop(context);
+                Navigator.pop(context); // ticket booking
+                Navigator.pop(context); // payment webview
                 Navigator.push(
                   context,
                   MaterialPageRoute(
