@@ -287,6 +287,9 @@ class __TicketDialogState extends State<_TicketDialog> {
       _name.text = widget.ticket?.name ?? "";
       _description.text = widget.ticket?.description ?? "";
       _capacity.text = widget.ticket!.capacity.toString();
+
+      _unlimitedCheckbox.value = widget.ticket?.capacity == -1;
+
       _price.text = widget.ticket!.price.toString();
       _selectedStatus = widget.ticket!.status;
 
