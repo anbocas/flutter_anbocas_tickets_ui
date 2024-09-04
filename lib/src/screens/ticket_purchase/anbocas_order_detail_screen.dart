@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -136,16 +138,40 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                           .contains("http"))
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 15.0.h),
-                                      child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          child: Image.network(
+                                      child: Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: NetworkImage(
+                                                  orderResponse.value!.event!
+                                                          .imageUrl ??
+                                                      "",
+                                                ),
+                                              ),
+                                            ),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(),
+                                              child: Image.network(
+                                                orderResponse.value!.event!
+                                                        .imageUrl ??
+                                                    "",
+                                                height: 180.v,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          Image.network(
                                             orderResponse
                                                     .value!.event!.imageUrl ??
                                                 "",
                                             height: 180.v,
-                                            fit: BoxFit.fill,
-                                          )),
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   Row(
                                     crossAxisAlignment:
