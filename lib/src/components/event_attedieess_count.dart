@@ -27,8 +27,8 @@ class EventAttendeesCount extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.secondaryTextColor!),
-                borderRadius: BorderRadius.circular(8),
+                color: theme.secondaryBgColor,
+                borderRadius: BorderRadius.circular(8.adaptSize),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -36,18 +36,18 @@ class EventAttendeesCount extends StatelessWidget {
                   Text(
                     'ALL',
                     textAlign: TextAlign.center,
-                    style: theme.bodyStyle,
+                    style: theme.labelStyle,
                   ),
                   Text(
                     totalGuests,
-                    style: theme.headingStyle,
+                    style: theme.subHeadingStyle,
                   ),
                 ],
               ),
             ),
           ),
           SizedBox(
-            width: 5,
+            width: 5.h,
           ),
           Flexible(
             flex: 1,
@@ -55,27 +55,27 @@ class EventAttendeesCount extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.secondaryTextColor!),
-                borderRadius: BorderRadius.circular(8),
+                color: theme.secondaryBgColor,
+                borderRadius: BorderRadius.circular(8.adaptSize),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'CHECKED IN',
+                    'CHECKED',
                     textAlign: TextAlign.center,
-                    style: theme.bodyStyle,
+                    style: theme.labelStyle,
                   ),
                   Text(
                     totalCheckIn,
-                    style: theme.bodyStyle,
+                    style: theme.subHeadingStyle,
                   ),
                 ],
               ),
             ),
           ),
           SizedBox(
-            width: 5,
+            width: 5.h,
           ),
           Flexible(
             flex: 1,
@@ -83,22 +83,22 @@ class EventAttendeesCount extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.secondaryTextColor!),
-                borderRadius: BorderRadius.circular(8),
+                color: theme.secondaryBgColor,
+                borderRadius: BorderRadius.circular(8.adaptSize),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FittedBox(
                     child: Text(
-                      'NOT CHECKED',
+                      'PENDING',
                       textAlign: TextAlign.center,
-                      style: theme.bodyStyle,
+                      style: theme.labelStyle,
                     ),
                   ),
                   Text(
                     totalNotCheckIn,
-                    style: theme.bodyStyle,
+                    style: theme.subHeadingStyle,
                   ),
                 ],
               ),

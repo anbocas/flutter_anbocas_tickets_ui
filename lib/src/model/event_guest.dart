@@ -1,9 +1,12 @@
+import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
+
 class EventGuest {
   String? id;
   String? orderId;
   String? eventId;
   String? code;
   String? orderTicketId;
+  OrderTicket? orderTicket;
 
   EventGuest.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -21,6 +24,9 @@ class EventGuest {
     if (json["order_ticket_id"] is String) {
       orderTicketId = json["order_ticket_id"];
     }
+    if (json["order_ticket"] is Map) {
+      orderTicket = OrderTicket.fromJson(json['order_ticket']);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -30,6 +36,7 @@ class EventGuest {
     data["event_id"] = eventId;
     data["code"] = code;
     data["order_ticket_id"] = orderTicketId;
+    data["order_ticket"] = orderTicket?.toJson();
 
     return data;
   }

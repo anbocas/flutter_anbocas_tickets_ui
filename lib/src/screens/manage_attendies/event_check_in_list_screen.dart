@@ -1,9 +1,10 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
-import 'package:anbocas_tickets_ui/src/components/event_attedieess_cout.dart';
+import 'package:anbocas_tickets_ui/src/components/event_attedieess_count.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/screens/manage_attendies/scan_qr_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventCheckInListScreen extends StatefulWidget {
   final String eventId;
@@ -77,7 +78,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
             IconButton(
               icon: Icon(
                 Icons.qr_code,
-                color: theme.iconColor!,
+                color: theme.primaryColor!,
               ),
               onPressed: () => launchScanner(),
             ),
@@ -112,8 +113,8 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                             children: [
                               if (response.status != null)
                                 Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(22.h, 0, 30.h, 15.v),
+                                  padding: EdgeInsets.fromLTRB(
+                                      22.h, 22.h, 30.h, 15.v),
                                   child: EventAttendeesCount(
                                       totalGuests:
                                           response.status!.all.toString(),
@@ -148,8 +149,12 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                   Icons.check_circle,
                                                   color:
                                                       guest.checkInTime != null
-                                                          ? Colors.green
+                                                          ? theme.primaryColor
                                                           : Colors.grey,
+                                                ),
+                                                leading: Text(
+                                                  '${index + 1}.',
+                                                  style: theme.labelStyle,
                                                 ),
                                                 title: Text(
                                                   guest.name ?? "",
@@ -162,9 +167,30 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                     fontSize: 16.fSize,
                                                   ),
                                                 ),
-                                                subtitle: Text(
-                                                  guest.checkInTime ?? '',
-                                                  style: theme.smallLabelStyle,
+                                                subtitle: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    // Text(
+                                                    //   guest.orderTicket?.,
+                                                    //   style:
+                                                    //       theme.smallLabelStyle,
+                                                    // ),
+                                                    if (guest.checkInTime !=
+                                                        null)
+                                                      Text(
+                                                        DateFormat()
+                                                            .add_Hm()
+                                                            .format(DateTime
+                                                                .parse(guest
+                                                                    .checkInTime!)),
+                                                        style: theme
+                                                            .smallLabelStyle
+                                                            ?.copyWith(
+                                                                color: theme
+                                                                    .primaryColor),
+                                                      ),
+                                                  ],
                                                 ),
                                               );
                                             },
