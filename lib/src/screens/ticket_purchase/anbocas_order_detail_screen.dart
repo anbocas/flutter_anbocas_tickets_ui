@@ -223,7 +223,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 3.v),
                                               child: Text(
-                                                  'Booked on: ${DateFormat.MEd().add_Hm().format(DateTime.parse(orderResponse.value!.createdAt!))}',
+                                                  'Booked on: ${orderResponse.value!.createdAt!}',
                                                   style: theme.labelStyle
                                                       ?.copyWith(
                                                           color: theme

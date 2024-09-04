@@ -35,7 +35,7 @@ class _QrFullviewState extends State<QrFullview> {
                 onPageChanged: (value) {
                   if (mounted) {
                     setState(() {
-                      currentPage = value;
+                      currentPage = value + 1;
                     });
                   }
                 },

@@ -11,6 +11,7 @@ import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class AnbocasBookingSuccessScreen extends StatefulWidget {
@@ -256,6 +257,15 @@ class _AnbocasBookingSuccessScreenState
                                               ),
                                             ),
                                         ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 3.v),
+                                        child: Text(
+                                            'Booked on: ${widget.orderDetails.createdAt!}',
+                                            style: theme.labelStyle?.copyWith(
+                                                color: theme.secondaryTextColor,
+                                                fontSize: 12.fSize)),
                                       ),
                                     ],
                                   ),
