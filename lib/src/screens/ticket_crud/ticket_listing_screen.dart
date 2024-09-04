@@ -168,25 +168,31 @@ class TicketsScreenState extends State<TicketListingScreen> {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.subHeadingStyle),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Availability: ${ticket.getCurrentAvailablity()}',
-                                  style: theme.labelStyle?.copyWith(
-                                      color: theme.secondaryTextColor,
-                                      fontSize: 12.fSize),
-                                ),
-                                Text(
-                                  'Status: ${ticket.status}',
-                                  style: theme.labelStyle?.copyWith(
-                                      color: theme.secondaryTextColor,
-                                      fontSize: 12.fSize),
-                                ),
+                            subtitle: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.v),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Availability: ${ticket.getCurrentAvailablity()}',
+                                    style: theme.labelStyle?.copyWith(
+                                        color: theme.secondaryTextColor,
+                                        fontSize: 12.fSize),
+                                  ),
+                                  SizedBox(
+                                    height: 3.v,
+                                  ),
+                                  Text(
+                                    'Status: ${ticket.status}',
+                                    style: theme.labelStyle?.copyWith(
+                                        color: theme.secondaryTextColor,
+                                        fontSize: 12.fSize),
+                                  ),
 
-                                // Text('Closes: ${ticket.getAvailableTo()}',
-                                //     style: theme.labelStyle),
-                              ],
+                                  // Text('Closes: ${ticket.getAvailableTo()}',
+                                  //     style: theme.labelStyle),
+                                ],
+                              ),
                             ),
                             leading: Text(
                               '${index + 1}.',

@@ -55,6 +55,7 @@ class OrderData {
   EventResponse? event;
   Company? company;
   Payment? payment;
+  String? createdAt;
 
   OrderData.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -162,6 +163,10 @@ class OrderData {
       totalPayable = json["total_payable"] != null
           ? double.tryParse(json["total_payable"]) ?? 0.0
           : 0.0;
+
+      if (json['created_at'] is String) {
+        createdAt = json['created_at'];
+      }
     }
 
     if (json["user_id"] is String) {

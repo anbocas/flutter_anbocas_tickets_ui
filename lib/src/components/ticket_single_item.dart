@@ -16,7 +16,6 @@ class TicketItemWidget extends StatefulWidget {
     this.showDeleteIcon = false,
     required this.onQuantityChanged,
     this.onDeletePres,
- 
     this.onItemSelect,
   });
 
@@ -59,7 +58,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
-      height: 180.v,
+      height: 160.v,
       width: double.infinity,
       decoration: BoxDecoration(
           color: widget.isSelected == true

@@ -8,6 +8,7 @@ import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class AnbocasOrderDetailScreen extends StatefulWidget {
@@ -191,6 +192,17 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                                     ),
                                                   ),
                                               ],
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 3.v),
+                                              child: Text(
+                                                  'Booked on: ${DateFormat.MEd().add_Hm().format(DateTime.parse(orderResponse.value!.createdAt!))}',
+                                                  style: theme.labelStyle
+                                                      ?.copyWith(
+                                                          color: theme
+                                                              .secondaryTextColor,
+                                                          fontSize: 12.fSize)),
                                             ),
                                           ],
                                         ),
