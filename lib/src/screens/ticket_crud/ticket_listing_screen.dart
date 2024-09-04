@@ -95,9 +95,15 @@ class TicketsScreenState extends State<TicketListingScreen> {
   }
 
   Future<void> _deleteTicket(String ticketId) async {
-    final result = await _ticketsApi.deleteTicket(ticketId: ticketId);
-    if (result) {
-      _fetchTickets();
+    try {
+      final result = await _ticketsApi.deleteTicket(ticketId: ticketId);
+      if (result) {
+        _fetchTickets();
+      }
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(e.toString())),
+      );
     }
   }
 
@@ -158,17 +164,28 @@ class TicketsScreenState extends State<TicketListingScreen> {
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                                '${ticket.name}  (${ticket.getCurrentAvailablity()})',
+                                '${ticket.name}  (${ticket.formattedPrice})',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.subHeadingStyle),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Open: ${ticket.getAvailableFrom()}',
-                                    style: theme.labelStyle),
-                                Text('Closes: ${ticket.getAvailableTo()}',
-                                    style: theme.labelStyle),
+                                Text(
+                                  'Availability: ${ticket.getCurrentAvailablity()}',
+                                  style: theme.labelStyle?.copyWith(
+                                      color: theme.secondaryTextColor,
+                                      fontSize: 12.fSize),
+                                ),
+                                Text(
+                                  'Status: ${ticket.status}',
+                                  style: theme.labelStyle?.copyWith(
+                                      color: theme.secondaryTextColor,
+                                      fontSize: 12.fSize),
+                                ),
+
+                                // Text('Closes: ${ticket.getAvailableTo()}',
+                                //     style: theme.labelStyle),
                               ],
                             ),
                             leading: Text(
