@@ -259,6 +259,14 @@ class OrderData {
 
   Map<String, dynamic> trimmedPayload() {
     final Map<String, dynamic> data = <String, dynamic>{};
+
+    final tempArray = <String>[];
+
+    for (var ticket in tickets) {
+      tempArray.add('${ticket.quantity}x ${ticket.singleTicket?.name}');
+    }
+
+    data["order_summary"] = tempArray.join(', ');
     data["anbocas_order_id"] = id;
     data["order_number"] = orderNumber;
     data["sub_total"] = subTotal;
