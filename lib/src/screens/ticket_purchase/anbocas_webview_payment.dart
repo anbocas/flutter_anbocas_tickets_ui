@@ -38,7 +38,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
     // #docregion webview_controller
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(theme.backgroundColor ?? Colors.black)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -86,8 +86,8 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
   }
 
   void _handleCancel() async {
-    await showAlertDialog(context, "Payment Cancel",
-        "Are you sure want to cancelled the payment process?",
+    await showAlertDialog(context, "Cancel Payment",
+        "Are you sure want to cancel the payment process?",
         okButtonText: "Yes",
         topIcon: const Icon(
           Icons.cancel,
@@ -125,7 +125,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                   valueListenable: urlLoading,
                   builder: (context, loader, child) {
                     return loader == false
-                        ? const SizedBox()
+                        ? const SizedBox.shrink()
                         : Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 4.adaptSize,

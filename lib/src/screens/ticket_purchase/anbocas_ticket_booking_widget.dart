@@ -5,7 +5,6 @@ import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
-import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_selected_ticket_widget.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/components/ticket_single_item.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -387,17 +386,6 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         return TicketItemWidget(
           isSelected: selectedTickets.contains(element),
           element: element,
-          onBuyItemPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AnbocasSelectedTicketWidget(
-                        ticketResponse: state.eventResponse.value!
-                            .copyWithSelectedTickets(tickets: [element]),
-                        eventId: widget.eventId,
-                      )),
-            );
-          },
           onQuantityChanged: (newQuantity, ticketId) {
             setState(() {
               final index = selectedTickets

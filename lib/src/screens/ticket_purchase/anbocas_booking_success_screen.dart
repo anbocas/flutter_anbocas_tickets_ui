@@ -5,7 +5,7 @@ import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
-import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/qr_fullview.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_qr_fullview.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
@@ -413,69 +413,73 @@ class _AnbocasBookingSuccessScreenState
                               ...updateOrderResponse!.tickets
                                   .asMap()
                                   .entries
-                                  .map((e) => Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15.v, horizontal: 12.h),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: theme.secondaryBgColor,
-                                        ),
-                                        margin:
-                                            EdgeInsets.symmetric(vertical: 4.h),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "${e.key + 1}. ",
-                                                  style: theme.subHeadingStyle,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                      e.value.singleTicket
-                                                              ?.name ??
-                                                          "",
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: theme
-                                                          .subHeadingStyle),
-                                                ),
-                                                SizedBox(
-                                                  width: 10.h,
-                                                ),
-                                                Text("${e.value.quantity}x",
-                                                    style: theme.labelStyle),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 10.v,
-                                            ),
-                                            Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.start,
-                                              alignment: WrapAlignment.start,
-                                              runAlignment: WrapAlignment.start,
-                                              children: updateOrderResponse!
-                                                  // .guests
-                                                  .ticketGuests(e.value.id!)
-                                                  .map((guest) => InkWell(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      QrFullview(
-                                                                          ticketCode:
-                                                                              guest)));
-                                                        },
-                                                        child: SizedBox(
+                                  .map((e) => InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => QrFullview(
+                                                      ticketCodes:
+                                                          updateOrderResponse!
+                                                              .ticketGuests(e
+                                                                  .value
+                                                                  .id!))));
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 15.v, horizontal: 12.h),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: theme.secondaryBgColor,
+                                          ),
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 4.h),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${e.key + 1}. ",
+                                                    style:
+                                                        theme.subHeadingStyle,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                        e.value.singleTicket
+                                                                ?.name ??
+                                                            "",
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: theme
+                                                            .subHeadingStyle),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10.h,
+                                                  ),
+                                                  Text("${e.value.quantity}x",
+                                                      style: theme.labelStyle),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: 10.v,
+                                              ),
+                                              Wrap(
+                                                crossAxisAlignment:
+                                                    WrapCrossAlignment.start,
+                                                alignment: WrapAlignment.start,
+                                                runAlignment:
+                                                    WrapAlignment.start,
+                                                children: updateOrderResponse!
+                                                    // .guests
+                                                    .ticketGuests(e.value.id!)
+                                                    .map((guest) => SizedBox(
                                                           width: 70,
                                                           child: QrImageView(
                                                             data: guest,
@@ -494,11 +498,11 @@ class _AnbocasBookingSuccessScreenState
                                                                 color: theme
                                                                     .qrcodeColor),
                                                           ),
-                                                        ),
-                                                      ))
-                                                  .toList(),
-                                            ),
-                                          ],
+                                                        ))
+                                                    .toList(),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ))
                                   .toList(),

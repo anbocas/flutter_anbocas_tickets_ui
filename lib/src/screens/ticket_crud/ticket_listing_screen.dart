@@ -5,7 +5,6 @@ import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/helper/common_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/ticket_by_event_response.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:intl/intl.dart';
@@ -268,8 +267,8 @@ class __TicketDialogState extends State<_TicketDialog> {
       _price.text = widget.ticket!.price.toString();
       _selectedStatus = widget.ticket!.status;
 
-      availableFrom = DateTime.parse(_availableFrom.text);
-      availableTo = DateTime.parse(_availableTo.text);
+      availableFrom = DateTime.parse(widget.ticket!.availableFrom!);
+      availableTo = DateTime.parse(widget.ticket!.availableTo!);
 
       _availableFrom.text =
           DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);

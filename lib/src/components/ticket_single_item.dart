@@ -16,7 +16,7 @@ class TicketItemWidget extends StatefulWidget {
     this.showDeleteIcon = false,
     required this.onQuantityChanged,
     this.onDeletePres,
-    this.onBuyItemPressed,
+ 
     this.onItemSelect,
   });
 
@@ -26,7 +26,6 @@ class TicketItemWidget extends StatefulWidget {
   final bool showDeleteIcon;
   final void Function(int newQuantity, String ticketId) onQuantityChanged;
   final void Function()? onDeletePres;
-  final void Function()? onBuyItemPressed;
   final void Function()? onItemSelect;
 
   @override
@@ -76,7 +75,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
               border: widget.isSelected == true
                   ? Border.all(
                       color:
-                          theme.ticketCardConfig.selectedTicketCardBorderColor!,
+                          theme.ticketCardConfig.selectedTicketCardBorderColor,
                       width: 2.adaptSize)
                   : const Border(),
               color: theme.ticketCardConfig.ticketCardBackgroundColor,
