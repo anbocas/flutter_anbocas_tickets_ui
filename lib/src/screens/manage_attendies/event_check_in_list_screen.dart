@@ -170,6 +170,8 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                 subtitle: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     // Text(
                                                     //   guest.orderTicket?.,
