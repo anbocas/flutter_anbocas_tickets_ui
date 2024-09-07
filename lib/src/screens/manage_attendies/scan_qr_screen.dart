@@ -98,7 +98,9 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                   }
                 });
               },
-              overlay: QRScannerOverlay(),
+              overlayBuilder: (context, constraints) {
+                return QRScannerOverlay();
+              },
             ),
           ),
           SafeArea(
@@ -118,14 +120,17 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                   IconButton(
                     onPressed: () => cameraController.toggleTorch(),
                     icon: ValueListenableBuilder(
-                      builder: (context, torchState, child) => Icon(
-                        torchState == TorchState.off
-                            ? Icons.flash_off
-                            : Icons.flash_on,
-                        color: theme.iconColor,
-                      ),
-                      valueListenable: cameraController.torchState,
-                    ),
+                        builder: (context, torchState, child) => Icon(
+                              torchState == TorchState.off
+                                  ? Icons.flash_off
+                                  : Icons.flash_on,
+                              color: theme.iconColor,
+                            ),
+                        valueListenable: ValueNotifier(
+                          cameraController.torchEnabled
+                              ? TorchState.on
+                              : TorchState.off,
+                        )),
                   ),
                   const SizedBox(),
                 ],
