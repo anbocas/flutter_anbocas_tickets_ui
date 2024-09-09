@@ -243,12 +243,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
   }
 
   Icon _iconBack(Color color) =>
-      Theme.of(context).platform == TargetPlatform.iOS
-          ? Icon(
-              Icons.arrow_back_ios,
-              color: color,
-            )
-          : Icon(
+     Icon(
               Icons.arrow_back,
               color: color,
             );

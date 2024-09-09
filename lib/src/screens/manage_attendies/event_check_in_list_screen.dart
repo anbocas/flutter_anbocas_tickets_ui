@@ -266,14 +266,8 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
   //       });
   // }
 
-  Icon _iconBack(Color color) =>
-      Theme.of(context).platform == TargetPlatform.iOS
-          ? Icon(
-              Icons.arrow_back_ios,
-              color: color,
-            )
-          : Icon(
-              Icons.arrow_back,
-              color: color,
-            );
+  Icon _iconBack(Color color) => Icon(
+        Icons.arrow_back,
+        color: color,
+      );
 }

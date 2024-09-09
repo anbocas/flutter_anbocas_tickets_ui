@@ -408,12 +408,7 @@ class _AnbocasPaymentWidgetState extends State<AnbocasPaymentWidget>
   }
 
   Icon _iconBack(Color color) =>
-      Theme.of(context).platform == TargetPlatform.iOS
-          ? Icon(
-              Icons.arrow_back_ios,
-              color: color,
-            )
-          : Icon(
+     Icon(
               Icons.arrow_back,
               color: color,
             );
