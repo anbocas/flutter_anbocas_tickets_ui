@@ -32,7 +32,8 @@ class AnbocasTickets {
 
     serviceManager.initializeBookingRepo(baseUrl, apikey);
     theme.updateConfig(customThemeConfig);
-    AnbocasTicketsApi.instance?.config(token: apikey, enableLog: true);
+    AnbocasTicketsApi.instance
+        ?.config(token: apikey, enableLog: true, mode: apiMode);
   }
 
   void launchBookingFlow({
