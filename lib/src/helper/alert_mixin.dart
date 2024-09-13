@@ -1,3 +1,5 @@
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:flutter/material.dart';
 
 mixin AlertDialogMixin {
@@ -18,22 +20,22 @@ mixin AlertDialogMixin {
           content: Text(message),
           icon: topIcon,
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          backgroundColor: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          backgroundColor: theme.secondaryBgColor,
           actions: [
             if (!hideIgnoreButton)
               TextButton(
-                child: const Text("Ignore",
+                child: Text("Ignore",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: theme.primaryTextColor,
                       fontWeight: FontWeight.w700,
                     )),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
             TextButton(
               child: Text(okButtonText ?? "Ok",
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: theme.primaryTextColor,
                     fontWeight: FontWeight.w700,
                   )),
               onPressed: () {
