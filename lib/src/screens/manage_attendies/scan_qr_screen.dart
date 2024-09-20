@@ -1,5 +1,8 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/screens/manage_attendies/qrcode_scan_already_scanned_screen.dart';
+import 'package:anbocas_tickets_ui/src/screens/manage_attendies/qrcode_scan_error_screen.dart';
+import 'package:anbocas_tickets_ui/src/screens/manage_attendies/qrcode_scan_success_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
@@ -65,36 +68,45 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                   return;
                 }
 
-                _handleScanResult(barcode, (message, statusCode) {
+                _handleScanResult(barcode, (message, statusCode, ticketName) {
+                  Navigator.pop(context);
                   if (statusCode == 200) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                        message ?? '',
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      backgroundColor: Colors.green,
-                    ));
-                    Navigator.pop(context, {});
-                  } else if (statusCode == 201) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                        message ?? '',
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                      backgroundColor: Colors.amber,
-                    ));
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          message ?? '',
-                          style: const TextStyle(color: Colors.white),
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, _, __) =>
+                            QrCodeScanSuccessScreen(
+                          barcode: barcode,
+                          status: message!,
+                          eventId: widget.eventId,
+                          ticketName: ticketName ?? '',
                         ),
-                        backgroundColor: Colors.red,
                       ),
                     );
-                    Navigator.pop(context);
+                  } else if (statusCode == 201) {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, _, __) =>
+                            QrCodeAlreadyScannedScreen(
+                          barcode: barcode,
+                          status: message!,
+                          eventId: widget.eventId,
+                          ticketName: ticketName ?? '',
+                        ),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, _, __) => QrCodeScanErrorScreen(
+                          barcode: barcode,
+                          status: message!,
+                          eventId: widget.eventId,
+                        ),
+                      ),
+                    );
                   }
                 });
               },
@@ -142,13 +154,15 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
     ));
   }
 
-  void _handleScanResult(String barcode,
-      Function(String? onScanned, int statusCode) onScanned) async {
+  void _handleScanResult(
+      String barcode,
+      Function(String? onScanned, int statusCode, String? name)
+          onScanned) async {
     try {
       final response =
           await _eventApi.checkIn(code: barcode, eventId: widget.eventId);
 
-      onScanned(response!.message, response.statusCode);
+      onScanned(response!.message, response.statusCode, response?.name);
     } catch (e) {
       debugPrint(e.toString());
     } finally {}
