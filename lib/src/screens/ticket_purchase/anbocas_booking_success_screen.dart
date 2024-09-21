@@ -60,9 +60,12 @@ class _AnbocasBookingSuccessScreenState
       if (status == 'COMPLETED' || status == 'FAILED') {
         // fire eventBookingSuccess event if order is completed
         if (status == 'COMPLETED') {
-          AnbocasEventManager.instance.emit(
-              AnbocasEventManager.eventBookingSuccess,
-              updateOrderResponse?.trimmedPayload());
+          AnbocasEventManager.instance
+              .emit(AnbocasEventManager.eventBookingSuccess, {
+            ...updateOrderResponse!.trimmedPayload(),
+            'reference_event_id': widget.referenceEventId
+          });
+
           if (mounted) {
             setState(() {});
           }
