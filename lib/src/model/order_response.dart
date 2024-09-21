@@ -293,6 +293,7 @@ class OrderData {
             })
         .toList();
     data["event_name"] = event?.name;
+    data["event_photo"] = event?.imageUrl;
 
     return data;
   }
