@@ -412,76 +412,84 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: theme.backgroundColor,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.of(context).pop();
+
+        return Future.value(true);
+      },
+      child: Scaffold(
         backgroundColor: theme.backgroundColor,
-        title: Text("Ticket Booking", style: theme.headingStyle),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: _iconBack(theme.iconColor!),
+        appBar: AppBar(
+          backgroundColor: theme.backgroundColor,
+          title: Text("Ticket Booking", style: theme.headingStyle),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: _iconBack(theme.iconColor!),
+          ),
         ),
-      ),
-      body: Builder(builder: (context) {
-        final state = AnbocasTicketBookingWidget.of(context)!;
-        return ValueListenableBuilder<bool>(
-          valueListenable: state.isLoading,
-          builder: (context, isLoading, child) {
-            return isLoading
-                ? _buildLoader()
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 22.h),
-                        child: ValueListenableBuilder<AnbocasEventResponse?>(
+        body: Builder(builder: (context) {
+          final state = AnbocasTicketBookingWidget.of(context)!;
+          return ValueListenableBuilder<bool>(
+            valueListenable: state.isLoading,
+            builder: (context, isLoading, child) {
+              return isLoading
+                  ? _buildLoader()
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 22.h),
+                          child: ValueListenableBuilder<AnbocasEventResponse?>(
+                              valueListenable: state.eventResponse,
+                              builder: (context, ticketsResp, child) {
+                                return state.eventResponse.value == null
+                                    ? const SizedBox.shrink()
+                                    : Text(
+                                        state.eventResponse.value?.name ?? "",
+                                        style: theme.headingStyle);
+                              }),
+                        ),
+                        SizedBox(
+                          height: 25.v,
+                        ),
+                        ValueListenableBuilder<AnbocasEventResponse?>(
                             valueListenable: state.eventResponse,
                             builder: (context, ticketsResp, child) {
-                              return state.eventResponse.value == null
-                                  ? const SizedBox.shrink()
-                                  : Text(state.eventResponse.value?.name ?? "",
-                                      style: theme.headingStyle);
-                            }),
-                      ),
-                      SizedBox(
-                        height: 25.v,
-                      ),
-                      ValueListenableBuilder<AnbocasEventResponse?>(
-                          valueListenable: state.eventResponse,
-                          builder: (context, ticketsResp, child) {
-                            ticketResponse = ticketsResp;
-                            return ticketsResp == null ||
-                                    ticketsResp.tickets.isEmpty
-                                ? Expanded(
-                                    child: Center(
-                                      child: Text(
-                                        "No tickets found",
-                                        style: theme.bodyStyle,
+                              ticketResponse = ticketsResp;
+                              return ticketsResp == null ||
+                                      ticketsResp.tickets.isEmpty
+                                  ? Expanded(
+                                      child: Center(
+                                        child: Text(
+                                          "No tickets found",
+                                          style: theme.bodyStyle,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Expanded(
-                                            child: _buildTicketList(
-                                                ticketsResp, state)),
-                                        _buildSummary()
-                                      ],
-                                    ),
-                                  );
-                          }),
-                    ],
-                  );
-          },
-        );
-      }),
+                                    )
+                                  : Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Expanded(
+                                              child: _buildTicketList(
+                                                  ticketsResp, state)),
+                                          _buildSummary()
+                                        ],
+                                      ),
+                                    );
+                            }),
+                      ],
+                    );
+            },
+          );
+        }),
+      ),
     );
   }
 
