@@ -131,47 +131,6 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                   SizedBox(
                                     height: 20.v,
                                   ),
-                                  if (orderResponse.value?.event?.imageUrl !=
-                                          null &&
-                                      orderResponse.value!.event!.imageUrl!
-                                          .contains("http"))
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 15.0.h),
-                                      child: Stack(
-                                        fit: StackFit.expand,
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: NetworkImage(
-                                                  orderResponse.value!.event!
-                                                          .imageUrl ??
-                                                      "",
-                                                ),
-                                              ),
-                                            ),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(),
-                                              child: Image.network(
-                                                orderResponse.value!.event!
-                                                        .imageUrl ??
-                                                    "",
-                                                height: 180.v,
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                          Image.network(
-                                            orderResponse
-                                                    .value!.event!.imageUrl ??
-                                                "",
-                                            height: 180.v,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -201,7 +160,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                                           .instance
                                                           .emit(
                                                               AnbocasEventManager
-                                                                  .eventBookingSuccess,
+                                                                  .viewEvent,
                                                               {
                                                             'event_id': widget
                                                                 .referenceEventId,
