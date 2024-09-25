@@ -9,12 +9,10 @@ class AnbocasEventManager {
   static const String eventBookingSuccess = 'booking.success';
   static const String viewEvent = 'view.event';
 
-  void on(String event, Function handler) {
-    cb(event, cont) {
-      handler(event.eventData);
-    }
-
-    _eventEmitter.on(event, null, cb);
+  void on(String event, Function(dynamic) handler) {
+    _eventEmitter.on(event, null, (ev, context) {
+      handler(ev.eventData);
+    });
   }
 
   /// Clears all event listeners

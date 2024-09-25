@@ -227,6 +227,7 @@ class _AnbocasBookingSuccessScreenState
                                           if (widget.referenceEventId != null)
                                             TextButton(
                                               onPressed: () {
+                                                Navigator.pop(context);
                                                 AnbocasEventManager.instance
                                                     .emit(
                                                         AnbocasEventManager
@@ -235,7 +236,6 @@ class _AnbocasBookingSuccessScreenState
                                                       'event_id': widget
                                                           .referenceEventId,
                                                     });
-                                                Navigator.pop(context);
                                               },
                                               child: Text(
                                                 'View Event',
