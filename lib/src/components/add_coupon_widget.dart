@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -92,7 +93,7 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
                 child: Icon(
                   Icons.close,
                   size: 35.adaptSize,
-                  color: Colors.orange,
+                  color: theme.iconColor,
                 ),
                 onTap: () => Navigator.pop(context),
               ),
@@ -111,10 +112,7 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
                 children: [
                   Text(
                     "Enter a coupon code",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 24.adaptSize,
-                        color: Colors.orange),
+                    style: theme.headingStyle,
                   ),
                   SizedBox(
                     height: 40.v,
@@ -157,8 +155,12 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
                       valueListenable: isLoading,
                       builder: (context, loading, child) {
                         return loading == true
-                            ? const Center(
-                                child: CircularProgressIndicator(),
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 4.adaptSize,
+                                  color: theme.accentColor,
+                                  backgroundColor: Colors.white,
+                                ),
                               )
                             : CustomButton(
                                 centerText: "Apply Coupon",

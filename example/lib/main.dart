@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    AnbocasRequestPlugin.instance
+    AnbocasTicketsApi.instance
         ?.config(token: dotenv.env['API_KEY'], enableLog: true);
     super.initState();
   }
@@ -50,15 +50,15 @@ class _MyAppState extends State<MyApp> {
             return const CompanyListingScreen();
           },
           "eventListing": (BuildContext context) {
-            final model =
-                ModalRoute.of(context)!.settings.arguments as CompanyModel;
+            final model = ModalRoute.of(context)!.settings.arguments
+                as AnbocasCompanyModel;
             return EventListingScreen(
               company: model,
             );
           },
           "eventDetail": (BuildContext context) {
             final model =
-                ModalRoute.of(context)!.settings.arguments as EventModel;
+                ModalRoute.of(context)!.settings.arguments as AnbocasEventModel;
             return DetailEventScreen(
               model: model,
             );

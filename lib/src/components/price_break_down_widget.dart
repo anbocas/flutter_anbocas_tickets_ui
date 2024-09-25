@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class PriceBreakDownWidget extends StatelessWidget with StringHelperMixin {
                     child: Icon(
                       Icons.close,
                       size: 35.adaptSize,
-                      color: Colors.orange,
+                      color: theme.iconColor,
                     ),
                     onTap: () => Navigator.pop(context),
                   ),
@@ -90,7 +91,7 @@ class PriceBreakDownWidget extends StatelessWidget with StringHelperMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Platform Fee",
+                            "Convenience Fee",
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15.fSize,

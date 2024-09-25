@@ -1,20 +1,22 @@
-class SingleTickets {
+import 'dart:ffi';
+
+class SingleTicket {
   String? id;
   String? eventId;
   String? name;
   String? description;
-  int? price;
-  int? tax;
-  int? capacity;
+  Double? price;
+  int capacity = -1;
+  int available = -1;
   String? availableFrom;
   String? availableTo;
   int minQtyPerOrder = 1;
   int maxQtyPerOrder = 10;
   String? status;
   String? formattedPrice;
-  int selectedQuantity = 1;
+  int selectedQuantity = 0;
 
-  SingleTickets.fromJson(Map<String, dynamic> json) {
+  SingleTicket.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
       id = json["id"];
     }
@@ -31,11 +33,12 @@ class SingleTickets {
     if (json["price"] is int) {
       price = json["price"];
     }
-    if (json["tax"] is int) {
-      tax = json["tax"];
-    }
+
     if (json["capacity"] is int) {
       capacity = json["capacity"];
+    }
+    if (json["available"] is int) {
+      available = json["available"];
     }
     if (json["available_from"] is String) {
       availableFrom = json["available_from"];
@@ -65,7 +68,6 @@ class SingleTickets {
     data["name"] = name;
     data["description"] = description;
     data["price"] = price;
-    data["tax"] = tax;
     data["capacity"] = capacity;
     data["available_from"] = availableFrom;
     data["available_to"] = availableTo;

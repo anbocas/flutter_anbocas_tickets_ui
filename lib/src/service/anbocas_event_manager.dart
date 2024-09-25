@@ -1,16 +1,13 @@
 import 'package:eventify/eventify.dart';
 
 class AnbocasEventManager {
-  static final AnbocasEventManager _instance = AnbocasEventManager._internal();
+  static final AnbocasEventManager instance = AnbocasEventManager._internal();
   final EventEmitter _eventEmitter = EventEmitter();
-
-  factory AnbocasEventManager() {
-    return _instance;
-  }
 
   AnbocasEventManager._internal();
 
   static const String eventBookingSuccess = 'booking.success';
+  static const String viewEvent = 'view.event';
 
   void on(String event, Function handler) {
     cb(event, cont) {

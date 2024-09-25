@@ -12,9 +12,9 @@ class TicketCardClipper extends CustomClipper<Path> {
     path.lineTo(size.width, 0.0);
 
     path.addOval(Rect.fromCircle(
-        center: Offset(0.0, size.height / 1.5), radius: radius));
+        center: Offset(0.0, size.height * 0.72), radius: radius));
     path.addOval(Rect.fromCircle(
-        center: Offset(size.width, size.height / 1.5), radius: radius));
+        center: Offset(size.width, size.height * 0.72), radius: radius));
     return path;
   }
 
@@ -41,9 +41,9 @@ class TicketCardFillPainter extends CustomPainter {
       path.lineTo(size.width, 0.0);
 
       path.addOval(Rect.fromCircle(
-          center: Offset(0.0, size.height / 1.5), radius: radius));
+          center: Offset(0.0, size.height * 0.72), radius: radius));
       path.addOval(Rect.fromCircle(
-          center: Offset(size.width, size.height / 1.5), radius: radius));
+          center: Offset(size.width, size.height * 0.72), radius: radius));
 
       canvas.drawPath(path, paint);
     }

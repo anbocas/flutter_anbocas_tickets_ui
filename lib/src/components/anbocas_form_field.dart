@@ -21,10 +21,9 @@ class AnbocasFormField extends StatefulWidget {
       this.onCountryChanged,
       this.inputFormatters,
       this.filled = true,
-      this.filledColor,
-      this.style,
       this.readOnly = false,
       this.maxLines = 1,
+      this.minLines = 1,
       this.onTap})
       : assert(
             !showCountryPicker ||
@@ -44,30 +43,31 @@ class AnbocasFormField extends StatefulWidget {
   final void Function(CountryCode)? onCountryChanged;
   final List<TextInputFormatter>? inputFormatters;
   final bool filled;
-  final Color? filledColor;
-  final TextStyle? style;
+
   final void Function()? onTap;
   final bool? readOnly;
   final int? maxLines;
+  final int? minLines;
 
   @override
   State<AnbocasFormField> createState() => _AnbocasFormFieldState();
 }
 
 class _AnbocasFormFieldState extends State<AnbocasFormField> {
-  final GlobalKey _countryPickerKey = GlobalKey();
+  // final GlobalKey _countryPickerKey = GlobalKey();
   double textInputPaddingLeft = 0.0;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      minLines: 1,
       maxLines: widget.maxLines,
       controller: widget.formCtr,
-      cursorColor: theme.iconColor,
+      cursorColor: theme.textFormFieldConfig.cursorColor,
       selectionHeightStyle: BoxHeightStyle.includeLineSpacingBottom,
       validator: widget.fieldValidator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: widget.style ?? theme.bodyStyle,
+      style: theme.textFormFieldConfig.style,
       textInputAction: widget.inputAction,
       keyboardType: widget.inputType,
       maxLength: widget.maxLength,
@@ -80,8 +80,8 @@ class _AnbocasFormFieldState extends State<AnbocasFormField> {
         prefixIcon: widget.showCountryPicker
             ? CountryCodePicker(
                 onChanged: (code) {
-                  textInputPaddingLeft =
-                      _countryPickerKey.currentContext!.size!.width;
+                  // textInputPaddingLeft =
+                  //     _countryPickerKey.currentContext?.size?.width;
                   if (widget.onCountryChanged != null) {
                     widget.onCountryChanged?.call(code);
                   }
@@ -115,19 +115,9 @@ class _AnbocasFormFieldState extends State<AnbocasFormField> {
                     borderSide: BorderSide(color: Colors.black, width: 1.0),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 1.0),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: theme.errorColor!, width: 1.0),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 1.0),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
+                  focusedBorder: theme.textFormFieldConfig.focusedBorder,
+                  errorBorder: theme.textFormFieldConfig.errorBorder,
+                  enabledBorder: theme.textFormFieldConfig.enabledBorder,
                 ),
                 searchStyle: Theme.of(context)
                     .textTheme
@@ -144,28 +134,16 @@ class _AnbocasFormFieldState extends State<AnbocasFormField> {
                 barrierColor: Colors.transparent,
               )
             : null,
-        fillColor: widget.filledColor ?? theme.secondaryBgColor,
+        fillColor: theme.textFormFieldConfig.fillColor,
         hintText: widget.hintText,
         labelText: widget.labelText,
-        contentPadding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 15.v),
-        labelStyle: theme.labelStyle?.copyWith(
-          color: theme.secondaryTextColor,
-        ),
-        hintStyle: theme.labelStyle?.copyWith(
-          color: theme.secondaryTextColor,
-        ),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.secondaryTextColor!, width: 1.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.accentColor!, width: 1.0),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.errorColor!, width: 1.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.secondaryTextColor!, width: 1.0),
-        ),
+        contentPadding: theme.textFormFieldConfig.contentPadding,
+        labelStyle: theme.textFormFieldConfig.labelStyle,
+        hintStyle: theme.textFormFieldConfig.hintStyle,
+        border: theme.textFormFieldConfig.border,
+        focusedBorder: theme.textFormFieldConfig.focusedBorder,
+        errorBorder: theme.textFormFieldConfig.errorBorder,
+        enabledBorder: theme.textFormFieldConfig.enabledBorder,
       ),
     );
   }
