@@ -125,7 +125,8 @@ class AnbocasTickets {
             }
             return AnbocasOrderDetailScreen(
                 anbocasOrderId: anbocasOrderId,
-                referenceEventId: referenceEventId);
+                referenceEventId: referenceEventId,
+                );
           },
         ),
       );

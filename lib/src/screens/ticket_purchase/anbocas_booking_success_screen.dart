@@ -209,19 +209,6 @@ class _AnbocasBookingSuccessScreenState
                             SizedBox(
                               height: 20.v,
                             ),
-                            if (widget.ticketResponse.imageUrl != null &&
-                                widget.ticketResponse.imageUrl!
-                                    .contains("http"))
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 15.0.h),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.network(
-                                      widget.ticketResponse.imageUrl ?? "",
-                                      height: 180.v,
-                                      fit: BoxFit.fill,
-                                    )),
-                              ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -243,7 +230,7 @@ class _AnbocasBookingSuccessScreenState
                                                 AnbocasEventManager.instance
                                                     .emit(
                                                         AnbocasEventManager
-                                                            .eventBookingSuccess,
+                                                            .viewEvent,
                                                         {
                                                       'event_id': widget
                                                           .referenceEventId,
