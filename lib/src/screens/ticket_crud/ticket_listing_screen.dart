@@ -80,7 +80,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
       barrierDismissible: false,
       builder: (context) => ScaffoldMessenger(
         child: Builder(builder: (context) {
-          return _TicketDialog(
+          return TicketDialog(
             ticket: ticket,
             event: _eventDetails.value!,
             eventDateTime: eventEndDate!,
@@ -249,19 +249,19 @@ class TicketsScreenState extends State<TicketListingScreen> {
             );
 }
 
-class _TicketDialog extends StatefulWidget {
+class TicketDialog extends StatefulWidget {
   final AnbocasEventModel event;
   final DateTime eventDateTime;
   final SingleTicketByEvent? ticket;
 
-  _TicketDialog(
+  TicketDialog(
       {this.ticket, required this.event, required this.eventDateTime});
 
   @override
-  __TicketDialogState createState() => __TicketDialogState();
+  TicketDialogState createState() => TicketDialogState();
 }
 
-class __TicketDialogState extends State<_TicketDialog> {
+class TicketDialogState extends State<TicketDialog> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _name = TextEditingController();
@@ -594,7 +594,7 @@ class __TicketDialogState extends State<_TicketDialog> {
                         value: status,
                         child: Text(
                           status,
-                          style: theme.textFormFieldConfig?.style,
+                          style: theme.textFormFieldConfig.style,
                         ),
                       );
                     }).toList(),
@@ -605,8 +605,8 @@ class __TicketDialogState extends State<_TicketDialog> {
                     },
                     decoration: InputDecoration(
                       labelText: "Status",
-                      labelStyle: theme.textFormFieldConfig?.labelStyle,
-                      border: theme.textFormFieldConfig?.border,
+                      labelStyle: theme.textFormFieldConfig.labelStyle,
+                      border: theme.textFormFieldConfig.border,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {

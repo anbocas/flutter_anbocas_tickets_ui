@@ -162,7 +162,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
       final response =
           await _eventApi.checkIn(code: barcode, eventId: widget.eventId);
 
-      onScanned(response!.message, response.statusCode, response?.name);
+      onScanned(response!.message, response.statusCode, response.name);
     } catch (e) {
       debugPrint(e.toString());
     } finally {}

@@ -3,9 +3,6 @@ import 'package:anbocas_tickets_ui/src/model/event_guest.dart';
 import 'package:anbocas_tickets_ui/src/model/event_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/single_company.dart';
-import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
-import 'package:eventify/eventify.dart';
-
 class OrderResponse {
   OrderData? data;
   String? paymentUrl;

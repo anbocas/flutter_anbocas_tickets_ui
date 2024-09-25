@@ -1,4 +1,3 @@
-import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
 
 class AnbocasCustomTheme {
