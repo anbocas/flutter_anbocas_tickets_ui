@@ -46,7 +46,6 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   AnbocasEventResponse? ticketResponse;
   AnbocasOrderResponse? placedOrderResponse;
   final _razorpay = Razorpay();
-  final rzpKey = 'rzp_test_kgIdixaRAUCC8c';
 
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
@@ -84,6 +83,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         name: userConfig.name ?? '',
         phone: userConfig.phone,
         email: userConfig.email ?? '',
+        shouldGeneratePaymentLink: false,
       )
           .then((order) {
         if (order != null) {
@@ -120,17 +120,15 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         );
       } else {
         if (order.paymentUrl != null) {
-          _initPayment(order);
-
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => AnbocasWebviewPayment(
-          //               webUrl: order.paymentUrl ?? "",
-          //               orderDetails: order.data!,
-          //               selectedTickets: eventResponse.value!,
-          //               referenceEventId: widget.referenceEventId,
-          //             )));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AnbocasWebviewPayment(
+                        webUrl: order.paymentUrl ?? "",
+                        orderDetails: order.data!,
+                        selectedTickets: eventResponse.value!,
+                        referenceEventId: widget.referenceEventId,
+                      )));
         } else {
           _initPayment(order);
         }
@@ -149,7 +147,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 
   void _initPayment(AnbocasOrderResponse order) {
     var options = {
-      'key': rzpKey,
+      'key': AnbocasTickets.instance.anbocasRazorpayApiKey,
       'amount': (order.data!.totalPayable * 100).toInt(),
       'name': '${order.data!.company!.name}',
       'description':
@@ -179,7 +177,6 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 
     await _booking?.verifyOrderPayment(response.paymentId!);
 
-    Navigator.pop(context);
     Navigator.pop(context);
     Navigator.push(
       context,

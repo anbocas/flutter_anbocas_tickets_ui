@@ -25,6 +25,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
         .on(AnbocasEventManager.eventBookingSuccess, handleBookingSuccess);
 
     AnbocasTickets.instance.config(
+      anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
       apikey: dotenv.env['API_KEY'] ?? "",
       customThemeConfig: AnbocasCustomTheme(
         backgroundColor: Colors.black,

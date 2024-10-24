@@ -16,12 +16,16 @@ class AnbocasTickets {
 
   String baseUrl = 'https://api.anbocas.com';
 
+  String? anbocasRazorpayApiKey;
+
   void config({
     required String apikey,
     ApiMode apiMode = ApiMode.sandbox,
     AnbocasCustomTheme? customThemeConfig,
+    required String anbocasRazorpayApiKey,
   }) {
     final serviceManager = AnbocasServiceManager();
+    this.anbocasRazorpayApiKey = anbocasRazorpayApiKey;
 
     if (apiMode == ApiMode.sandbox) {
       baseUrl = 'https://sandbox-api.anbocas.com';
@@ -124,9 +128,9 @@ class AnbocasTickets {
               MediaQueryHolder().initialize(ctx);
             }
             return AnbocasOrderDetailScreen(
-                anbocasOrderId: anbocasOrderId,
-                referenceEventId: referenceEventId,
-                );
+              anbocasOrderId: anbocasOrderId,
+              referenceEventId: referenceEventId,
+            );
           },
         ),
       );
