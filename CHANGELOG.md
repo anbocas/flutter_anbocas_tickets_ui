@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Bug Fixes for event not fired when View Event was clicked on the Order Detail Screen
+
 ## 0.0.3
 
 * Bug Fixes

@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/add_coupon_widget.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
@@ -14,6 +18,7 @@ import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_webview_p
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class AnbocasTicketBookingWidget extends StatefulWidget {
   final String eventId;
@@ -39,8 +44,11 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   ValueNotifier<bool> calculatingSummary = ValueNotifier(false);
   ValueNotifier<bool> placingOrder = ValueNotifier(false);
   AnbocasEventResponse? ticketResponse;
+  AnbocasOrderResponse? placedOrderResponse;
+  final _razorpay = Razorpay();
+  final rzpKey = 'rzp_test_kgIdixaRAUCC8c';
 
-  void updateTheValue(OrderResponse order) {
+  void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
     itemsTotal.value = order.data?.subTotal ?? 0.00;
     totalFee.value = order.data?.totalConvenienceFee ?? 0.00;
@@ -53,6 +61,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   @override
   void initState() {
     super.initState();
+    _initRazorpay();
   }
 
   @override
@@ -61,6 +70,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     totalFee.dispose();
     totalPrice.dispose();
     discountPrice.dispose();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -77,6 +87,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       )
           .then((order) {
         if (order != null) {
+          placedOrderResponse = order;
           handleNavigationAfterOrder(order);
         } else {
           showAlertSnackBar(
@@ -91,7 +102,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     }
   }
 
-  void handleNavigationAfterOrder(OrderResponse order) {
+  void handleNavigationAfterOrder(AnbocasOrderResponse order) {
     if (order.data != null) {
       double totalPayable = order.data?.totalPayable ?? 0.00;
       if (totalPayable <= 0) {
@@ -109,24 +120,87 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         );
       } else {
         if (order.paymentUrl != null) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AnbocasWebviewPayment(
-                        webUrl: order.paymentUrl ?? "",
-                        orderDetails: order.data!,
-                        selectedTickets: eventResponse.value!,
-                        referenceEventId: widget.referenceEventId,
-                      )));
+          _initPayment(order);
+
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => AnbocasWebviewPayment(
+          //               webUrl: order.paymentUrl ?? "",
+          //               orderDetails: order.data!,
+          //               selectedTickets: eventResponse.value!,
+          //               referenceEventId: widget.referenceEventId,
+          //             )));
         } else {
-          showAlertSnackBar(
-              context, "Something went wrong, Failed to create payment.");
+          _initPayment(order);
         }
       }
     } else {
       showAlertSnackBar(
           context, "Something went wrong, Unable to generate order");
     }
+  }
+
+  void _initRazorpay() {
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void _initPayment(AnbocasOrderResponse order) {
+    var options = {
+      'key': rzpKey,
+      'amount': (order.data!.totalPayable * 100).toInt(),
+      'name': '${order.data!.company!.name}',
+      'description':
+          'Payment for Tickets: ${utf8.encode(order.data!.event!.name!)}',
+      'prefill': {
+        'contact': order.data!.phone,
+        'email': order.data!.email,
+        'name': order.data!.name,
+      },
+      "notes": {
+        "order_id": order.data!.id,
+        "order_number": order.data!.orderNumber,
+        "event_id": order.data!.eventId,
+        "payer_name": order.data!.name
+      },
+      "theme": {
+        'color': order.data!.company!.brandColor,
+      },
+      'image': order.data!.company!.logo,
+    };
+
+    _razorpay.open(options);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    // Do something when payment succeeds
+
+    await _booking?.verifyOrderPayment(response.paymentId!);
+
+    Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AnbocasBookingSuccessScreen(
+                ticketResponse: eventResponse.value!,
+                orderDetails: placedOrderResponse!.data!,
+                referenceEventId: widget.referenceEventId,
+              )),
+    );
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+
+    _booking?.cancelOrder(placedOrderResponse!.data!.id!);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet was selected
+    log(response.toString());
   }
 
   void fetchCalculatedAmount() async {

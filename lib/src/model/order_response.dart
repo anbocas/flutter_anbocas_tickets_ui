@@ -3,13 +3,13 @@ import 'package:anbocas_tickets_ui/src/model/event_guest.dart';
 import 'package:anbocas_tickets_ui/src/model/event_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/single_company.dart';
-class OrderResponse {
+class AnbocasOrderResponse {
   OrderData? data;
   String? paymentUrl;
 
-  OrderResponse({this.data, this.paymentUrl});
+  AnbocasOrderResponse({this.data, this.paymentUrl});
 
-  OrderResponse.fromJson(Map<String, dynamic> json) {
+  AnbocasOrderResponse.fromJson(Map<String, dynamic> json) {
     if (json["data"] is Map) {
       data = json["data"] == null ? null : OrderData.fromJson(json["data"]);
     }
@@ -53,6 +53,7 @@ class OrderData {
   Company? company;
   Payment? payment;
   String? createdAt;
+  
 
   OrderData.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -213,6 +214,7 @@ class OrderData {
       payment =
           json["payment"] == null ? null : Payment.fromJson(json["payment"]);
     }
+    
   }
 
   Map<String, dynamic> toJson() {

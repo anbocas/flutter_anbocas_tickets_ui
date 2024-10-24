@@ -12,6 +12,8 @@ const _placeOrderUrl = "/v1/orders/placeOrder";
 // const _orderDetailsUrl = "/v1/orders/";
 const _getCalculateAmountUrl = "/v1/orders/calculate";
 const _validateCouponUrl = "/v1/coupons/validate";
+const _verifyOrderPaymentUrl = "/v1/verifyOrderPayment";
+const _cancelOrderPaymentUrl = "/v1/order/cancel";
 
 class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   AnbocasBookingRepo({
@@ -53,13 +55,14 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     return null;
   }
 
-  Future<OrderResponse?> placeOrder(
+  Future<AnbocasOrderResponse?> placeOrder(
       {required List<SingleTicket> selectedTickets,
       String? coupon,
       required String name,
       String? phone,
       required String email,
-      bool isGuestCheckout = false}) async {
+      bool isGuestCheckout = false,
+      bool shouldGeneratePaymentLink = true}) async {
     List<Map<String, dynamic>> selectedTicket = [];
     selectedTickets.asMap().forEach((index, value) {
       var singleTicket = <String, dynamic>{};
@@ -74,14 +77,15 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       "name": name,
       "phone": phone,
       "email": email,
-      "is_guest_checkout": isGuestCheckout
+      "is_guest_checkout": isGuestCheckout,
+      "payment_link_required": shouldGeneratePaymentLink ? '1' : '0',
     };
 
     info(data.toString());
     var resp = await doPost(_placeOrderUrl, data);
     info(resp.data.toString());
     if (resp.data['data'] != null) {
-      var order = OrderResponse.fromJson(resp.data);
+      var order = AnbocasOrderResponse.fromJson(resp.data);
       return order;
     } else {
       return Future.value();
@@ -108,7 +112,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     }
   }
 
-  Future<OrderResponse?> getCalculateAmount({
+  Future<AnbocasOrderResponse?> getCalculateAmount({
     required List<SingleTicket> selectedTickets,
     String? coupon,
   }) async {
@@ -130,7 +134,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       var resp = await doPost(_getCalculateAmountUrl, data);
       info(resp.data.toString());
       if (resp.data['data'] != null) {
-        var order = OrderResponse.fromJson(resp.data);
+        var order = AnbocasOrderResponse.fromJson(resp.data);
         return order;
       } else {
         return Future.value();
@@ -154,6 +158,28 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       }
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> verifyOrderPayment(
+    String paymentId,
+  ) async {
+    try {
+      await doPost(_verifyOrderPaymentUrl, {"razorpay_payment_id": paymentId});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> cancelOrder(
+    String orderId,
+  ) async {
+    try {
+      await doPost(_cancelOrderPaymentUrl, {"order_id": orderId});
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
