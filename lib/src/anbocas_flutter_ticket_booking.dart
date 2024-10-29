@@ -49,8 +49,7 @@ class AnbocasTickets {
       if (userMetaData != null) {
         userConfig.updateConfig(userMetaData);
       }
-      Navigator.push(
-        context,
+      Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder(
           pageBuilder: (ctx, __, ___) {
             if (MediaQueryHolder().mediaQueryData == null) {
@@ -73,8 +72,7 @@ class AnbocasTickets {
     required String eventId,
   }) {
     try {
-      Navigator.push(
-        context,
+      Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder(
           pageBuilder: (ctx, __, ___) {
             if (MediaQueryHolder().mediaQueryData == null) {
@@ -96,8 +94,7 @@ class AnbocasTickets {
     required String eventId,
   }) {
     try {
-      Navigator.push(
-        context,
+      Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder(
           pageBuilder: (ctx, __, ___) {
             if (MediaQueryHolder().mediaQueryData == null) {
@@ -120,8 +117,7 @@ class AnbocasTickets {
     String? referenceEventId,
   }) {
     try {
-      Navigator.push(
-        context,
+      Navigator.of(context, rootNavigator: true).push(
         PageRouteBuilder(
           pageBuilder: (ctx, __, ___) {
             if (MediaQueryHolder().mediaQueryData == null) {
