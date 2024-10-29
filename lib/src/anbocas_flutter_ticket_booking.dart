@@ -14,6 +14,8 @@ class AnbocasTickets {
 
   factory AnbocasTickets() => instance;
 
+  String sandboxUrl = 'https://sandbox-api.anbocas.com';
+  String productionUrl = 'https://api.anbocas.com';
   String baseUrl = 'https://api.anbocas.com';
 
   String? anbocasRazorpayApiKey;

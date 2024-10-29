@@ -242,11 +242,10 @@ class TicketsScreenState extends State<TicketListingScreen> {
     );
   }
 
-  Icon _iconBack(Color color) =>
-     Icon(
-              Icons.arrow_back,
-              color: color,
-            );
+  Icon _iconBack(Color color) => Icon(
+        Icons.arrow_back,
+        color: color,
+      );
 }
 
 class TicketDialog extends StatefulWidget {
@@ -254,8 +253,7 @@ class TicketDialog extends StatefulWidget {
   final DateTime eventDateTime;
   final SingleTicketByEvent? ticket;
 
-  TicketDialog(
-      {this.ticket, required this.event, required this.eventDateTime});
+  TicketDialog({this.ticket, required this.event, required this.eventDateTime});
 
   @override
   TicketDialogState createState() => TicketDialogState();
