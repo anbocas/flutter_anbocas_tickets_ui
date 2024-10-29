@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
-import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/add_coupon_widget.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
