@@ -1,3 +1,9 @@
+## 0.0.5
+
+* Navigation Fixes
+* Added View Order Detail Screen
+* UI Fixes
+
 ## 0.0.4
 
 * Bug Fixes for event not fired when View Event was clicked on the Order Detail Screen
