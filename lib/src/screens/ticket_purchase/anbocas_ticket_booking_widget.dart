@@ -150,8 +150,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       'key': AnbocasTickets.instance.anbocasRazorpayApiKey,
       'amount': (order.data!.totalPayable * 100).toInt(),
       'name': '${order.data!.company!.name}',
-      'description':
-          'Payment for Tickets: ${utf8.encode(order.data!.event!.name!)}',
+      'description': 'Payment for Tickets',
       'prefill': {
         'contact': order.data!.phone,
         'email': order.data!.email,
