@@ -9,7 +9,7 @@ class CompanyListingScreen extends StatefulWidget {
 }
 
 class _CompanyListingScreenState extends State<CompanyListingScreen> {
-  late Future<List<CompanyModel>> _eventsFuture;
+  late Future<List<AnbocasCompanyModel>> _eventsFuture;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _CompanyListingScreenState extends State<CompanyListingScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: FutureBuilder<List<CompanyModel>>(
+        child: FutureBuilder<List<AnbocasCompanyModel>>(
           future: _eventsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -124,9 +124,9 @@ class _CompanyListingScreenState extends State<CompanyListingScreen> {
     );
   }
 
-  Future<List<CompanyModel>> fetchEvents() async {
+  Future<List<AnbocasCompanyModel>> fetchEvents() async {
     try {
-      var response = await AnbocasRequestPlugin.company
+      var response = await AnbocasTicketsApi.company
           .get(CompanyGetRequest(paginate: false));
       if (response != null) {
         return response;

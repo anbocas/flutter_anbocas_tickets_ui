@@ -23,9 +23,7 @@ class CustomButton extends StatelessWidget {
               buttonSize ?? Size(double.infinity, 50.v))),
       child: Text(
         centerText,
-        style: theme.labelStyle?.copyWith(
-          fontWeight: FontWeight.w700,
-        ),
+        style: theme.labelStyle
       ),
     );
   }

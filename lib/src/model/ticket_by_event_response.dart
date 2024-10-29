@@ -1,3 +1,5 @@
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
+
 class Status {
   int all = 0;
   int available = 0;
@@ -64,8 +66,8 @@ class SingleTicketByEvent {
   String? name;
   String? description;
   String? price;
-  int? capacity;
-  int? available;
+  late int capacity;
+  late int available;
   String? availableFrom;
   String? availableTo;
   String? status;
@@ -73,14 +75,54 @@ class SingleTicketByEvent {
   String? updatedAt;
   String? formattedPrice;
 
+  String getCapacity() {
+    if (capacity == -1) {
+      return 'Unlimited';
+    }
+    return capacity.toString();
+  }
+
+  String getCurrentAvailablity() {
+    if (capacity == -1) {
+      return 'Unlimited';
+    } else {
+      return '${getAvailable()}/${getCapacity()}';
+    }
+  }
+
+  String getAvailable() {
+    if (available == -1) {
+      return 'Unlimited';
+    }
+    return available.toString();
+  }
+
+  String getAvailableFrom() {
+    if (availableFrom == null) {
+      return 'N/A';
+    }
+    final dateTime = DateTime.parse(availableFrom!);
+
+    return DateFormatter.formatDate(dateTime);
+  }
+
+  String getAvailableTo() {
+    if (availableTo == null) {
+      return 'N/A';
+    }
+    final dateTime = DateTime.parse(availableTo!);
+
+    return DateFormatter.formatDate(dateTime);
+  }
+
   SingleTicketByEvent(
       {this.id,
       this.eventId,
       this.name,
       this.description,
       this.price,
-      this.capacity,
-      this.available,
+      this.capacity = -1,
+      this.available = -1,
       this.availableFrom,
       this.availableTo,
       this.status,

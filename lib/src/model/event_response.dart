@@ -8,6 +8,7 @@ class EventResponse {
   String? description;
   String? website;
   String? location;
+  String? venue;
   double? latitude;
   double? longitude;
   String? locationType;
@@ -79,6 +80,9 @@ class EventResponse {
     }
     if (json["location"] is String) {
       location = json["location"];
+    }
+    if (json["venue"] is String) {
+      venue = json["venue"];
     }
     if (json["latitude"] is double) {
       latitude = json["latitude"];

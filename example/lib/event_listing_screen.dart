@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class EventListingScreen extends StatefulWidget {
-  final CompanyModel company;
+  final AnbocasCompanyModel company;
   const EventListingScreen({
     Key? key,
     required this.company,
@@ -14,7 +14,7 @@ class EventListingScreen extends StatefulWidget {
 }
 
 class _EventListingScreenState extends State<EventListingScreen> {
-  late Future<List<EventModel>> _eventsFuture;
+  late Future<List<AnbocasEventModel>> _eventsFuture;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _EventListingScreenState extends State<EventListingScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: FutureBuilder<List<EventModel>>(
+        child: FutureBuilder<List<AnbocasEventModel>>(
           future: _eventsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -137,9 +137,9 @@ class _EventListingScreenState extends State<EventListingScreen> {
     );
   }
 
-  Future<List<EventModel>> fetchEvents() async {
+  Future<List<AnbocasEventModel>> fetchEvents() async {
     try {
-      var response = await AnbocasRequestPlugin.event
+      var response = await AnbocasTicketsApi.event
           .get(companyId: widget.company.id ?? "", paginate: false);
       if (response != null) {
         return response;

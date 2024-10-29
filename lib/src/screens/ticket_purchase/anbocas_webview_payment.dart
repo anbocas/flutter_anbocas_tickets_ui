@@ -1,6 +1,8 @@
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
+import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/helper/alert_mixin.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
@@ -8,14 +10,16 @@ import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 
 class AnbocasWebviewPayment extends StatefulWidget {
   final OrderData orderDetails;
-  final TicketResponse selectedTickets;
+  final AnbocasEventResponse selectedTickets;
   final String webUrl;
-  const AnbocasWebviewPayment({
-    Key? key,
-    required this.orderDetails,
-    required this.selectedTickets,
-    required this.webUrl,
-  }) : super(key: key);
+  final String? referenceEventId;
+  const AnbocasWebviewPayment(
+      {Key? key,
+      required this.orderDetails,
+      required this.selectedTickets,
+      required this.webUrl,
+      this.referenceEventId})
+      : super(key: key);
 
   @override
   State<AnbocasWebviewPayment> createState() => _AnbocasWebviewPaymentState();
@@ -34,7 +38,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
     // #docregion webview_controller
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(theme.backgroundColor ?? Colors.black)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -49,15 +53,17 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
           onUrlChange: (UrlChange url) {
             if (url.url!.contains("/order")) {
               if (mounted) {
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pushReplacement(
+                Navigator.pop(context); // ticket booking
+                Navigator.pop(context); // payment webview
+                Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AnbocasBookingSuccessScreen(
-                            ticketResponse: widget.selectedTickets,
-                            orderDetails: widget.orderDetails,
-                          )),
+                    builder: (context) => AnbocasBookingSuccessScreen(
+                      ticketResponse: widget.selectedTickets,
+                      orderDetails: widget.orderDetails,
+                      referenceEventId: widget.referenceEventId,
+                    ),
+                  ),
                 );
               }
             }
@@ -79,19 +85,23 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
       ..loadRequest(Uri.parse(widget.webUrl));
   }
 
+  void _handleCancel() async {
+    await showAlertDialog(context, "Cancel Payment",
+        "Are you sure want to cancel the payment process?",
+        okButtonText: "Yes",
+        topIcon: const Icon(
+          Icons.cancel,
+          color: Colors.red,
+        ), okPressed: () {
+      Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await showAlertDialog(context, "Payment Cancel",
-            "Are you sure want to cancelled the payment process?",
-            okButtonText: "Yes",
-            topIcon: const Icon(
-              Icons.cancel,
-              color: Colors.red,
-            ), okPressed: () {
-          Navigator.pop(context);
-        });
+        _handleCancel();
         return false;
       },
       child: Scaffold(
@@ -104,17 +114,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
             ),
             centerTitle: true,
             leading: IconButton(
-              onPressed: () {
-                showAlertDialog(context, "Payment Cancel",
-                    "Are you sure want to cancelled the payment process?",
-                    okButtonText: "Yes",
-                    topIcon: const Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    ), okPressed: () {
-                  Navigator.pop(context);
-                });
-              },
+              onPressed: _handleCancel,
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
@@ -125,10 +125,11 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                   valueListenable: urlLoading,
                   builder: (context, loader, child) {
                     return loader == false
-                        ? const SizedBox()
-                        : const Center(
+                        ? const SizedBox.shrink()
+                        : Center(
                             child: CircularProgressIndicator(
-                              color: Colors.black,
+                              strokeWidth: 4.adaptSize,
+                              color: theme.primaryColor,
                               backgroundColor: Colors.white,
                             ),
                           );

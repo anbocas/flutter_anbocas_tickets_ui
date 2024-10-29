@@ -14,9 +14,9 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  anbocas_tickets_api: ^0.0.1
   flutter:
     sdk: flutter
+  anbocas_tickets_api: ^0.0.2
   intl:
   flutter_widget_from_html: ^0.15.1
   url_launcher: ^6.1.6

@@ -18,8 +18,8 @@ class IconWithCircleBackground extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        width: 20.h,
-        height: 20.v,
+        width: 25.h,
+        height: 25.v,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: color,

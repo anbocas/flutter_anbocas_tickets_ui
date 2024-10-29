@@ -2,7 +2,7 @@ import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/coupon_model.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
-import 'package:anbocas_tickets_ui/src/model/ticket_response.dart';
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_service.dart';
 import 'package:dio/dio.dart';
 
@@ -12,6 +12,8 @@ const _placeOrderUrl = "/v1/orders/placeOrder";
 // const _orderDetailsUrl = "/v1/orders/";
 const _getCalculateAmountUrl = "/v1/orders/calculate";
 const _validateCouponUrl = "/v1/coupons/validate";
+const _verifyOrderPaymentUrl = "/v1/verifyOrderPayment";
+const _cancelOrderPaymentUrl = "/v1/order/cancel";
 
 class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   AnbocasBookingRepo({
@@ -20,7 +22,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     Map<String, String>? apiHeaders,
   }) : super(dio: dio, baseUrl: baseUrl, apiHeaders: apiHeaders);
 
-  Future<TicketResponse?> getBookingTicket({
+  Future<AnbocasEventResponse?> getEventById({
     required String eventId,
   }) async {
     var resp = await doGet("$_ticketsUrl/$eventId",
@@ -29,8 +31,8 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     info("$eventId -- ${resp.data}");
     if (resp.data['data'] != null) {
       DateTime now = DateTime.now();
-      var ticketResp = TicketResponse.fromJson(resp.data['data']);
-      List<SingleTickets> validTickets = [];
+      var ticketResp = AnbocasEventResponse.fromJson(resp.data['data']);
+      List<SingleTicket> validTickets = [];
       validTickets.clear();
       for (var ticket in ticketResp.tickets) {
         DateTime? availableFrom = ticket.availableFrom != null
@@ -53,13 +55,14 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     return null;
   }
 
-  Future<OrderResponse?> placeOrder(
-      {required List<SingleTickets> selectedTickets,
+  Future<AnbocasOrderResponse?> placeOrder(
+      {required List<SingleTicket> selectedTickets,
       String? coupon,
       required String name,
       String? phone,
       required String email,
-      bool isGuestCheckout = false}) async {
+      bool isGuestCheckout = false,
+      bool shouldGeneratePaymentLink = true}) async {
     List<Map<String, dynamic>> selectedTicket = [];
     selectedTickets.asMap().forEach((index, value) {
       var singleTicket = <String, dynamic>{};
@@ -74,14 +77,15 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       "name": name,
       "phone": phone,
       "email": email,
-      "is_guest_checkout": isGuestCheckout
+      "is_guest_checkout": isGuestCheckout,
+      "payment_link_required": shouldGeneratePaymentLink ? '1' : '0',
     };
 
     info(data.toString());
     var resp = await doPost(_placeOrderUrl, data);
     info(resp.data.toString());
     if (resp.data['data'] != null) {
-      var order = OrderResponse.fromJson(resp.data);
+      var order = AnbocasOrderResponse.fromJson(resp.data);
       return order;
     } else {
       return Future.value();
@@ -108,8 +112,8 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     }
   }
 
-  Future<OrderResponse?> getCalculateAmount({
-    required List<SingleTickets> selectedTickets,
+  Future<AnbocasOrderResponse?> getCalculateAmount({
+    required List<SingleTicket> selectedTickets,
     String? coupon,
   }) async {
     List<Map<String, dynamic>> selectedTicket = [];
@@ -130,7 +134,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       var resp = await doPost(_getCalculateAmountUrl, data);
       info(resp.data.toString());
       if (resp.data['data'] != null) {
-        var order = OrderResponse.fromJson(resp.data);
+        var order = AnbocasOrderResponse.fromJson(resp.data);
         return order;
       } else {
         return Future.value();
@@ -154,6 +158,28 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       }
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> verifyOrderPayment(
+    String paymentId,
+  ) async {
+    try {
+      await doPost(_verifyOrderPaymentUrl, {"razorpay_payment_id": paymentId});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> cancelOrder(
+    String orderId,
+  ) async {
+    try {
+      await doPost(_cancelOrderPaymentUrl, {"order_id": orderId});
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

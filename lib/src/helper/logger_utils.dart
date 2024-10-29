@@ -21,7 +21,7 @@ mixin LoggerUtils {
 
   void stacktrace(Exception exception) {
     if (kDebugMode) {
-      print('\x1B[33m ====[ Stacktrace ]=====>>  ${exception} \x1B[0m');
+      print('\x1B[33m ====[ Stacktrace ]=====>>  $exception \x1B[0m');
     }
   }
 }

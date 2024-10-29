@@ -11,6 +11,7 @@ class Company {
   dynamic phone;
   String? taxId;
   String? status;
+  String brandColor='#000000';
 
   Currency? currency;
 
@@ -61,6 +62,9 @@ class Company {
     if (json["currency"] is Map) {
       currency =
           json["currency"] == null ? null : Currency.fromJson(json["currency"]);
+    }
+     if (json["brand_color"] is String) {
+      brandColor = json["brand_color"];
     }
   }
 
