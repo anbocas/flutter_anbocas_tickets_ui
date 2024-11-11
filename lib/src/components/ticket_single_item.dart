@@ -2,6 +2,7 @@ import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/dottted_line.dart';
 import 'package:anbocas_tickets_ui/src/components/icon_with_circle_background.dart';
+import 'package:anbocas_tickets_ui/src/components/read_more_text.dart';
 import 'package:anbocas_tickets_ui/src/components/ticket_card_clipper.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
@@ -58,7 +59,6 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
-      height: 160.v,
       width: double.infinity,
       decoration: BoxDecoration(
           color: widget.isSelected == true
@@ -81,44 +81,41 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(
-                flex: 2,
-                child: InkWell(
-                  onTap: (widget.showBuyButton) ? null : widget.onItemSelect,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(widget.element.name ?? "",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.ticketCardConfig.nameStyle),
-                            ),
-                            SizedBox(
-                              width: 20.h,
-                            ),
-                            Text(widget.element.formattedPrice ?? "",
-                                style: theme.ticketCardConfig.priceStyle),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10.v,
-                        ),
-                        Text(
-                          widget.element.description ?? "",
-                          style: theme.ticketCardConfig.labelStyle
-                              .copyWith(overflow: TextOverflow.ellipsis),
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
+              InkWell(
+                onTap: (widget.showBuyButton) ? null : widget.onItemSelect,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(widget.element.name ?? "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.ticketCardConfig.nameStyle),
+                          ),
+                          SizedBox(
+                            width: 20.h,
+                          ),
+                          Text(widget.element.formattedPrice ?? "",
+                              style: theme.ticketCardConfig.priceStyle),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.v,
+                      ),
+                      ReadMoreText(
+                        text: widget.element.description ?? "",
+                        textStyle: theme.ticketCardConfig.labelStyle
+                            .copyWith(overflow: TextOverflow.ellipsis),
+                        maxLines: 3,
+                      ),
+                    ],
                   ),
                 ),
               ),
