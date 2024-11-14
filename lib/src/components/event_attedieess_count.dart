@@ -8,12 +8,12 @@ class EventAttendeesCount extends StatelessWidget {
     super.key,
     required this.totalGuests,
     required this.totalCheckIn,
-    required this.totalNotCheckIn,
+    required this.totalSales,
   });
 
   final String totalGuests;
   final String totalCheckIn;
-  final String totalNotCheckIn;
+  final String totalSales;
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +91,13 @@ class EventAttendeesCount extends StatelessWidget {
                 children: [
                   FittedBox(
                     child: Text(
-                      'PENDING',
+                      'SALES',
                       textAlign: TextAlign.center,
                       style: theme.labelStyle,
                     ),
                   ),
                   Text(
-                    totalNotCheckIn,
+                    '₹$totalSales',
                     style: theme.subHeadingStyle,
                   ),
                 ],

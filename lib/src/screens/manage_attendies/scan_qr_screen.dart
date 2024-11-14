@@ -71,6 +71,10 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                 _handleScanResult(barcode, (message, statusCode, ticketName) {
                   Navigator.pop(context);
                   if (statusCode == 200) {
+                    // fire success event
+                    AnbocasEventManager.instance
+                        .emit(AnbocasEventManager.guestScanSuccess, null);
+                    // show success screen
                     Navigator.push(
                       context,
                       PageRouteBuilder(
