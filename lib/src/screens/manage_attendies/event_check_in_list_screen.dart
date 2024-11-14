@@ -127,7 +127,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                             response.status!.all.toString(),
                                         totalCheckIn: response.status!.checkedIn
                                             .toString(),
-                                        totalSales: totalSales.toString()),
+                                        totalSales: totalSales.toStringAsFixed(2)),
                                   );
                                 }),
                               response.data.isEmpty
