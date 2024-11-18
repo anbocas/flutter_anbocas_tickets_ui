@@ -82,8 +82,11 @@ class _AnbocasBookingSuccessScreenState
     if (orderDetails == null) {
       return "PENDING";
     } else {
-      updateOrderResponse = orderDetails;
-      return orderDetails.status ?? "PENDING";
+      if (orderDetails.data != null) {
+        updateOrderResponse = orderDetails.data;
+        return orderDetails.data?.status ?? "PENDING";
+      }
+      return "PENDING";
     }
   }
 

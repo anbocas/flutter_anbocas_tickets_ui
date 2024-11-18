@@ -39,17 +39,18 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
   }
 
   Future<void> _fetchorder() async {
-    try {
-      loading.value = true;
+    loading.value = true;
+    final response =
+        await _booking?.getOrderDetails(orderId: widget.anbocasOrderId);
 
-      final orderDetails =
-          await _booking?.getOrderDetails(orderId: widget.anbocasOrderId);
-
-      orderResponse.value = orderDetails;
-    } catch (e) {
-      error(e.toString());
-    } finally {
-      loading.value = false;
+    loading.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        orderResponse.value = response.data;
+      }
+      if (response.error != null) {
+        showAlertSnackBar(context, response.error ?? "Something went wrong");
+      }
     }
   }
 

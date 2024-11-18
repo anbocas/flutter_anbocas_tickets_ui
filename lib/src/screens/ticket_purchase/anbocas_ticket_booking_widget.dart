@@ -6,6 +6,7 @@ import 'package:anbocas_tickets_ui/src/helper/debouncer.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
+import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
@@ -74,31 +75,28 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   }
 
   void _handleBuyPressed() async {
-    try {
-      placingOrder.value = true;
-      await _booking
-          ?.placeOrder(
-        coupon: appliedCoupon,
-        selectedTickets: selectedTickets,
-        name: userConfig.name ?? '',
-        phone: userConfig.phone,
-        email: userConfig.email ?? '',
-        shouldGeneratePaymentLink: false,
-      )
-          .then((order) {
-        if (order != null) {
-          placedOrderResponse = order;
-          handleNavigationAfterOrder(order);
-        } else {
-          showAlertSnackBar(
-              context, "Something went wrong, Unable to generate order");
-        }
-      }).whenComplete(() => placingOrder.value = false);
-    } catch (e) {
-      // log(e.toString());
-      if (!mounted) return;
-      showAlertSnackBar(context, e.toString());
+    placingOrder.value = true;
+    ApiResponse<AnbocasOrderResponse>? response = await _booking?.placeOrder(
+      coupon: appliedCoupon,
+      selectedTickets: selectedTickets,
+      name: userConfig.name ?? '',
+      phone: userConfig.phone,
+      email: userConfig.email ?? '',
+      shouldGeneratePaymentLink: false,
+    );
+
+    if (response != null) {
       placingOrder.value = false;
+      if (response.data != null) {
+        placedOrderResponse = response.data;
+        handleNavigationAfterOrder(response.data!);
+      }
+      if (response.error != null) {
+        if (!mounted) return;
+        showAlertSnackBar(context,
+            response.error ?? "Something went wrong, Unable to generate order");
+        placingOrder.value = false;
+      }
     }
   }
 
@@ -208,20 +206,18 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     selectedTickets.asMap().forEach((key, value) {
       info(value.selectedQuantity.toString());
     });
-    try {
-      calculatingSummary.value = true;
-      await _booking
-          ?.getCalculateAmount(
-              selectedTickets: selectedTickets, coupon: appliedCoupon)
-          .then((value) {
-        if (value != null) {
-          updateTheValue(value);
-        } else {
-          showAlertSnackBar(context, "Unable to update price");
-        }
-      }).whenComplete(() => calculatingSummary.value = false);
-    } catch (e) {
-      calculatingSummary.value = false;
+    calculatingSummary.value = true;
+    final ApiResponse<AnbocasOrderResponse>? response =
+        await _booking?.getCalculateAmount(
+            selectedTickets: selectedTickets, coupon: appliedCoupon);
+    calculatingSummary.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        updateTheValue(response.data!);
+      }
+      if (response.error != null) {
+        showAlertSnackBar(context, response.error.toString());
+      }
     }
   }
 
@@ -577,7 +573,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 }
 
 abstract class AnbocasTicketBookingState
-    extends State<AnbocasTicketBookingWidget> {
+    extends State<AnbocasTicketBookingWidget> with SnackbarMixin {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   final AnbocasBookingRepo? _booking = AnbocasServiceManager().bookingRepo;
 
@@ -591,21 +587,19 @@ abstract class AnbocasTicketBookingState
   List<SingleTicket> selectedTickets = [];
 
   Future<void> _fetchEvent() async {
-    try {
-      isLoading.value = true;
-      await _booking
-          ?.getEventById(
-        eventId: widget.eventId,
-      )
-          .then((value) {
-        eventResponse.value = value;
-      });
-      isLoading.value = false;
-    } catch (e) {
-      // if (e is DioException) {}
-      isLoading.value = false;
-      if (!mounted) return;
-      Navigator.pop(context);
+    isLoading.value = true;
+    ApiResponse<AnbocasEventResponse>? response = await _booking?.getEventById(
+      eventId: widget.eventId,
+    );
+    isLoading.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        eventResponse.value = response.data!;
+      }
+      if (response.error != null) {
+        if (!mounted) return;
+        showAlertSnackBar(context, response.error ?? "Something went wrong");
+      }
     }
   }
 

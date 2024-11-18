@@ -4,6 +4,7 @@ import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
+import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/coupon_model.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_repo.dart';
@@ -34,27 +35,25 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
 
   void validateCoupon(BuildContext context) async {
     isLoading.value = true;
-    try {
-      await _booking
-          ?.validateCoupon(code: voucherCtr.text, eventId: widget.eventId)
-          .then((value) {
-        if (value != null) {
-          if (value.couponType() == CouponTypeEnum.FIXED) {
-            widget.validatedCoupon.call(voucherCtr.text, value.discount);
-          } else if (value.couponType() == CouponTypeEnum.PERCENTAGE) {
-            widget.validatedCoupon.call(
-                voucherCtr.text, (widget.totalAmount * (value.discount / 100)));
-          } else {
-            errorText.value = "Invalid coupon type";
-            _startErrorTimer();
-          }
+    ApiResponse<CouponModel>? response = await _booking?.validateCoupon(
+        code: voucherCtr.text, eventId: widget.eventId);
+    isLoading.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        if (response.data?.couponType() == CouponTypeEnum.FIXED) {
+          widget.validatedCoupon.call(voucherCtr.text, response.data!.discount);
+        } else if (response.data?.couponType() == CouponTypeEnum.PERCENTAGE) {
+          widget.validatedCoupon.call(voucherCtr.text,
+              (widget.totalAmount * (response.data!.discount / 100)));
         } else {
-          errorText.value = "Code is invalid";
+          errorText.value = "Invalid coupon type";
           _startErrorTimer();
         }
-      }).whenComplete(() => isLoading.value = false);
-    } catch (e) {
-      isLoading.value = false;
+      }
+      if (response.error != null) {
+        errorText.value = response.error;
+        _startErrorTimer();
+      }
     }
   }
 
