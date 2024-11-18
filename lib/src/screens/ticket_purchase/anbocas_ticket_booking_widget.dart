@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/components/add_coupon_widget.dart';
+import 'package:anbocas_tickets_ui/src/helper/debouncer.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
@@ -44,6 +45,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   AnbocasEventResponse? ticketResponse;
   AnbocasOrderResponse? placedOrderResponse;
   final _razorpay = Razorpay();
+  final _debounces = Debounced(milliseconds: 500);
 
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
@@ -460,23 +462,25 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           isSelected: selectedTickets.contains(element),
           element: element,
           onQuantityChanged: (newQuantity, ticketId) {
-            setState(() {
-              final index = selectedTickets
-                  .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
+            _debounces.run(() {
+              setState(() {
+                final index = selectedTickets
+                    .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
 
-              if (index == -1) {
-                final selectedTicket =
-                    ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
-                selectedTickets.add(selectedTicket..selectedQuantity = 1);
-              } else {
-                if (newQuantity == 0) {
-                  selectedTickets.removeAt(index);
+                if (index == -1) {
+                  final selectedTicket =
+                      ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
+                  selectedTickets.add(selectedTicket..selectedQuantity = 1);
                 } else {
-                  selectedTickets[index].selectedQuantity = newQuantity;
+                  if (newQuantity == 0) {
+                    selectedTickets.removeAt(index);
+                  } else {
+                    selectedTickets[index].selectedQuantity = newQuantity;
+                  }
                 }
-              }
+              });
+              fetchCalculatedAmount();
             });
-            fetchCalculatedAmount();
           },
         );
       },

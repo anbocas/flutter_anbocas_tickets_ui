@@ -170,7 +170,8 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                               ),
                               IconWithCircleBackground(
                                   onPressed: () {
-                                    if (quantity.value <= 9) {
+                                    if (quantity.value <
+                                        widget.element.maxQtyPerOrder) {
                                       quantity.value++;
                                       widget.onQuantityChanged(
                                           quantity.value, widget.element.id!);
