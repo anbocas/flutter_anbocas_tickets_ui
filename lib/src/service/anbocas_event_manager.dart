@@ -9,6 +9,7 @@ class AnbocasEventManager {
   static const String eventBookingSuccess = 'booking.success';
   static const String eventBookingFail = 'booking.fail';
   static const String viewEvent = 'view.event';
+  static const String guestScanSuccess = 'guest.scanned.success';
 
   void on(String event, Function(dynamic) handler) {
     _eventEmitter.on(event, null, (ev, context) {

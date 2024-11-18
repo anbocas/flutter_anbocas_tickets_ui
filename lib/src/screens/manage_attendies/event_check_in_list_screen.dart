@@ -1,4 +1,5 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/event_attedieess_count.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -27,6 +28,10 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
   void initState() {
     super.initState();
     _fetchCheckInAttendees();
+
+    AnbocasEventManager.instance.on(AnbocasEventManager.guestScanSuccess, (_) {
+      _fetchCheckInAttendees();
+    });
   }
 
   Future<void> _fetchCheckInAttendees() async {
@@ -43,7 +48,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
   }
 
   void launchScanner() async {
-    final response = await Navigator.push(
+    await Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (ctx, __, ___) => ScanQrScreen(
@@ -52,10 +57,6 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
         ),
       ),
     );
-
-    if (response != null) {
-      _fetchCheckInAttendees();
-    }
   }
 
   @override
@@ -112,18 +113,23 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                         : Column(
                             children: [
                               if (response.status != null)
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      22.h, 22.h, 30.h, 15.v),
-                                  child: EventAttendeesCount(
-                                      totalGuests:
-                                          response.status!.all.toString(),
-                                      totalCheckIn:
-                                          response.status!.checkedIn.toString(),
-                                      totalNotCheckIn: response
-                                          .status!.notCheckedIn
-                                          .toString()),
-                                ),
+                                Builder(builder: (context) {
+                                  final totalSales = response.data.fold(
+                                      0.0,
+                                      (double sum, e) =>
+                                          sum + e.orderTicket!.total);
+
+                                  return Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        22.h, 22.h, 30.h, 15.v),
+                                    child: EventAttendeesCount(
+                                        totalGuests:
+                                            response.status!.all.toString(),
+                                        totalCheckIn: response.status!.checkedIn
+                                            .toString(),
+                                        totalSales: totalSales.toStringAsFixed(2)),
+                                  );
+                                }),
                               response.data.isEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.only(top: 20.0),
@@ -145,12 +151,35 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                   response.data[index];
                                               return ListTile(
                                                 contentPadding: EdgeInsets.zero,
-                                                trailing: Icon(
-                                                  Icons.check_circle,
-                                                  color:
-                                                      guest.checkInTime != null
-                                                          ? theme.primaryColor
-                                                          : Colors.grey,
+                                                trailing: Column(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.check_circle,
+                                                      color:
+                                                          guest.checkInTime !=
+                                                                  null
+                                                              ? theme
+                                                                  .primaryColor
+                                                              : Colors.grey,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    if (guest.checkInTime !=
+                                                        null)
+                                                      Text(
+                                                        DateFormat()
+                                                            .add_Hm()
+                                                            .format(DateTime
+                                                                .parse(guest
+                                                                    .checkInTime!)),
+                                                        style: theme
+                                                            .smallLabelStyle
+                                                            ?.copyWith(
+                                                                color: theme
+                                                                    .primaryColor),
+                                                      ),
+                                                  ],
                                                 ),
                                                 leading: Text(
                                                   '${index + 1}.',
@@ -173,25 +202,11 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    // Text(
-                                                    //   guest.orderTicket?.,
-                                                    //   style:
-                                                    //       theme.smallLabelStyle,
-                                                    // ),
-                                                    if (guest.checkInTime !=
-                                                        null)
-                                                      Text(
-                                                        DateFormat()
-                                                            .add_Hm()
-                                                            .format(DateTime
-                                                                .parse(guest
-                                                                    .checkInTime!)),
-                                                        style: theme
-                                                            .smallLabelStyle
-                                                            ?.copyWith(
-                                                                color: theme
-                                                                    .primaryColor),
-                                                      ),
+                                                    Text(
+                                                      '${guest.orderTicket?.ticket?.name} | ${guest.orderTicket?.ticket?.formattedPrice}',
+                                                      style:
+                                                          theme.smallLabelStyle,
+                                                    ),
                                                   ],
                                                 ),
                                               );

@@ -5,10 +5,10 @@ packages:
     dependency: "direct main"
     description:
       name: anbocas_tickets_api
-      sha256: "8398ab86dc10fcbd9e5f086c6c95b8574bc4a84ed19048d634feb81ae209b11d"
+      sha256: "6783c0e8df04a5a55563f4f461d4eb7339b9b7a3e5524acce5aac886f8107eda"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "0.0.4"
   anbocas_tickets_ui:
     dependency: "direct main"
     description:
