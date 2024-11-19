@@ -81,8 +81,8 @@ class AnbocasEventResponse {
     if (json["slug"] is String) {
       slug = json["slug"];
     }
-    if (json["imageUrl"] is String) {
-      imageUrl = json["imageUrl"];
+    if (json["image_url"] is String) {
+      imageUrl = json["image_url"];
     }
     if (json["description"] is String) {
       description = json["description"];
@@ -152,7 +152,7 @@ class AnbocasEventResponse {
     _data["company_id"] = companyId;
     _data["name"] = name;
     _data["slug"] = slug;
-    _data["imageUrl"] = imageUrl;
+    _data["image_url"] = imageUrl;
     _data["description"] = description;
     _data["website"] = website;
     _data["venue"] = venue;
