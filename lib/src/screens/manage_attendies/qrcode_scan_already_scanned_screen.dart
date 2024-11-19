@@ -9,12 +9,16 @@ class QrCodeAlreadyScannedScreen extends StatelessWidget {
       required this.barcode,
       required this.status,
       required this.eventId,
-      required this.ticketName});
+      required this.ticketName,
+      required this.name,
+      required this.price});
 
   final String barcode;
   final String ticketName;
   final String status;
   final String eventId;
+  final String name;
+  final String price;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +44,20 @@ class QrCodeAlreadyScannedScreen extends StatelessWidget {
                 height: 25,
               ),
               Text(
-                ticketName,
+                name,
                 textAlign: TextAlign.center,
                 style: theme.headingStyle?.copyWith(color: Colors.white),
               ),
               const SizedBox(
-                height: 25,
+                height: 5,
+              ),
+              Text("Ticket Name - $ticketName", style: theme.labelStyle),
+              const SizedBox(
+                height: 5,
+              ),
+              Text("Ticket Price - $price", style: theme.labelStyle),
+              const SizedBox(
+                height: 20,
               ),
               Text(
                 'Status',

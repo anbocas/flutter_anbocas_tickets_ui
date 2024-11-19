@@ -46,7 +46,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   AnbocasEventResponse? ticketResponse;
   AnbocasOrderResponse? placedOrderResponse;
   final _razorpay = Razorpay();
-  final Debounced<int> _debounces = Debounced(milliseconds: 800);
+  final Debounced<int> _debounces = Debounced(milliseconds: 400);
 
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
