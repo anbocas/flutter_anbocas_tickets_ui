@@ -1,20 +1,21 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 
-class Debounced {
+class Debounced<T> {
   Debounced({required this.milliseconds});
   final int milliseconds;
   Timer? _timer;
-  VoidCallback? _lastAction;
-  void run(VoidCallback action) {
-    _lastAction = action;
+  T? _lastValue;
+
+  void run(T value, Function(T) action) {
+    _lastValue = value;
     if (_timer?.isActive ?? false) {
       _timer?.cancel();
     }
 
     _timer = Timer(Duration(milliseconds: milliseconds), () {
-      _lastAction?.call();
-      _lastAction = null;
+      if (_lastValue != null) {
+        action(_lastValue as T);
+      }
     });
   }
 }

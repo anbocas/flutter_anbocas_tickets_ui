@@ -46,7 +46,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   AnbocasEventResponse? ticketResponse;
   AnbocasOrderResponse? placedOrderResponse;
   final _razorpay = Razorpay();
-  final _debounces = Debounced(milliseconds: 500);
+  final Debounced<int> _debounces = Debounced(milliseconds: 800);
 
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
@@ -458,7 +458,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           isSelected: selectedTickets.contains(element),
           element: element,
           onQuantityChanged: (newQuantity, ticketId) {
-            _debounces.run(() {
+            _debounces.run(newQuantity, (value) {
               setState(() {
                 final index = selectedTickets
                     .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
@@ -468,10 +468,10 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                       ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
                   selectedTickets.add(selectedTicket..selectedQuantity = 1);
                 } else {
-                  if (newQuantity == 0) {
+                  if (value == 0) {
                     selectedTickets.removeAt(index);
                   } else {
-                    selectedTickets[index].selectedQuantity = newQuantity;
+                    selectedTickets[index].selectedQuantity = value;
                   }
                 }
               });

@@ -134,7 +134,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
               Padding(
                   padding:
                       EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                  child: (widget.element.available < 0)
+                  child: (widget.element.available == 0)
                       ? Text("Sold Out!",
                           style: theme.ticketCardConfig.labelStyle
                               .copyWith(color: theme.errorColor))
