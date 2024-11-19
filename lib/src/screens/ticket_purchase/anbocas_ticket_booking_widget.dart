@@ -93,11 +93,23 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       }
       if (response.error != null) {
         if (!mounted) return;
+        refreshTheContent();
         showAlertSnackBar(context,
             response.error ?? "Something went wrong, Unable to generate order");
         placingOrder.value = false;
       }
     }
+  }
+
+  // --- refresh the content incase of place Order Error
+  void refreshTheContent() async {
+    selectedTickets.clear();
+    eventResponse.value = null;
+    itemsTotal.value = 0.00;
+    totalPrice.value = 0.00;
+    totalFee.value = 0.00;
+    discountPrice.value = 0.00;
+    await _fetchEvent();
   }
 
   void handleNavigationAfterOrder(AnbocasOrderResponse order) {
