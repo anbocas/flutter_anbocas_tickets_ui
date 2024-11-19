@@ -470,25 +470,31 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           isSelected: selectedTickets.contains(element),
           element: element,
           onQuantityChanged: (newQuantity, ticketId) {
-            _debounces.run(newQuantity, (value) {
-              setState(() {
-                final index = selectedTickets
-                    .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
+            final index = selectedTickets
+                .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
 
-                if (index == -1) {
-                  final selectedTicket =
-                      ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
-                  selectedTickets.add(selectedTicket..selectedQuantity = 1);
-                } else {
+            if (index == -1 && newQuantity > 0) {
+              setState(() {
+                final selectedTicket =
+                    ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
+                selectedTickets
+                    .add(selectedTicket..selectedQuantity = newQuantity);
+              });
+              fetchCalculatedAmount();
+            } else {
+              _debounces.run(newQuantity, (value) {
+                setState(() {
+                  if (index == -1) return;
+
                   if (value == 0) {
                     selectedTickets.removeAt(index);
                   } else {
                     selectedTickets[index].selectedQuantity = value;
                   }
-                }
+                });
+                fetchCalculatedAmount();
               });
-              fetchCalculatedAmount();
-            });
+            }
           },
         );
       },
