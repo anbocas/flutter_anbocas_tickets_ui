@@ -108,7 +108,7 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                       ),
                       if (widget.element.available > 0 &&
                           widget.element.available < 20)
-                        Text("only ${widget.element.available} left",
+                        Text("Only ${widget.element.available} left",
                             style: theme.ticketCardConfig.labelStyle
                                 .copyWith(color: theme.errorColor)),
                       SizedBox(
@@ -134,78 +134,84 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
               Padding(
                   padding:
                       EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                  child: (widget.element.available == 0)
-                      ? Text("Sold Out!",
-                          style: theme.ticketCardConfig.labelStyle
-                              .copyWith(color: theme.errorColor))
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Quantity",
-                              style: theme.ticketCardConfig.labelStyle,
-                            ),
-                            SizedBox(
-                              width: 10.h,
-                            ),
-                            Row(
-                              children: [
-                                IconWithCircleBackground(
-                                    icon: Icons.remove,
-                                    onPressed: () {
-                                      if (quantity.value > 0) {
-                                        quantity.value--;
-                                        widget.onQuantityChanged(
-                                            quantity.value, widget.element.id!);
-                                      }
-                                    },
-                                    color: theme.ticketCardConfig
-                                        .qtyReduceBackgroundColor),
-                                SizedBox(
-                                  width: 10.h,
-                                ),
-                                ValueListenableBuilder<int>(
-                                    valueListenable: quantity,
-                                    builder: (context, quantity, child) {
-                                      return Text(
-                                        quantity.toString(),
-                                        style: theme.labelStyle?.copyWith(
-                                          color: theme.primaryTextColor,
-                                        ),
-                                      );
-                                    }),
-                                SizedBox(
-                                  width: 10.h,
-                                ),
-                                IconWithCircleBackground(
-                                    onPressed: () {
-                                      if (widget.element.available == -1) {
-                                        // Unlimited quantity allowed
-                                        quantity.value++;
-                                        widget.onQuantityChanged(
-                                            quantity.value, widget.element.id!);
-                                      } else if (widget.element.available > 0) {
-                                        // Limited by available stock
-                                        if (quantity.value <
-                                            widget.element.available) {
-                                          quantity.value++;
-                                          widget.onQuantityChanged(
-                                              quantity.value,
-                                              widget.element.id!);
-                                        }
-                                      }
-                                    },
-                                    icon: Icons.add,
-                                    color: theme.ticketCardConfig
-                                        .qtyAddBackgroundColor),
-                              ],
-                            )
-                          ],
-                        )),
+                  child: _ticketCardFooter(widget.element)),
             ]),
           ),
         ),
       ),
     );
+  }
+
+  Widget _ticketCardFooter(SingleTicket ticket) {
+    if (ticket.available == 0 || ticket.status == "OUT_OF_STOCK") {
+      return Text("Sold Out!",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
+    } else if (DateTime.parse(ticket.availableTo!).isBefore(DateTime.now())) {
+      return Text("Expired",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Quantity",
+            style: theme.ticketCardConfig.labelStyle,
+          ),
+          SizedBox(
+            width: 10.h,
+          ),
+          Row(
+            children: [
+              IconWithCircleBackground(
+                  icon: Icons.remove,
+                  onPressed: () {
+                    if (quantity.value > 0) {
+                      quantity.value--;
+                      widget.onQuantityChanged(
+                          quantity.value, widget.element.id!);
+                    }
+                  },
+                  color: theme.ticketCardConfig.qtyReduceBackgroundColor),
+              SizedBox(
+                width: 10.h,
+              ),
+              ValueListenableBuilder<int>(
+                  valueListenable: quantity,
+                  builder: (context, quantity, child) {
+                    return Text(
+                      quantity.toString(),
+                      style: theme.labelStyle?.copyWith(
+                        color: theme.primaryTextColor,
+                      ),
+                    );
+                  }),
+              SizedBox(
+                width: 10.h,
+              ),
+              IconWithCircleBackground(
+                  onPressed: () {
+                    if (widget.element.available == -1) {
+                      // Unlimited quantity allowed
+                      quantity.value++;
+                      widget.onQuantityChanged(
+                          quantity.value, widget.element.id!);
+                    } else if (widget.element.available > 0) {
+                      // Limited by available stock
+                      if (quantity.value < widget.element.available) {
+                        quantity.value++;
+                        widget.onQuantityChanged(
+                            quantity.value, widget.element.id!);
+                      }
+                    }
+                  },
+                  icon: Icons.add,
+                  color: theme.ticketCardConfig.qtyAddBackgroundColor),
+            ],
+          )
+        ],
+      );
+    }
   }
 }
