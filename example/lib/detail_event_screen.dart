@@ -24,6 +24,9 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     AnbocasEventManager.instance
         .on(AnbocasEventManager.eventBookingSuccess, handleBookingSuccess);
 
+    AnbocasEventManager.instance
+        .on(AnbocasEventManager.ticketAddedSuccess, handleTicketSuccess);
+
     AnbocasTickets.instance.config(
       anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
       apikey: dotenv.env['API_KEY'] ?? "",
@@ -81,6 +84,12 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
 
   handleBookingSuccess(data) {
     debugPrint("-------------Listening the Booking Data-----------");
+    debugPrint("--------------------------------------------------");
+    debugPrint(data.toString());
+  }
+
+  handleTicketSuccess(dynamic data) {
+    debugPrint("-------------Listening the Ticket Success-----------");
     debugPrint("--------------------------------------------------");
     debugPrint(data.toString());
   }

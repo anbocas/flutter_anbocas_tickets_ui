@@ -311,30 +311,44 @@ class TicketDialogState extends State<TicketDialog> {
       _formKey.currentState!.save();
       final api = AnbocasTicketsApi.ticket;
 
-      if (widget.ticket == null) {
-        await api.createTicket(
-          eventId: widget.event.id!,
-          name: _name.text,
-          description: _description.text,
-          capacity: _capacity.text,
-          price: _price.text,
-          availableFrom: _availableFrom.text,
-          availableTo: _availableTo.text,
-          status: _selectedStatus ?? "",
-        );
-      } else {
-        await api.updateTicket(
-          ticketId: widget.ticket!.id!,
-          name: _name.text,
-          description: _description.text,
-          capacity: _capacity.text,
-          price: _price.text,
-          availableFrom: _availableFrom.text,
-          availableTo: _availableTo.text,
-          status: _selectedStatus ?? "",
-        );
+      try {
+        if (widget.ticket == null) {
+          await api.createTicket(
+            eventId: widget.event.id!,
+            name: _name.text,
+            description: _description.text,
+            capacity: _capacity.text,
+            price: _price.text,
+            availableFrom: _availableFrom.text,
+            availableTo: _availableTo.text,
+            status: _selectedStatus ?? "",
+          );
+        } else {
+          await api.updateTicket(
+            ticketId: widget.ticket!.id!,
+            name: _name.text,
+            description: _description.text,
+            capacity: _capacity.text,
+            price: _price.text,
+            availableFrom: _availableFrom.text,
+            availableTo: _availableTo.text,
+            status: _selectedStatus ?? "",
+          );
+        }
+        // fire ticketAddedSuccess event if ticket is added
+        AnbocasEventManager.instance
+            .emit(AnbocasEventManager.ticketAddedSuccess, {
+          'reference_event_id': widget.event.id,
+          'is_updated': widget.ticket == null ? false : true
+        });
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        if (e is AnbocasAPIException) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(backgroundColor: Colors.red, content: Text(e.cause)),
+          );
+        }
       }
-      Navigator.of(context).pop(true);
     }
   }
 
