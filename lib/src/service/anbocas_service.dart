@@ -1,6 +1,7 @@
+import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:dio/dio.dart';
 
-abstract class AnbocasService {
+abstract class AnbocasService with LoggerUtils {
   late final Dio _dio;
 
   AnbocasService({
@@ -26,6 +27,7 @@ abstract class AnbocasService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    info(_dio.options.baseUrl + path);
     return _dio.get(path, queryParameters: queryParameters, options: options);
   }
 

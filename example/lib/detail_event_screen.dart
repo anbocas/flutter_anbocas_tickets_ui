@@ -370,6 +370,33 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                             fontWeight: FontWeight.w700, color: Colors.white),
                       )),
                 ),
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.black),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        minimumSize: WidgetStateProperty.all<Size>(
+                            const Size(double.infinity, 50)),
+                      ),
+                      onPressed: () => AnbocasTickets.instance
+                          .viewCompanyOverView(
+                              context: context,
+                              companyId:
+                                  '97cf3c9e-6812-4f04-8511-6b731211199e'),
+                      child: const Text(
+                        "Company Overview",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, color: Colors.white),
+                      )),
+                ),
               ],
             ))
       ],
