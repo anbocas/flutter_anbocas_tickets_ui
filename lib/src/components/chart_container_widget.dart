@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
-import 'package:anbocas_tickets_ui/src/screens/company_overview/time_series_chart_two_widget.dart';
+import 'package:anbocas_tickets_ui/src/components/time_series_chart_two_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
 
 class ChartYearlyContainerWidget extends StatefulWidget {
   final CompanyCharts charts;
-  ChartYearlyContainerWidget({
+  const ChartYearlyContainerWidget({
     Key? key,
     required this.charts,
   }) : super(key: key);

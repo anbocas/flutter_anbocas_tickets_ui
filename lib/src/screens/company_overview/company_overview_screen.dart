@@ -3,9 +3,9 @@ import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
-import 'package:anbocas_tickets_ui/src/screens/company_overview/chart_container_widget.dart';
-import 'package:anbocas_tickets_ui/src/screens/company_overview/pie_series_chart_widget.dart';
-import 'package:anbocas_tickets_ui/src/screens/company_overview/time_series_chart_widget.dart';
+import 'package:anbocas_tickets_ui/src/components/chart_container_widget.dart';
+import 'package:anbocas_tickets_ui/src/components/pie_series_chart_widget.dart';
+import 'package:anbocas_tickets_ui/src/components/time_series_chart_widget.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_booking_manager.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_company_overview.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,7 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                                         ?.statistics[index];
                                     return Container(
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF5BE498),
+                                        color: theme.secondaryBgColor,
                                         borderRadius:
                                             BorderRadius.circular(12.0),
                                       ),
@@ -82,8 +82,8 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                                           ),
                                           const SizedBox(height: 10.0),
                                           Text(
-                                            'Count: ${item?.total ?? 0}',
-                                            style: theme.labelStyle,
+                                            '${item?.total ?? 0}',
+                                            style: theme.headingStyle,
                                           ),
                                         ],
                                       ),
@@ -159,14 +159,18 @@ abstract class CompanyOverviewWidgetState extends State<CompanyOverviewWidget>
       AnbocasServiceManager().overviewRepo;
 
   @override
-  void didChangeDependencies() {
-    _fetchOverview();
-    super.didChangeDependencies();
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchOverview();
+    });
+    super.initState();
   }
 
   @override
   void dispose() {
     isLoading.dispose();
+    overviewResponse.dispose();
+
     super.dispose();
   }
 

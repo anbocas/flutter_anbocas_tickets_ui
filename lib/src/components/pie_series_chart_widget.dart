@@ -41,11 +41,14 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
     super.didChangeDependencies();
   }
 
+  double totalValue = 0.0;
   List<PieSeriesChartData> combiningTheTwoList() {
     List<PieSeriesChartData> combinedList = [];
-    for (int i = 0;
-        i < widget.keys.length && i < widget.pieChartData.length;
-        i++) {
+    for (int i = 0; i < widget.keys.length; i++) {
+      final double value = (i < widget.pieChartData.length)
+          ? widget.pieChartData[i].toDouble()
+          : 0.0;
+      totalValue += value;
       final random = Random();
       final randomColor = Color.fromRGBO(
         random.nextInt(256),
@@ -53,8 +56,7 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
         random.nextInt(256),
         1.0,
       );
-      combinedList.add(PieSeriesChartData(
-          widget.keys[i], widget.pieChartData[i].toDouble(), randomColor));
+      combinedList.add(PieSeriesChartData(widget.keys[i], value, randomColor));
     }
     return combinedList;
   }
@@ -68,19 +70,6 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
           color: Colors.white, borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
-          Row(
-            children: [
-              ...combinedData
-                  .map(
-                    (e) => Indicator(
-                      color: e.color,
-                      text: e.key,
-                      isSquare: false,
-                    ),
-                  )
-                  .toList()
-            ],
-          ),
           SizedBox(
             height: 200.v,
             child: PieChart(
@@ -95,6 +84,21 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
               ),
             ),
           ),
+          Wrap(
+            spacing: 5,
+            children: [
+              ...combinedData
+                  .map(
+                    (e) => Indicator(
+                      color: e.color,
+                      text:
+                          "${e.key} - (${((e.value / totalValue) * 100).toStringAsFixed(2)}%)",
+                      isSquare: false,
+                    ),
+                  )
+                  .toList()
+            ],
+          ),
         ],
       ),
     );
@@ -105,12 +109,14 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
       combinedData.length,
       (i) {
         return PieChartSectionData(
-          color: combinedData[i].color,
-          value: combinedData[i].value,
-          title: combinedData[i].value.toString(),
-          radius: 80,
-          titlePositionPercentageOffset: 0.55,
-        );
+            color: combinedData[i].color,
+            value: (combinedData[i].value / totalValue) * 100,
+            // title: combinedData[i].value.toString(),
+            title: "",
+            radius: 80,
+            titlePositionPercentageOffset: 0.60,
+            borderSide: const BorderSide(color: Colors.white, width: 0.5),
+            titleStyle: theme.bodyStyle);
       },
     );
   }
@@ -134,6 +140,7 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
           width: size,

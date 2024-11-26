@@ -1,9 +1,7 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,54 +25,7 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
     AnbocasEventManager.instance
         .on(AnbocasEventManager.ticketAddedSuccess, handleTicketSuccess);
 
-    AnbocasTickets.instance.config(
-      anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
-      apikey: dotenv.env['API_KEY'] ?? "",
-      customThemeConfig: AnbocasCustomTheme(
-        backgroundColor: Colors.black,
-        primaryColor: const Color(0xFFB71C1C),
-        secondaryBgColor: Colors.grey,
-        secondaryTextColor: Colors.white,
-        qrcodeColor: Colors.white,
-        headingStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
-        subHeadingStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 16),
-        bodyStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 14),
-        labelStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
-        buttonStyle: ButtonStyle(
-          backgroundColor:
-              WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
-          minimumSize: WidgetStateProperty.all<Size>(
-            const Size(double.infinity, 50),
-          ),
-        ),
-        textFormFieldConfig: AnbocasTextFormFieldConfig(
-            style: GoogleFonts.poppins()
-                .copyWith(color: Colors.white, fontSize: 14),
-            hintStyle: GoogleFonts.poppins()
-                .copyWith(color: Colors.white, fontSize: 12),
-            labelStyle: GoogleFonts.poppins()
-                .copyWith(color: Colors.white, fontSize: 12),
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white))),
-      ),
-    );
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    AnbocasEventManager.instance.clear();
-    super.dispose();
   }
 
   @override
@@ -366,33 +317,6 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                           context: context, eventId: widget.model.id ?? ""),
                       child: const Text(
                         "Manage Attendies",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700, color: Colors.white),
-                      )),
-                ),
-                Container(
-                  color: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.all<Color>(Colors.black),
-                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                        minimumSize: WidgetStateProperty.all<Size>(
-                            const Size(double.infinity, 50)),
-                      ),
-                      onPressed: () => AnbocasTickets.instance
-                          .viewCompanyOverView(
-                              context: context,
-                              companyId:
-                                  '97cf3c9e-6812-4f04-8511-6b731211199e'),
-                      child: const Text(
-                        "Company Overview",
                         style: TextStyle(
                             fontWeight: FontWeight.w700, color: Colors.white),
                       )),

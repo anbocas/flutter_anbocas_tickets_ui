@@ -1,38 +1,33 @@
-import 'dart:developer';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
+import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class TimeSeriesChartWidget extends StatefulWidget {
+class TimeSeriesChartTwoWidget extends StatefulWidget {
   final List<String> bottomKeys;
-  final List<ChartData> data;
+  final List<ChartData2> data;
 
-  const TimeSeriesChartWidget(
+  const TimeSeriesChartTwoWidget(
       {super.key, required this.bottomKeys, required this.data});
 
   @override
-  State<TimeSeriesChartWidget> createState() => _TimeSeriesChartWidgetState();
+  State<TimeSeriesChartTwoWidget> createState() =>
+      _TimeSeriesChartTwoWidgetState();
 }
 
-class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
+class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
+    with StringHelperMixin {
   List<Map<String, dynamic>> tileData = [];
-  List<int> get ticketsSoldList =>
-      widget.data.map((chart) => chart.ticketsSold).toList();
-  List<double> get salesVolumeList =>
-      widget.data.map((chart) => chart.salesVolume).toList();
 
   @override
   void didChangeDependencies() {
     tileData.clear();
-    if (ticketsSoldList.isNotEmpty) {
-      tileData.add({"title": "Ticket Sales", 'color': lineColors[1]});
-    }
-    if (salesVolumeList.isNotEmpty) {
-      tileData.add({"title": "Sales Volume", 'color': lineColors[2]});
-    }
-
+    widget.data.asMap().forEach((value, data) {
+      tileData.add(
+          {"title": data.name, 'color': lineColors[value % lineColors.length]});
+    });
     super.didChangeDependencies();
   }
 
@@ -41,7 +36,7 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
     return Stack(
       children: [
         LineChart(
-          _buildLineChartData(ticketsSoldList, salesVolumeList),
+          _buildLineChartData(widget.data),
         ),
         Positioned(
             top: 0,
@@ -71,28 +66,45 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    String title = widget.bottomKeys[value.toInt()];
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 10,
       angle: -1,
-      child: Text(title,
+      child: Text(widget.bottomKeys[value.toInt()],
           style: theme.labelStyle?.copyWith(
-              color: Colors.black,
-              fontSize: title.length >= 8 ? 8.adaptSize : 12.adaptSize)),
+            color: Colors.black,
+          )),
     );
   }
 
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
-        reservedSize: 32,
+        reservedSize: 30,
         interval: 1,
         getTitlesWidget: bottomTitleWidgets,
       );
 
-  LineChartData _buildLineChartData(
-      List<int> ticketsSoldList, List<double> salesVolumeList) {
-    double maxYValue = calculateMaxY(ticketsSoldList, salesVolumeList);
+  Widget leftTitleWidgets(double value, TitleMeta meta) {
+    String title = formatLeftValue(value);
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 2,
+      child: Text(title,
+          style: theme.labelStyle?.copyWith(
+              color: Colors.black,
+              fontSize: 7.adaptSize,
+              fontWeight: FontWeight.w600)),
+    );
+  }
+
+  SideTitles leftTitles(double interval) => SideTitles(
+        showTitles: true,
+        interval: interval,
+        getTitlesWidget: leftTitleWidgets,
+      );
+
+  LineChartData _buildLineChartData(List<ChartData2> data) {
+    double maxYValue = calculateMaxY(data);
     double intervalY = calculateInterval(maxYValue);
 
     return LineChartData(
@@ -100,19 +112,10 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
           const FlGridData(drawHorizontalLine: true, drawVerticalLine: false),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(
-          drawBelowEverything: false,
           sideTitles: bottomTitles,
         ),
         leftTitles: AxisTitles(
-          drawBelowEverything: false,
-          sideTitles: SideTitles(
-            interval: intervalY,
-            showTitles: true,
-            getTitlesWidget: (value, meta) {
-              return Text(value.toInt().toString(),
-                  style: theme.labelStyle?.copyWith(color: Colors.black));
-            },
-          ),
+          sideTitles: leftTitles(intervalY),
         ),
         rightTitles:
             const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -125,26 +128,25 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
       minX: 0,
       maxX: widget.bottomKeys.length - 1,
       minY: 0,
-      maxY: maxYValue + intervalY,
-      lineBarsData: [
-        if (ticketsSoldList.isNotEmpty) _buildChartLine(ticketsSoldList, 0),
-        if (salesVolumeList.isNotEmpty) _buildChartLine(salesVolumeList, 1)
-      ],
+      maxY: ((maxYValue + intervalY) / 100).ceil() * 100,
+      lineBarsData: data
+          .map((entry) => _buildChartLine(entry, data.indexOf(entry)))
+          .toList(),
     );
   }
 
-  LineChartBarData _buildChartLine(List<dynamic> data, int index) {
+  LineChartBarData _buildChartLine(ChartData2 data, int index) {
     return LineChartBarData(
       // isCurved: true,
       color: tileData[index]['color'],
       barWidth: 2.5,
       isStrokeCapRound: true,
-      dotData: const FlDotData(show: false),
+      dotData: FlDotData(show: false),
       belowBarData: BarAreaData(show: false),
-      spots: data
+      spots: data.data
           .asMap()
           .entries
-          .map((entry) => FlSpot(entry.key.toDouble(), entry.value.toDouble()))
+          .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
           .toList(),
     );
   }
@@ -155,26 +157,4 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget> {
     Colors.orange,
     Colors.purple,
   ];
-
-  double calculateMaxY(
-      List<int> ticketsSoldList, List<double> salesVolumeList) {
-    List<double> combinedList = [
-      ...ticketsSoldList.map((e) => e.toDouble()),
-      ...salesVolumeList
-    ];
-    double maxYValue = combinedList.reduce((a, b) => a > b ? a : b);
-    log(maxYValue.toString());
-    return maxYValue;
-  }
-
-  double calculateInterval(double maxYValue) {
-    log(maxYValue.toString());
-    if (maxYValue <= 5) {
-      return 1;
-    } else if (maxYValue <= 10) {
-      return 2;
-    } else {
-      return (maxYValue / 10).ceilToDouble() * 2;
-    }
-  }
 }

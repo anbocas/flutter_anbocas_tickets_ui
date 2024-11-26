@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -150,6 +152,7 @@ class AnbocasTickets {
             if (MediaQueryHolder().mediaQueryData == null) {
               MediaQueryHolder().initialize(ctx);
             }
+
             return CompanyOverviewWidget(
               companyId: companyId,
             );

@@ -1,5 +1,8 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CompanyListingScreen extends StatefulWidget {
   const CompanyListingScreen({super.key});
@@ -14,7 +17,53 @@ class _CompanyListingScreenState extends State<CompanyListingScreen> {
   @override
   void initState() {
     _eventsFuture = fetchEvents();
+    AnbocasTickets.instance.config(
+      anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
+      apikey: dotenv.env['API_KEY'] ?? "",
+      customThemeConfig: AnbocasCustomTheme(
+        backgroundColor: Colors.black,
+        primaryColor: const Color(0xFFB71C1C),
+        secondaryBgColor: Colors.grey,
+        secondaryTextColor: Colors.white,
+        qrcodeColor: Colors.white,
+        headingStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
+        subHeadingStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 16),
+        bodyStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 14),
+        labelStyle:
+            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
+        buttonStyle: ButtonStyle(
+          backgroundColor:
+              WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          minimumSize: WidgetStateProperty.all<Size>(
+            const Size(double.infinity, 50),
+          ),
+        ),
+        textFormFieldConfig: AnbocasTextFormFieldConfig(
+            style: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 14),
+            hintStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            labelStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white))),
+      ),
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    AnbocasEventManager.instance.clear();
+    super.dispose();
   }
 
   @override

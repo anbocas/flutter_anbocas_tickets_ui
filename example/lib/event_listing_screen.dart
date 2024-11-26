@@ -1,4 +1,5 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -36,102 +37,129 @@ class _EventListingScreenState extends State<EventListingScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: FutureBuilder<List<AnbocasEventModel>>(
-          future: _eventsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-              return const Center(
-                  child: Text("No event Found for the Company"));
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                itemBuilder: (context, index) {
-                  var element = snapshot.data![index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, "eventDetail",
-                          arguments: element);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15)),
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                height: 90,
-                                width: 90,
-                                decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        255, 225, 217, 217),
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              if (element.imageUrl != null &&
-                                  element.imageUrl!.contains("http"))
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: Image.network(
-                                    element.imageUrl ?? "",
-                                    height: 90,
-                                    width: 90,
-                                    fit: BoxFit.fill,
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<AnbocasEventModel>>(
+                future: _eventsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                    return const Center(
+                        child: Text("No event Found for the Company"));
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      itemBuilder: (context, index) {
+                        var element = snapshot.data![index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, "eventDetail",
+                                arguments: element);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15)),
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(bottom: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Stack(
+                                  children: [
+                                    Container(
+                                      height: 90,
+                                      width: 90,
+                                      decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 225, 217, 217),
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
+                                    if (element.imageUrl != null &&
+                                        element.imageUrl!.contains("http"))
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          element.imageUrl ?? "",
+                                          height: 90,
+                                          width: 90,
+                                          fit: BoxFit.fill,
+                                        ),
+                                      )
+                                  ],
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        element.name ?? "",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        convertToReadable(
+                                            element.startDate ?? ""),
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        const WidgetSpan(
+                                            child: Icon(
+                                          Icons.location_on,
+                                          color: Colors.blue,
+                                          size: 18,
+                                        )),
+                                        TextSpan(
+                                            text: element.location ?? "",
+                                            style: const TextStyle(
+                                                color: Colors.grey))
+                                      ]))
+                                    ],
                                   ),
                                 )
-                            ],
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  element.name ?? "",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 18),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  convertToReadable(element.startDate ?? ""),
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 5),
-                                RichText(
-                                    text: TextSpan(children: [
-                                  const WidgetSpan(
-                                      child: Icon(
-                                    Icons.location_on,
-                                    color: Colors.blue,
-                                    size: 18,
-                                  )),
-                                  TextSpan(
-                                      text: element.location ?? "",
-                                      style:
-                                          const TextStyle(color: Colors.grey))
-                                ]))
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
-              );
-            }
-          },
+              ),
+            ),
+            ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  minimumSize: WidgetStateProperty.all<Size>(
+                      const Size(double.infinity, 50)),
+                ),
+                onPressed: () => AnbocasTickets.instance.viewCompanyOverView(
+                    context: context, companyId: widget.company.id ?? ""),
+                child: const Text(
+                  "Company Overview",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700, color: Colors.white),
+                )),
+          ],
         ),
       ),
     );
