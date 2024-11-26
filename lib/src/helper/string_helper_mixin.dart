@@ -21,7 +21,7 @@ mixin StringHelperMixin {
       return 10;
     } else if (maxYValue == 1) {
       return 10;
-    } else if (maxYValue == 1) {
+    } else if (maxYValue == 2) {
       return 5;
     } else if (maxYValue <= 5) {
       return 2;
