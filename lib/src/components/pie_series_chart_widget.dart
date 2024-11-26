@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
-
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
+import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -19,10 +17,12 @@ class PieSeriesChartData {
 }
 
 class PieSeriesChartWidget extends StatefulWidget {
+  final String title;
   final List<String> keys;
   final List<double> pieChartData;
   const PieSeriesChartWidget({
     Key? key,
+    required this.title,
     required this.keys,
     required this.pieChartData,
   }) : super(key: key);
@@ -31,7 +31,8 @@ class PieSeriesChartWidget extends StatefulWidget {
   State<StatefulWidget> createState() => PieChartSample1State();
 }
 
-class PieChartSample1State extends State<PieSeriesChartWidget> {
+class PieChartSample1State extends State<PieSeriesChartWidget>
+    with StringHelperMixin {
   List<PieSeriesChartData> combinedData = [];
 
   @override
@@ -49,14 +50,10 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
           ? widget.pieChartData[i].toDouble()
           : 0.0;
       totalValue += value;
-      final random = Random();
-      final randomColor = Color.fromRGBO(
-        random.nextInt(256),
-        random.nextInt(256),
-        random.nextInt(256),
-        1.0,
-      );
-      combinedList.add(PieSeriesChartData(widget.keys[i], value, randomColor));
+      final Color randomShadeColor =
+          generateRandomColor(theme.primaryColor!, i, widget.keys.length);
+      combinedList
+          .add(PieSeriesChartData(widget.keys[i], value, randomShadeColor));
     }
     return combinedList;
   }
@@ -67,9 +64,14 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
       margin: EdgeInsets.symmetric(vertical: 20.v),
       padding: EdgeInsets.all(10.h),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          color: theme.secondaryBgColor,
+          borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
+          Text(
+            widget.title,
+            style: theme.bodyStyle,
+          ),
           SizedBox(
             height: 200.v,
             child: PieChart(
@@ -113,9 +115,9 @@ class PieChartSample1State extends State<PieSeriesChartWidget> {
             value: (combinedData[i].value / totalValue) * 100,
             // title: combinedData[i].value.toString(),
             title: "",
-            radius: 80,
+            radius: (80 + i * 1.2).toDouble(),
             titlePositionPercentageOffset: 0.60,
-            borderSide: const BorderSide(color: Colors.white, width: 0.5),
+            borderSide: BorderSide.none,
             titleStyle: theme.bodyStyle);
       },
     );
@@ -155,7 +157,7 @@ class Indicator extends StatelessWidget {
         ),
         Text(
           text,
-          style: theme.labelStyle?.copyWith(color: Colors.black),
+          style: theme.labelStyle,
         )
       ],
     );

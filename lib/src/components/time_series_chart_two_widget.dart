@@ -25,8 +25,11 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
   void didChangeDependencies() {
     tileData.clear();
     widget.data.asMap().forEach((value, data) {
-      tileData.add(
-          {"title": data.name, 'color': lineColors[value % lineColors.length]});
+      tileData.add({
+        "title": data.name,
+        'color':
+            generateRandomColor(theme.primaryColor!, value, widget.data.length)
+      });
     });
     super.didChangeDependencies();
   }
@@ -54,8 +57,7 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
                         ),
                         Text(
                           e['title'],
-                          style:
-                              theme.labelStyle?.copyWith(color: Colors.black),
+                          style: theme.labelStyle,
                         )
                       ],
                     ))
@@ -70,10 +72,7 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
       axisSide: meta.axisSide,
       space: 10,
       angle: -1,
-      child: Text(widget.bottomKeys[value.toInt()],
-          style: theme.labelStyle?.copyWith(
-            color: Colors.black,
-          )),
+      child: Text(widget.bottomKeys[value.toInt()], style: theme.labelStyle),
     );
   }
 
@@ -90,10 +89,8 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
       axisSide: meta.axisSide,
       space: 2,
       child: Text(title,
-          style: theme.labelStyle?.copyWith(
-              color: Colors.black,
-              fontSize: 7.adaptSize,
-              fontWeight: FontWeight.w600)),
+          style: theme.labelStyle
+              ?.copyWith(fontSize: 7.adaptSize, fontWeight: FontWeight.w600)),
     );
   }
 

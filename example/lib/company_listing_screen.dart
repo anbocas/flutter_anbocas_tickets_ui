@@ -21,32 +21,42 @@ class _CompanyListingScreenState extends State<CompanyListingScreen> {
       anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
       apikey: dotenv.env['API_KEY'] ?? "",
       customThemeConfig: AnbocasCustomTheme(
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0xFF151313),
         primaryColor: const Color(0xFFB71C1C),
-        secondaryBgColor: Colors.grey,
+        accentColor: Color(0xFFB71C1C),
+        secondaryBgColor: Color(0xFF2D2D2D),
         secondaryTextColor: Colors.white,
         qrcodeColor: Colors.white,
-        headingStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 18),
-        subHeadingStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 16),
-        bodyStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 14),
-        labelStyle:
-            GoogleFonts.poppins().copyWith(color: Colors.white, fontSize: 12),
-        buttonStyle: ButtonStyle(
-          backgroundColor:
-              WidgetStateProperty.all<Color>(const Color(0xFFB71C1C)),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
-          minimumSize: WidgetStateProperty.all<Size>(
-            const Size(double.infinity, 50),
-          ),
+        headingStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+        subHeadingStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+        bodyStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        labelStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        smallLabelStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+        ticketCardConfig: AnbocasTicketCardConfig(
+          ticketCardBackgroundColor: Color(0xFF2D2D2D),
+          selectedTicketCardBorderColor: Color(0xFFB71C1C),
+          qtyAddBackgroundColor: Color(0xFFB71C1C),
+          nameStyle: GoogleFonts.poppins().copyWith(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+          priceStyle: GoogleFonts.poppins().copyWith(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+          descriptionStyle: GoogleFonts.poppins().copyWith(
+              color: Color(0xFFBCBCBC),
+              fontSize: 12,
+              fontWeight: FontWeight.w500),
+          labelStyle: GoogleFonts.poppins().copyWith(
+              color: Color(0xFFBCBCBC),
+              fontSize: 14,
+              fontWeight: FontWeight.w500),
+          dottedLineColor: Color(0xFF5F5F5F),
         ),
         textFormFieldConfig: AnbocasTextFormFieldConfig(
+            cursorColor: Colors.white,
             style: GoogleFonts.poppins()
                 .copyWith(color: Colors.white, fontSize: 14),
             hintStyle: GoogleFonts.poppins()

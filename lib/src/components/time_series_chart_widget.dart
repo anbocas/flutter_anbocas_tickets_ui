@@ -28,10 +28,16 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget>
   void didChangeDependencies() {
     tileData.clear();
     if (ticketsSoldList.isNotEmpty) {
-      tileData.add({"title": "Ticket Sales", 'color': lineColors[1]});
+      tileData.add({
+        "title": "Ticket Sales",
+        'color': generateRandomColor(theme.primaryColor!, 0, 2)
+      });
     }
     if (salesVolumeList.isNotEmpty) {
-      tileData.add({"title": "Sales Volume", 'color': lineColors[2]});
+      tileData.add({
+        "title": "Sales Volume",
+        'color': generateRandomColor(theme.primaryColor!, 1, 2)
+      });
     }
 
     super.didChangeDependencies();
@@ -60,8 +66,7 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget>
                         ),
                         Text(
                           e['title'],
-                          style:
-                              theme.labelStyle?.copyWith(color: Colors.black),
+                          style: theme.labelStyle,
                         )
                       ],
                     ))
@@ -79,7 +84,6 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget>
       angle: -1,
       child: Text(title,
           style: theme.labelStyle?.copyWith(
-              color: Colors.black,
               fontWeight: FontWeight.w600,
               fontSize: title.length >= 8 ? 7.adaptSize : 12.adaptSize)),
     );
@@ -98,10 +102,8 @@ class _TimeSeriesChartWidgetState extends State<TimeSeriesChartWidget>
       axisSide: meta.axisSide,
       space: 2,
       child: Text(title,
-          style: theme.labelStyle?.copyWith(
-              color: Colors.black,
-              fontSize: 7.adaptSize,
-              fontWeight: FontWeight.w600)),
+          style: theme.labelStyle
+              ?.copyWith(fontSize: 7.adaptSize, fontWeight: FontWeight.w600)),
     );
   }
 

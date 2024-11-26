@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 mixin StringHelperMixin {
@@ -65,5 +66,15 @@ mixin StringHelperMixin {
     ];
     double maxYValue = combinedList.reduce((a, b) => a > b ? a : b);
     return maxYValue;
+  }
+
+  Color generateRandomColor(Color color, int index, int totalGenerateLength) {
+    final double shadeFactor = (index + 1) / totalGenerateLength;
+    final Color randomShadeColor = Color.lerp(
+      color.withOpacity(0.3), // Lighter shade
+      color, // Darker shade
+      shadeFactor,
+    )!;
+    return randomShadeColor;
   }
 }

@@ -97,14 +97,13 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                                             vertical: 20.v),
                                         padding: EdgeInsets.all(10.h),
                                         decoration: BoxDecoration(
-                                            color: Colors.white,
+                                            color: theme.secondaryBgColor,
                                             borderRadius:
                                                 BorderRadius.circular(10)),
                                         child: Column(children: [
                                           Text(
                                             e.title ?? "",
-                                            style: theme.bodyStyle?.copyWith(
-                                                color: theme.backgroundColor),
+                                            style: theme.bodyStyle,
                                           ),
                                           const SizedBox(
                                             height: 20,
@@ -125,6 +124,7 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                                 ...state.overviewResponse.value!
                                     .pieCharts()
                                     .map((e) => PieSeriesChartWidget(
+                                          title: e.title ?? "",
                                           keys: e.keys,
                                           pieChartData: e.pieChartData,
                                         )),

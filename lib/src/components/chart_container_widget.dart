@@ -35,7 +35,8 @@ class _ChartYearlyContainerWidgetState
       margin: EdgeInsets.symmetric(vertical: 20.v),
       padding: EdgeInsets.all(10.h),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          color: theme.secondaryBgColor,
+          borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           Row(
@@ -43,7 +44,7 @@ class _ChartYearlyContainerWidgetState
             children: [
               Text(
                 widget.charts.title ?? "",
-                style: theme.bodyStyle?.copyWith(color: theme.backgroundColor),
+                style: theme.bodyStyle,
               ),
               Container(
                 height: 40.v,
