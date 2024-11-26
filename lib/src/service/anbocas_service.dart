@@ -28,6 +28,7 @@ abstract class AnbocasService with LoggerUtils {
     Options? options,
   }) async {
     info(_dio.options.baseUrl + path);
+    info(queryParameters.toString());
     return _dio.get(path, queryParameters: queryParameters, options: options);
   }
 

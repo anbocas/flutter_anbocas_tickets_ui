@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
+import 'package:anbocas_tickets_ui/src/screens/user_booking/anbocas_booking_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/company_overview/company_overview_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/manage_attendies/event_check_in_list_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_crud/ticket_listing_screen.dart';
@@ -155,6 +154,29 @@ class AnbocasTickets {
 
             return CompanyOverviewWidget(
               companyId: companyId,
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void viewMyBooking({
+    required BuildContext context,
+    required String emailID,
+  }) {
+    try {
+      Navigator.of(context, rootNavigator: true).push(
+        PageRouteBuilder(
+          pageBuilder: (ctx, __, ___) {
+            if (MediaQueryHolder().mediaQueryData == null) {
+              MediaQueryHolder().initialize(ctx);
+            }
+
+            return AnbocasMyBookingScreen(
+              emailID: emailID,
             );
           },
         ),

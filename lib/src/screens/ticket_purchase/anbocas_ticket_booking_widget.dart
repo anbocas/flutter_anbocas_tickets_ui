@@ -82,7 +82,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       name: userConfig.name ?? '',
       phone: userConfig.phone,
       email: userConfig.email ?? '',
-      shouldGeneratePaymentLink: false,
+      shouldGeneratePaymentLink: true,
     );
 
     if (response != null) {
@@ -123,7 +123,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           context,
           MaterialPageRoute(
               builder: (context) => AnbocasBookingSuccessScreen(
-                    ticketResponse: eventResponse.value!,
+                    // ticketResponse: eventResponse.value!,
                     orderDetails: order.data!,
                     referenceEventId: widget.referenceEventId,
                   )),
@@ -191,7 +191,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       context,
       MaterialPageRoute(
           builder: (context) => AnbocasBookingSuccessScreen(
-                ticketResponse: eventResponse.value!,
+                // ticketResponse: eventResponse.value!,
                 orderDetails: placedOrderResponse!.data!,
                 referenceEventId: widget.referenceEventId,
               )),

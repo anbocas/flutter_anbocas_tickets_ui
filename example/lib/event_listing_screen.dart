@@ -159,6 +159,27 @@ class _EventListingScreenState extends State<EventListingScreen> {
                   style: TextStyle(
                       fontWeight: FontWeight.w700, color: Colors.white),
                 )),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  minimumSize: WidgetStateProperty.all<Size>(
+                      const Size(double.infinity, 50)),
+                ),
+                onPressed: () => AnbocasTickets.instance.viewMyBooking(
+                    context: context, emailID: "saurabhTester35@gmail.com"),
+                child: const Text(
+                  "Company Booking",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700, color: Colors.white),
+                )),
           ],
         ),
       ),

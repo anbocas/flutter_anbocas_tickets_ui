@@ -3,6 +3,40 @@ import 'package:anbocas_tickets_ui/src/model/event_guest.dart';
 import 'package:anbocas_tickets_ui/src/model/event_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/single_company.dart';
+
+class AnbocasPaginatedOrder {
+  PaginatedOrderData? data;
+  Status? status;
+
+  AnbocasPaginatedOrder({this.data, this.status});
+
+  AnbocasPaginatedOrder.fromJson(Map<String, dynamic> json) {
+    if (json["data"] is Map) {
+      data = json["data"] == null
+          ? null
+          : PaginatedOrderData.fromJson(json["data"]);
+    }
+    if (json["status"] is Map) {
+      status = json["status"] == null ? null : Status.fromJson(json["status"]);
+    }
+  }
+
+  static List<AnbocasPaginatedOrder> fromList(List<Map<String, dynamic>> list) {
+    return list.map(AnbocasPaginatedOrder.fromJson).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> _data = <String, dynamic>{};
+    if (data != null) {
+      _data["data"] = data?.toJson();
+    }
+    if (status != null) {
+      _data["status"] = status?.toJson();
+    }
+    return _data;
+  }
+}
+
 class AnbocasOrderResponse {
   OrderData? data;
   String? paymentUrl;
@@ -47,13 +81,12 @@ class OrderData {
   String? currencyId;
   int? isGuestCheckout;
   String? status;
-  late List<OrderTicket> tickets;
-  late List<EventGuest> guests;
+  List<OrderTicket> tickets = [];
+  List<EventGuest> guests = [];
   EventResponse? event;
   Company? company;
   Payment? payment;
   String? createdAt;
-  
 
   OrderData.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -214,7 +247,6 @@ class OrderData {
       payment =
           json["payment"] == null ? null : Payment.fromJson(json["payment"]);
     }
-    
   }
 
   Map<String, dynamic> toJson() {
@@ -396,6 +428,95 @@ class Payment {
     _data["tax"] = tax;
     _data["created_at"] = createdAt;
     _data["updated_at"] = updatedAt;
+    return _data;
+  }
+}
+
+class Status {
+  int? all;
+  int? completed;
+  int? pending;
+  int? failed;
+  int? cancelled;
+  int? refunded;
+
+  Status(
+      {this.all,
+      this.completed,
+      this.pending,
+      this.failed,
+      this.cancelled,
+      this.refunded});
+
+  Status.fromJson(Map<String, dynamic> json) {
+    if (json["ALL"] is int) {
+      all = json["ALL"];
+    }
+    if (json["COMPLETED"] is int) {
+      completed = json["COMPLETED"];
+    }
+    if (json["PENDING"] is int) {
+      pending = json["PENDING"];
+    }
+    if (json["FAILED"] is int) {
+      failed = json["FAILED"];
+    }
+    if (json["CANCELLED"] is int) {
+      cancelled = json["CANCELLED"];
+    }
+    if (json["REFUNDED"] is int) {
+      refunded = json["REFUNDED"];
+    }
+  }
+
+  static List<Status> fromList(List<Map<String, dynamic>> list) {
+    return list.map(Status.fromJson).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> _data = <String, dynamic>{};
+    _data["ALL"] = all;
+    _data["COMPLETED"] = completed;
+    _data["PENDING"] = pending;
+    _data["FAILED"] = failed;
+    _data["CANCELLED"] = cancelled;
+    _data["REFUNDED"] = refunded;
+    return _data;
+  }
+}
+
+class PaginatedOrderData {
+  int? currentPage;
+  List<OrderData> data = [];
+  int? lastPage;
+
+  PaginatedOrderData({
+    this.currentPage,
+    required this.data,
+    this.lastPage,
+  });
+
+  PaginatedOrderData.fromJson(Map<String, dynamic> json) {
+    if (json["current_page"] is int) {
+      currentPage = json["current_page"];
+    }
+    if (json["data"] is List) {
+      data = (json["data"] as List).map((e) => OrderData.fromJson(e)).toList();
+    }
+    if (json["last_page"] is int) {
+      lastPage = json["last_page"];
+    }
+  }
+
+  static List<PaginatedOrderData> fromList(List<Map<String, dynamic>> list) {
+    return list.map(PaginatedOrderData.fromJson).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> _data = <String, dynamic>{};
+    _data["current_page"] = currentPage;
+    _data["data"] = data.map((e) => e.toJson()).toList();
+    _data["last_page"] = lastPage;
     return _data;
   }
 }

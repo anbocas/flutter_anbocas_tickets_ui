@@ -16,6 +16,7 @@ const _getCalculateAmountUrl = "/v1/orders/calculate";
 const _validateCouponUrl = "/v1/coupons/validate";
 const _verifyOrderPaymentUrl = "/v1/verifyOrderPayment";
 const _cancelOrderPaymentUrl = "/v1/order/cancel";
+const _listOrderEmail = "/v1/ordersByEmail";
 
 class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   AnbocasBookingRepo({
@@ -188,6 +189,31 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<ApiResponse<List<OrderData>>> getOrderByEmail(
+      {required String email, int pageNo = 1}) async {
+    try {
+      Options options = Options(headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      var resp =
+          await doGet(_listOrderEmail, options: options, queryParameters: {
+        "email": email,
+      });
+      info(resp.data.toString());
+      if (resp.data['data'] != null) {
+        var orders = (resp.data['data'] as List)
+            .map((item) => OrderData.fromJson(item))
+            .toList();
+        return ApiResponse(data: orders);
+      } else {
+        return ApiResponse(error: "Order Not Found");
+      }
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 }

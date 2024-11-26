@@ -59,7 +59,7 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
                   context,
                   MaterialPageRoute(
                     builder: (context) => AnbocasBookingSuccessScreen(
-                      ticketResponse: widget.selectedTickets,
+                      // ticketResponse: widget.selectedTickets,
                       orderDetails: widget.orderDetails,
                       referenceEventId: widget.referenceEventId,
                     ),
