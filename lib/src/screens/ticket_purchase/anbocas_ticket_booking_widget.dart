@@ -531,54 +531,70 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
             builder: (context, isLoading, child) {
               return isLoading
                   ? _buildLoader()
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 22.h),
-                          child: ValueListenableBuilder<AnbocasEventResponse?>(
-                              valueListenable: state.eventResponse,
-                              builder: (context, ticketsResp, child) {
-                                return state.eventResponse.value == null
-                                    ? const SizedBox.shrink()
-                                    : Text(
-                                        state.eventResponse.value?.name ?? "",
-                                        style: theme.headingStyle);
-                              }),
-                        ),
-                        SizedBox(
-                          height: 25.v,
-                        ),
-                        ValueListenableBuilder<AnbocasEventResponse?>(
-                            valueListenable: state.eventResponse,
-                            builder: (context, ticketsResp, child) {
-                              ticketResponse = ticketsResp;
-                              return ticketsResp == null ||
-                                      ticketsResp.tickets.isEmpty
-                                  ? Expanded(
-                                      child: Center(
-                                        child: Text(
-                                          "No tickets found",
-                                          style: theme.bodyStyle,
-                                        ),
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Expanded(
-                                              child: _buildTicketList(
-                                                  ticketsResp, state)),
-                                          _buildSummary()
-                                        ],
-                                      ),
-                                    );
-                            }),
-                      ],
-                    );
+                  : (state.eventResponse.value == null)
+                      ? Center(
+                          child: Text("This event is not found",
+                              style: theme.bodyStyle),
+                        )
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 22.h),
+                              child:
+                                  ValueListenableBuilder<AnbocasEventResponse?>(
+                                      valueListenable: state.eventResponse,
+                                      builder: (context, ticketsResp, child) {
+                                        return state.eventResponse.value == null
+                                            ? const SizedBox.shrink()
+                                            : Text(
+                                                state.eventResponse.value
+                                                        ?.name ??
+                                                    "",
+                                                style: theme.headingStyle);
+                                      }),
+                            ),
+                            SizedBox(
+                              height: 25.v,
+                            ),
+                            (state.eventResponse.value?.status == "PUBLISHED")
+                                ? ValueListenableBuilder<AnbocasEventResponse?>(
+                                    valueListenable: state.eventResponse,
+                                    builder: (context, ticketsResp, child) {
+                                      ticketResponse = ticketsResp;
+                                      return ticketsResp == null ||
+                                              ticketsResp.tickets.isEmpty
+                                          ? Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  "No tickets found",
+                                                  style: theme.bodyStyle,
+                                                ),
+                                              ),
+                                            )
+                                          : Expanded(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Expanded(
+                                                      child: _buildTicketList(
+                                                          ticketsResp, state)),
+                                                  _buildSummary()
+                                                ],
+                                              ),
+                                            );
+                                    })
+                                : Expanded(
+                                    child: Center(
+                                      child: Text(
+                                          "This event is ${state.eventResponse.value?.status}",
+                                          style: theme.bodyStyle),
+                                    ),
+                                  ),
+                          ],
+                        );
             },
           );
         }),

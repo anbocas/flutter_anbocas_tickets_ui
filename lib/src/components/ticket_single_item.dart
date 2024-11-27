@@ -151,6 +151,10 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
       return Text("Expired",
           style: theme.ticketCardConfig.labelStyle
               .copyWith(color: theme.errorColor));
+    } else if (ticket.status == "UNAVAILABLE") {
+      return Text("Unavailable",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

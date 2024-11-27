@@ -103,6 +103,7 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                                         child: Column(children: [
                                           Text(
                                             e.title ?? "",
+                                            textAlign: TextAlign.center,
                                             style: theme.bodyStyle,
                                           ),
                                           const SizedBox(

@@ -171,7 +171,7 @@ class ChartData {
 
 class CompanyStatistics {
   String? title;
-  int? total;
+  num? total;
 
   CompanyStatistics({this.title, this.total});
 
@@ -179,8 +179,15 @@ class CompanyStatistics {
     if (json["title"] is String) {
       title = json["title"];
     }
-    if (json["total"] is int) {
-      total = json["total"];
+
+    if (json["total"] != null) {
+      if (json["total"] is int) {
+        total = json["total"];
+      } else if (json["total"] is String) {
+        total = double.tryParse(json["total"]) ?? 0.0;
+      } else if (json["total"] is double) {
+        total = json["total"];
+      }
     }
   }
 

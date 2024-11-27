@@ -42,9 +42,14 @@ class _ChartYearlyContainerWidgetState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.charts.title ?? "",
-                style: theme.bodyStyle,
+              Expanded(
+                child: Text(
+                  widget.charts.title ?? "",
+                  style: theme.bodyStyle,
+                ),
+              ),
+              SizedBox(
+                width: 5.h,
               ),
               Container(
                 height: 40.v,
