@@ -338,7 +338,7 @@ class TicketDialogState extends State<TicketDialog> {
         // fire ticketAddedSuccess event if ticket is added
         AnbocasEventManager.instance
             .emit(AnbocasEventManager.ticketAddedSuccess, {
-          'reference_event_id': widget.event.id,
+          'reference_event_id': widget.event.referenceId,
           'is_updated': widget.ticket == null ? false : true
         });
         Navigator.of(context).pop(true);
