@@ -184,7 +184,9 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     // Do something when payment succeeds
 
-    await _booking?.verifyOrderPayment(response.paymentId!);
+    Future.delayed(const Duration(seconds: 2), () {
+      _booking?.verifyOrderPayment(response.paymentId!);
+    });
 
     Navigator.pop(context);
     Navigator.push(

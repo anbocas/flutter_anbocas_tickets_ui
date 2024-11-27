@@ -117,7 +117,7 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
                                   final totalSales = response.data.fold(
                                       0.0,
                                       (double sum, e) =>
-                                          sum + e.orderTicket!.total);
+                                          sum + e.orderTicket!.price);
 
                                   return Padding(
                                     padding: EdgeInsets.fromLTRB(
