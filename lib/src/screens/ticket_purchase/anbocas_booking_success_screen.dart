@@ -197,7 +197,7 @@ class _AnbocasBookingSuccessScreenState
                                         height: 10.v,
                                       ),
                                       Text(
-                                        "Unfortunately\nyour order has failed.",
+                                        "Your order has failed.",
                                         style: theme.bodyStyle,
                                         textAlign: TextAlign.center,
                                       ),
@@ -218,7 +218,7 @@ class _AnbocasBookingSuccessScreenState
                                         height: 10.v,
                                       ),
                                       Text(
-                                        "Unfortunately\nYour order had been cancelled.",
+                                        "Your order is cancelled.",
                                         style: theme.bodyStyle,
                                         textAlign: TextAlign.center,
                                       ),

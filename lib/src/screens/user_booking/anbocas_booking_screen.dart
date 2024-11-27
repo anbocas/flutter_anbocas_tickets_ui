@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
+import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_order_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
@@ -32,7 +33,7 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
         backgroundColor: theme.backgroundColor,
         appBar: AppBar(
           backgroundColor: theme.backgroundColor,
-          title: Text("My Booking", style: theme.headingStyle),
+          title: Text("My Bookings", style: theme.headingStyle),
           centerTitle: true,
           leading: IconButton(
             onPressed: () {
@@ -55,9 +56,14 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                               style: theme.labelStyle,
                             ),
                           )
-                        : ListView.builder(
+                        : ListView.separated(
                             padding: EdgeInsets.symmetric(horizontal: 22.h),
                             itemCount: state.orderList.value.length,
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                color: theme.dividerColor,
+                              );
+                            },
                             itemBuilder: (context, index) {
                               var element = state.orderList.value[index];
                               return ListTile(
@@ -66,10 +72,8 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        AnbocasBookingSuccessScreen(
-                                      orderDetails: element,
-                                      referenceEventId: widget.referenceEventId,
-                                      detailFlow: true,
+                                        AnbocasOrderDetailScreen(
+                                      anbocasOrderId: element.id!,
                                     ),
                                   ),
                                 ),
@@ -113,20 +117,19 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                         children: [
                                           Text(
                                             element.event?.name ?? "",
-                                            style: theme.bodyStyle,
+                                            style: theme.subHeadingStyle,
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
                                           Text(
-                                            element.orderNumber ?? "",
+                                            "ID: ${element.orderNumber}",
                                             style: theme.smallLabelStyle,
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
-                                          Text(
-                                              'Booked on: ${element.createdAt!}',
+                                          Text(element.createdAt!,
                                               style: theme.smallLabelStyle),
                                         ],
                                       ),
@@ -138,14 +141,14 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Total",
-                                      style: theme.labelStyle,
-                                    ),
-                                    Text(
-                                      element.totalPayable.toString(),
+                                      element.totalPayable.toStringAsFixed(2),
                                       style: theme.labelStyle?.copyWith(
                                           fontWeight: FontWeight.w700),
-                                    )
+                                    ),
+                                    Text(
+                                      "${element.status}",
+                                      style: theme.labelStyle,
+                                    ),
                                   ],
                                 ),
                               );
