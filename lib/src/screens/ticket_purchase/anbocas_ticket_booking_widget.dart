@@ -82,7 +82,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       name: userConfig.name ?? '',
       phone: userConfig.phone,
       email: userConfig.email ?? '',
-      shouldGeneratePaymentLink: true,
+      shouldGeneratePaymentLink: false,
     );
 
     if (response != null) {
