@@ -155,7 +155,7 @@ class Indicator extends StatelessWidget {
         const SizedBox(
           width: 4,
         ),
-        Expanded(
+        Flexible(
           child: Text(
             text,
             style: theme.labelStyle,
