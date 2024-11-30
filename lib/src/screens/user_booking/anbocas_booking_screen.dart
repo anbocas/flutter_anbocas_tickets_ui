@@ -77,77 +77,89 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                     ),
                                   ),
                                 ),
-                                title: Row(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (element.event?.imageUrl != null &&
-                                            element.event!.imageUrl!
-                                                .contains("http"))
-                                        ? ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            child: DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      theme.secondaryBgColor),
-                                              child: Image.network(
-                                                element.event?.imageUrl ?? "",
-                                                height: 90.v,
-                                                width: 75.h,
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(
-                                            height: 90.v,
-                                            width: 75.h,
-                                            decoration: BoxDecoration(
-                                                color: theme.secondaryBgColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(15)),
-                                          ),
+                                    Text(
+                                      element.event?.name ?? "",
+                                      style: theme.subHeadingStyle,
+                                    ),
                                     const SizedBox(
-                                      width: 20,
+                                      height: 5,
                                     ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            element.event?.name ?? "",
-                                            style: theme.subHeadingStyle,
+                                    Row(
+                                      children: [
+                                        // (element.event?.imageUrl != null &&
+                                        //         element.event!.imageUrl!
+                                        //             .contains("http"))
+                                        //     ? ClipRRect(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(15),
+                                        //         child: DecoratedBox(
+                                        //           decoration: BoxDecoration(
+                                        //               color:
+                                        //                   theme.secondaryBgColor),
+                                        //           child: Image.network(
+                                        //             element.event?.imageUrl ?? "",
+                                        //             height: 90.v,
+                                        //             width: 75.h,
+                                        //             fit: BoxFit.fill,
+                                        //           ),
+                                        //         ),
+                                        //       )
+                                        //     : Container(
+                                        //         height: 90.v,
+                                        //         width: 75.h,
+                                        //         decoration: BoxDecoration(
+                                        //             color: theme.secondaryBgColor,
+                                        //             borderRadius:
+                                        //                 BorderRadius.circular(15)),
+                                        //       ),
+                                        // const SizedBox(
+                                        //   width: 20,
+                                        // ),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "ID: ${element.orderNumber}",
+                                                style: theme.smallLabelStyle,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(element.createdAt!,
+                                                  style: theme.smallLabelStyle),
+                                            ],
                                           ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            "ID: ${element.orderNumber}",
-                                            style: theme.smallLabelStyle,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(element.createdAt!,
-                                              style: theme.smallLabelStyle),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      element.totalPayable.toStringAsFixed(2),
-                                      style: theme.labelStyle?.copyWith(
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    Text(
-                                      "${element.status}",
-                                      style: theme.labelStyle,
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              element.totalPayable
+                                                  .toStringAsFixed(2),
+                                              style: theme.labelStyle?.copyWith(
+                                                  fontWeight: FontWeight.w700),
+                                            ),
+                                            Text(
+                                              "${element.status}",
+                                              style: theme.labelStyle?.copyWith(
+                                                  fontSize: 12.adaptSize),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ],
                                 ),

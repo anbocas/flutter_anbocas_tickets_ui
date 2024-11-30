@@ -1,8 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 
 class PieSeriesChartData {
   final String key;
@@ -14,6 +16,10 @@ class PieSeriesChartData {
     this.value,
     this.color,
   );
+
+  @override
+  String toString() =>
+      'PieSeriesChartData(key: $key, value: $value, color: $color)';
 }
 
 class PieSeriesChartWidget extends StatefulWidget {
@@ -45,6 +51,7 @@ class PieChartSample1State extends State<PieSeriesChartWidget>
   double totalValue = 0.0;
   List<PieSeriesChartData> combiningTheTwoList() {
     List<PieSeriesChartData> combinedList = [];
+
     for (int i = 0; i < widget.keys.length; i++) {
       final double value = (i < widget.pieChartData.length)
           ? widget.pieChartData[i].toDouble()
@@ -60,50 +67,52 @@ class PieChartSample1State extends State<PieSeriesChartWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20.v),
-      padding: EdgeInsets.all(10.h),
-      decoration: BoxDecoration(
-          color: theme.secondaryBgColor,
-          borderRadius: BorderRadius.circular(10)),
-      child: Column(
-        children: [
-          Text(
-            widget.title,
-            style: theme.bodyStyle,
-          ),
-          SizedBox(
-            height: 200.v,
-            child: PieChart(
-              PieChartData(
-                startDegreeOffset: 180,
-                borderData: FlBorderData(
-                  show: false,
+    return combinedData.isEmpty || totalValue <= 0.0
+        ? const SizedBox.shrink()
+        : Container(
+            margin: EdgeInsets.symmetric(vertical: 20.v),
+            padding: EdgeInsets.all(10.h),
+            decoration: BoxDecoration(
+                color: theme.secondaryBgColor,
+                borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              children: [
+                Text(
+                  widget.title,
+                  style: theme.bodyStyle,
                 ),
-                sectionsSpace: 1,
-                centerSpaceRadius: 0,
-                sections: showingSections(),
-              ),
-            ),
-          ),
-          Wrap(
-            spacing: 5,
-            children: [
-              ...combinedData
-                  .map(
-                    (e) => Indicator(
-                      color: e.color,
-                      text:
-                          "${e.key} - (${((e.value / totalValue) * 100).toStringAsFixed(2)}%)",
-                      isSquare: false,
+                SizedBox(
+                  height: 200.v,
+                  child: PieChart(
+                    PieChartData(
+                      startDegreeOffset: 180,
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      sectionsSpace: 1,
+                      centerSpaceRadius: 0,
+                      sections: showingSections(),
                     ),
-                  )
-                  .toList()
-            ],
-          ),
-        ],
-      ),
-    );
+                  ),
+                ),
+                Wrap(
+                  spacing: 5,
+                  children: [
+                    ...combinedData
+                        .map(
+                          (e) => Indicator(
+                            color: e.color,
+                            text:
+                                "${e.key} -  (${totalValue > 0.0 ? ((e.value / totalValue) * 100).toStringAsFixed(2) : 0}%)",
+                            isSquare: false,
+                          ),
+                        )
+                        .toList()
+                  ],
+                ),
+              ],
+            ),
+          );
   }
 
   List<PieChartSectionData> showingSections() {
@@ -112,7 +121,9 @@ class PieChartSample1State extends State<PieSeriesChartWidget>
       (i) {
         return PieChartSectionData(
             color: combinedData[i].color,
-            value: (combinedData[i].value / totalValue) * 100,
+            value: totalValue > 0.0
+                ? (combinedData[i].value / totalValue) * 100
+                : 0,
             // title: combinedData[i].value.toString(),
             title: "",
             radius: (80 + i * 1.2).toDouble(),
