@@ -147,15 +147,22 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              element.totalPayable
-                                                  .toStringAsFixed(2),
+                                              '₹${element.totalPayable.toStringAsFixed(2)}',
                                               style: theme.labelStyle?.copyWith(
                                                   fontWeight: FontWeight.w700),
                                             ),
                                             Text(
                                               "${element.status}",
                                               style: theme.labelStyle?.copyWith(
-                                                  fontSize: 12.adaptSize),
+                                                fontSize: 12.adaptSize,
+                                                color: element.status ==
+                                                        'COMPLETED'
+                                                    ? Colors.green
+                                                    : element.status ==
+                                                            'PENDING'
+                                                        ? Colors.yellow
+                                                        : Colors.red,
+                                              ),
                                             ),
                                           ],
                                         )
