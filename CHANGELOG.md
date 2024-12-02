@@ -1,3 +1,11 @@
+## 0.0.6
+
+* My Bookings Screen
+* Organiser Dashboard Screen
+* Event expiration and cancellation handling
+* Ticket unavailable and out of stock handling.
+* Minor UI Fixes
+
 ## 0.0.5
 
 * Navigation Fixes
