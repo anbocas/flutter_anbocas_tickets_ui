@@ -103,17 +103,39 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                   SizedBox(
                                     height: 10.v,
                                   ),
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                    size: 90.adaptSize,
-                                  ),
+                                  if (orderResponse.value?.status ==
+                                      'COMPLETED')
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 90.adaptSize,
+                                    ),
+                                  if (orderResponse.value?.status == 'PENDING')
+                                    Icon(
+                                      Icons.watch_later_rounded,
+                                      color: Colors.yellow,
+                                      size: 90.adaptSize,
+                                    ),
+                                  if (orderResponse.value?.status == 'FAILED' ||
+                                      orderResponse.value?.status ==
+                                          'CANCELLED')
+                                    Icon(
+                                      Icons.cancel,
+                                      color: Colors.red,
+                                      size: 90.adaptSize,
+                                    ),
+                                  if (orderResponse.value?.status == 'REFUNDED')
+                                    Icon(
+                                      Icons.replay_circle_filled_rounded,
+                                      color: Colors.grey,
+                                      size: 90.adaptSize,
+                                    ),
                                   SizedBox(
                                     height: 20.v,
                                   ),
                                   RichText(
                                     text: TextSpan(
-                                      text: "Congratulations! Your order",
+                                      text: "Your order",
                                       style: theme.bodyStyle,
                                       children: [
                                         TextSpan(
@@ -123,14 +145,20 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                         ),
                                         TextSpan(
                                             text:
-                                                "has been placed successfully.",
+                                                "is ${orderResponse.value?.status}.",
                                             style: theme.bodyStyle),
                                       ],
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
                                   SizedBox(
-                                    height: 20.v,
+                                    height: 10.v,
+                                  ),
+                                  Divider(
+                                    color: theme.dividerColor,
+                                  ),
+                                  SizedBox(
+                                    height: 10.v,
                                   ),
                                   Row(
                                     crossAxisAlignment:
@@ -182,7 +210,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 3.v),
                                               child: Text(
-                                                  'Booked on: ${orderResponse.value!.createdAt!}',
+                                                  'Order Date: ${orderResponse.value!.createdAt!}',
                                                   style: theme.labelStyle
                                                       ?.copyWith(
                                                           color: theme

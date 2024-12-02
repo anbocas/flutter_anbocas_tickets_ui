@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_order_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
@@ -126,14 +125,15 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "ID: ${element.orderNumber}",
-                                                style: theme.smallLabelStyle,
-                                              ),
+                                                  '${element.event?.startDate!}',
+                                                  style: theme.smallLabelStyle),
                                               const SizedBox(
                                                 height: 5,
                                               ),
-                                              Text(element.createdAt!,
-                                                  style: theme.smallLabelStyle),
+                                              Text(
+                                                "Booking ID: ${element.orderNumber}",
+                                                style: theme.smallLabelStyle,
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -154,7 +154,7 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                             Text(
                                               "${element.status}",
                                               style: theme.labelStyle?.copyWith(
-                                                fontSize: 12.adaptSize,
+                                                fontSize: 10.adaptSize,
                                                 color: element.status ==
                                                         'COMPLETED'
                                                     ? Colors.green

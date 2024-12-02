@@ -304,7 +304,7 @@ class _AnbocasBookingSuccessScreenState
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 3.v),
                                         child: Text(
-                                            'Booked on: ${_orderDetails.value!.createdAt!}',
+                                            'Order Date: ${_orderDetails.value!.createdAt!}',
                                             style: theme.labelStyle?.copyWith(
                                                 color: theme.secondaryTextColor,
                                                 fontSize: 12.fSize)),
