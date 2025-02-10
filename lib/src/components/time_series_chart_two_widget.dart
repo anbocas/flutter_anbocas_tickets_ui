@@ -69,7 +69,7 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 10,
       angle: -1,
       child: Text(widget.bottomKeys[value.toInt()], style: theme.labelStyle),
@@ -86,7 +86,7 @@ class _TimeSeriesChartTwoWidgetState extends State<TimeSeriesChartTwoWidget>
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     String title = formatLeftValue(value);
     return SideTitleWidget(
-      axisSide: meta.axisSide,
+      meta: meta,
       space: 2,
       child: Text(title,
           style: theme.labelStyle
