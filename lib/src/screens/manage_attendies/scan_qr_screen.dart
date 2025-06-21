@@ -68,7 +68,8 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                   return;
                 }
 
-                _handleScanResult(barcode, (message, statusCode, ticketName) {
+                _handleScanResult(barcode,
+                    (message, statusCode, name, ticketName, price) {
                   Navigator.pop(context);
                   if (statusCode == 200) {
                     // fire success event
@@ -84,6 +85,8 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                           status: message!,
                           eventId: widget.eventId,
                           ticketName: ticketName ?? '',
+                          name: name ?? '',
+                          price: price ?? '',
                         ),
                       ),
                     );
@@ -97,6 +100,8 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                           status: message!,
                           eventId: widget.eventId,
                           ticketName: ticketName ?? '',
+                          name: name ?? '',
+                          price: price ?? '',
                         ),
                       ),
                     );
@@ -160,13 +165,15 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
 
   void _handleScanResult(
       String barcode,
-      Function(String? onScanned, int statusCode, String? name)
+      Function(String? onScanned, int statusCode, String? name,
+              String? ticketName, String? formattedPrice)
           onScanned) async {
     try {
       final response =
           await _eventApi.checkIn(code: barcode, eventId: widget.eventId);
 
-      onScanned(response!.message, response.statusCode, response.name);
+      onScanned(response!.message, response.statusCode, response.name,
+          response.ticketModel?.name, response.ticketModel?.formattedPrice);
     } catch (e) {
       debugPrint(e.toString());
     } finally {}

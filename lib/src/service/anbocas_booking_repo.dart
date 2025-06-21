@@ -1,4 +1,6 @@
+import 'package:anbocas_tickets_ui/src/helper/api_exception_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
+import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/coupon_model.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
@@ -14,6 +16,7 @@ const _getCalculateAmountUrl = "/v1/orders/calculate";
 const _validateCouponUrl = "/v1/coupons/validate";
 const _verifyOrderPaymentUrl = "/v1/verifyOrderPayment";
 const _cancelOrderPaymentUrl = "/v1/order/cancel";
+const _listOrderEmail = "/v1/ordersByEmail";
 
 class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   AnbocasBookingRepo({
@@ -22,40 +25,43 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     Map<String, String>? apiHeaders,
   }) : super(dio: dio, baseUrl: baseUrl, apiHeaders: apiHeaders);
 
-  Future<AnbocasEventResponse?> getEventById({
+  Future<ApiResponse<AnbocasEventResponse>> getEventById({
     required String eventId,
   }) async {
-    var resp = await doGet("$_ticketsUrl/$eventId",
-        queryParameters: {"paginate": false});
+    try {
+      var resp = await doGet("$_ticketsUrl/$eventId",
+          queryParameters: {"paginate": false});
+      info("$eventId -- ${resp.data}");
+      if (resp.data['data'] != null) {
+        DateTime now = DateTime.now();
+        var ticketResp = AnbocasEventResponse.fromJson(resp.data['data']);
+        List<SingleTicket> validTickets = [];
+        validTickets.clear();
+        for (var ticket in ticketResp.tickets) {
+          DateTime? availableFrom = ticket.availableFrom != null
+              ? DateTime.parse(ticket.availableFrom!)
+              : null;
+          DateTime? availableTo = ticket.availableTo != null
+              ? DateTime.parse(ticket.availableTo!)
+              : null;
+          bool isAvailable =
+              (availableFrom == null || now.isAfter(availableFrom)) &&
+                  (availableTo == null || now.isBefore(availableTo));
 
-    info("$eventId -- ${resp.data}");
-    if (resp.data['data'] != null) {
-      DateTime now = DateTime.now();
-      var ticketResp = AnbocasEventResponse.fromJson(resp.data['data']);
-      List<SingleTicket> validTickets = [];
-      validTickets.clear();
-      for (var ticket in ticketResp.tickets) {
-        DateTime? availableFrom = ticket.availableFrom != null
-            ? DateTime.parse(ticket.availableFrom!)
-            : null;
-        DateTime? availableTo = ticket.availableTo != null
-            ? DateTime.parse(ticket.availableTo!)
-            : null;
-        bool isAvailable =
-            (availableFrom == null || now.isAfter(availableFrom)) &&
-                (availableTo == null || now.isBefore(availableTo));
-
-        if (isAvailable) {
-          validTickets.add(ticket);
+          if (isAvailable) {
+            validTickets.add(ticket);
+          }
         }
+        return ApiResponse(data: ticketResp.copyWith(tickets: validTickets));
+      } else {
+        return ApiResponse(error: "Tickets Not Found");
       }
-
-      return ticketResp.copyWith(tickets: validTickets);
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
-    return null;
   }
 
-  Future<AnbocasOrderResponse?> placeOrder(
+  Future<ApiResponse<AnbocasOrderResponse>> placeOrder(
       {required List<SingleTicket> selectedTickets,
       String? coupon,
       required String name,
@@ -82,17 +88,22 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
     };
 
     info(data.toString());
-    var resp = await doPost(_placeOrderUrl, data);
-    info(resp.data.toString());
-    if (resp.data['data'] != null) {
-      var order = AnbocasOrderResponse.fromJson(resp.data);
-      return order;
-    } else {
-      return Future.value();
+    try {
+      var resp = await doPost(_placeOrderUrl, data);
+      info(resp.data.toString());
+      if (resp.data['data'] != null) {
+        var order = AnbocasOrderResponse.fromJson(resp.data);
+        return ApiResponse(data: order);
+      } else {
+        return ApiResponse(error: "Order not Found");
+      }
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 
-  Future<OrderData?> getOrderDetails({required String orderId}) async {
+  Future<ApiResponse<OrderData>> getOrderDetails(
+      {required String orderId}) async {
     try {
       Options options = Options(headers: {
         'Content-Type': 'application/json',
@@ -102,17 +113,16 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       info(resp.data.toString());
       if (resp.data['data'] != null) {
         var order = OrderData.fromJson(resp.data['data']);
-        return order;
+        return ApiResponse(data: order);
       } else {
-        return null;
+        return ApiResponse(error: "Order Not Found");
       }
-    } catch (e) {
-      error(e.toString());
-      return null;
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 
-  Future<AnbocasOrderResponse?> getCalculateAmount({
+  Future<ApiResponse<AnbocasOrderResponse>> getCalculateAmount({
     required List<SingleTicket> selectedTickets,
     String? coupon,
   }) async {
@@ -135,29 +145,28 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       info(resp.data.toString());
       if (resp.data['data'] != null) {
         var order = AnbocasOrderResponse.fromJson(resp.data);
-        return order;
+        return ApiResponse(data: order);
       } else {
-        return Future.value();
+        return ApiResponse(error: "Order data Not found");
       }
-    } catch (e) {
-      error(e.toString());
-      return null;
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 
-  Future<CouponModel?> validateCoupon(
+  Future<ApiResponse<CouponModel>> validateCoupon(
       {required String code, required String eventId}) async {
     try {
       info("$code - $eventId");
       var resp =
           await doPost(_validateCouponUrl, {"code": code, "event_id": eventId});
       if (resp.data['data'] != null) {
-        return CouponModel.fromJson(resp.data['data']);
+        return ApiResponse(data: CouponModel.fromJson(resp.data['data']));
       } else {
-        return null;
+        return ApiResponse(error: "Not Valid Coupon");
       }
-    } catch (e) {
-      return null;
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 
@@ -180,6 +189,31 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<ApiResponse<List<OrderData>>> getOrderByEmail(
+      {required String email, int pageNo = 1}) async {
+    try {
+      Options options = Options(headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      var resp =
+          await doGet(_listOrderEmail, options: options, queryParameters: {
+        "email": email,
+      });
+      info(resp.data.toString());
+      if (resp.data['data'] != null) {
+        var orders = (resp.data['data'] as List)
+            .map((item) => OrderData.fromJson(item))
+            .toList();
+        return ApiResponse(data: orders);
+      } else {
+        return ApiResponse(error: "Order Not Found");
+      }
+    } on Exception catch (e) {
+      return ApiResponse(error: handleAnbocasApiException(e));
     }
   }
 }

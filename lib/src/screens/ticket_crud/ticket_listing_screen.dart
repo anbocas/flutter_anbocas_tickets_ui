@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
@@ -292,6 +294,7 @@ class TicketDialogState extends State<TicketDialog> {
       _availableFrom.text =
           DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);
       _availableTo.text = DateFormat('yyyy-MM-dd H:mm').format(availableTo!);
+      _selectedStatus = widget.ticket?.status;
     }
 
     if (widget.ticket == null) {
@@ -306,35 +309,54 @@ class TicketDialogState extends State<TicketDialog> {
     }
   }
 
+  ValueNotifier<bool> _submitLoader = ValueNotifier(false);
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
+      _submitLoader.value = true;
       _formKey.currentState!.save();
       final api = AnbocasTicketsApi.ticket;
 
-      if (widget.ticket == null) {
-        await api.createTicket(
-          eventId: widget.event.id!,
-          name: _name.text,
-          description: _description.text,
-          capacity: _capacity.text,
-          price: _price.text,
-          availableFrom: _availableFrom.text,
-          availableTo: _availableTo.text,
-          status: _selectedStatus ?? "",
-        );
-      } else {
-        await api.updateTicket(
-          ticketId: widget.ticket!.id!,
-          name: _name.text,
-          description: _description.text,
-          capacity: _capacity.text,
-          price: _price.text,
-          availableFrom: _availableFrom.text,
-          availableTo: _availableTo.text,
-          status: _selectedStatus ?? "",
-        );
+      try {
+        if (widget.ticket == null) {
+          await api.createTicket(
+            eventId: widget.event.id!,
+            name: _name.text,
+            description: _description.text,
+            capacity: _capacity.text,
+            price: _price.text,
+            availableFrom: _availableFrom.text,
+            availableTo: _availableTo.text,
+            status: _selectedStatus ?? "",
+          );
+        } else {
+          await api.updateTicket(
+            ticketId: widget.ticket!.id!,
+            name: _name.text,
+            description: _description.text,
+            capacity: _capacity.text,
+            price: _price.text,
+            availableFrom: _availableFrom.text,
+            availableTo: _availableTo.text,
+            status: _selectedStatus ?? "",
+          );
+        }
+        _submitLoader.value = false;
+        // fire ticketAddedSuccess event if ticket is added
+        AnbocasEventManager.instance
+            .emit(AnbocasEventManager.ticketAddedSuccess, {
+          'reference_event_id': widget.event.referenceId,
+          'is_updated': widget.ticket == null ? false : true
+        });
+        Navigator.of(context).pop(true);
+      } catch (e) {
+        _submitLoader.value = false;
+        if (e is AnbocasAPIException) {
+          log(e.cause);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(backgroundColor: Colors.red, content: Text(e.cause)),
+          );
+        }
       }
-      Navigator.of(context).pop(true);
     }
   }
 
@@ -539,6 +561,45 @@ class TicketDialogState extends State<TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
+                Visibility(
+                  visible: widget.ticket != null,
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedStatus,
+                    items: ['AVAILABLE', 'OUT_OF_STOCK', "UNAVAILABLE"]
+                        .map((status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(
+                          status,
+                          style: theme.textFormFieldConfig.style,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedStatus = value;
+                      });
+                    },
+                    dropdownColor: theme.backgroundColor,
+                    decoration: InputDecoration(
+                      labelText: "Status",
+                      labelStyle: theme.textFormFieldConfig.labelStyle,
+                      border: theme.textFormFieldConfig.border,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Status is required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Visibility(
+                  visible: widget.ticket != null,
+                  child: SizedBox(
+                    height: 15.v,
+                  ),
+                ),
                 GestureDetector(
                   onTap: () => _pickAvailableFrom(),
                   child: AbsorbPointer(
@@ -583,40 +644,6 @@ class TicketDialogState extends State<TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
-                Visibility(
-                  visible: false,
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedStatus,
-                    items: ['AVAILABLE', 'OUT_OF_STOCK'].map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(
-                          status,
-                          style: theme.textFormFieldConfig.style,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedStatus = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Status",
-                      labelStyle: theme.textFormFieldConfig.labelStyle,
-                      border: theme.textFormFieldConfig.border,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Status is required";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                // SizedBox(
-                //   height: 15.v,
-                // ),
                 AnbocasFormField(
                   formCtr: _description,
                   filled: false,
@@ -641,11 +668,26 @@ class TicketDialogState extends State<TicketDialog> {
                     const SizedBox(
                       width: 40,
                     ),
-                    CustomButton(
-                      onPressedCallback: _submit,
-                      centerText: widget.ticket == null ? 'Add' : 'Update',
-                      buttonSize: Size(100.h, 40.v),
-                    ),
+                    ValueListenableBuilder<bool>(
+                        valueListenable: _submitLoader,
+                        builder: (context, loader, child) {
+                          return loader
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 4.adaptSize,
+                                    color: theme.accentColor,
+                                    backgroundColor: Colors.white,
+                                  ),
+                                )
+                              : CustomButton(
+                                  onPressedCallback: _submit,
+                                  centerText:
+                                      widget.ticket == null ? 'Add' : 'Update',
+                                  buttonSize: Size(100.h, 40.v),
+                                );
+                        }),
                   ],
                 )
               ],

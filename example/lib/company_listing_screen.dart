@@ -1,5 +1,8 @@
 import 'package:anbocas_tickets_api/anbocas_tickets_api.dart';
+import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CompanyListingScreen extends StatefulWidget {
   const CompanyListingScreen({super.key});
@@ -14,7 +17,63 @@ class _CompanyListingScreenState extends State<CompanyListingScreen> {
   @override
   void initState() {
     _eventsFuture = fetchEvents();
+    AnbocasTickets.instance.config(
+      anbocasRazorpayApiKey: dotenv.env['RZP_API_KEY'] ?? "",
+      apikey: dotenv.env['API_KEY'] ?? "",
+      customThemeConfig: AnbocasCustomTheme(
+        backgroundColor: Color(0xFF151313),
+        primaryColor: const Color(0xFFB71C1C),
+        accentColor: Color(0xFFB71C1C),
+        secondaryBgColor: Color(0xFF2D2D2D),
+        secondaryTextColor: Colors.white,
+        qrcodeColor: Colors.white,
+        headingStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+        subHeadingStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+        bodyStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        labelStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        smallLabelStyle: GoogleFonts.poppins().copyWith(
+            color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+        ticketCardConfig: AnbocasTicketCardConfig(
+          ticketCardBackgroundColor: Color(0xFF2D2D2D),
+          selectedTicketCardBorderColor: Color(0xFFB71C1C),
+          qtyAddBackgroundColor: Color(0xFFB71C1C),
+          nameStyle: GoogleFonts.poppins().copyWith(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+          priceStyle: GoogleFonts.poppins().copyWith(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+          descriptionStyle: GoogleFonts.poppins().copyWith(
+              color: Color(0xFFBCBCBC),
+              fontSize: 12,
+              fontWeight: FontWeight.w500),
+          labelStyle: GoogleFonts.poppins().copyWith(
+              color: Color(0xFFBCBCBC),
+              fontSize: 14,
+              fontWeight: FontWeight.w500),
+          dottedLineColor: Color(0xFF5F5F5F),
+        ),
+        textFormFieldConfig: AnbocasTextFormFieldConfig(
+            cursorColor: Colors.white,
+            style: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 14),
+            hintStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            labelStyle: GoogleFonts.poppins()
+                .copyWith(color: Colors.white, fontSize: 12),
+            border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white))),
+      ),
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    AnbocasEventManager.instance.clear();
+    super.dispose();
   }
 
   @override

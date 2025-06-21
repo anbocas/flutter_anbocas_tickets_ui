@@ -1,3 +1,5 @@
+import 'package:anbocas_tickets_ui/src/model/anbocas_event_response.dart';
+
 class EventResponse {
   String? id;
   String? categoryId;
@@ -53,6 +55,14 @@ class EventResponse {
       this.updatedAt,
       this.deletedAt});
 
+  TicketLocationType getLocationType() {
+    if (locationType == "VIRTUAL") {
+      return TicketLocationType.virtual;
+    } else {
+      return TicketLocationType.inPerson;
+    }
+  }
+
   EventResponse.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
       id = json["id"];
@@ -69,8 +79,8 @@ class EventResponse {
     if (json["slug"] is String) {
       slug = json["slug"];
     }
-    if (json["imageUrl"] is String) {
-      imageUrl = json["imageUrl"];
+    if (json["image_url"] is String) {
+      imageUrl = json["image_url"];
     }
     if (json["description"] is String) {
       description = json["description"];

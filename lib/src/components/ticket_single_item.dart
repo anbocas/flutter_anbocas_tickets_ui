@@ -2,6 +2,7 @@ import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/dottted_line.dart';
 import 'package:anbocas_tickets_ui/src/components/icon_with_circle_background.dart';
+import 'package:anbocas_tickets_ui/src/components/read_more_text.dart';
 import 'package:anbocas_tickets_ui/src/components/ticket_card_clipper.dart';
 import 'package:anbocas_tickets_ui/src/helper/size_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/single_ticket.dart';
@@ -58,7 +59,6 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
-      height: 160.v,
       width: double.infinity,
       decoration: BoxDecoration(
           color: widget.isSelected == true
@@ -81,44 +81,46 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(
-                flex: 2,
-                child: InkWell(
-                  onTap: (widget.showBuyButton) ? null : widget.onItemSelect,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(widget.element.name ?? "",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.ticketCardConfig.nameStyle),
-                            ),
-                            SizedBox(
-                              width: 20.h,
-                            ),
-                            Text(widget.element.formattedPrice ?? "",
-                                style: theme.ticketCardConfig.priceStyle),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10.v,
-                        ),
-                        Text(
-                          widget.element.description ?? "",
-                          style: theme.ticketCardConfig.labelStyle
-                              .copyWith(overflow: TextOverflow.ellipsis),
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
+              InkWell(
+                onTap: (widget.showBuyButton) ? null : widget.onItemSelect,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(widget.element.name ?? "",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.ticketCardConfig.nameStyle),
+                          ),
+                          SizedBox(
+                            width: 20.h,
+                          ),
+                          Text(widget.element.formattedPrice ?? "",
+                              style: theme.ticketCardConfig.priceStyle),
+                        ],
+                      ),
+                      if (widget.element.available > 0 &&
+                          widget.element.available < 20)
+                        Text("Only ${widget.element.available} left",
+                            style: theme.ticketCardConfig.labelStyle
+                                .copyWith(color: theme.errorColor)),
+                      SizedBox(
+                        height: 10.v,
+                      ),
+                      ReadMoreText(
+                        text: widget.element.description ?? "",
+                        textStyle: theme.ticketCardConfig.labelStyle
+                            .copyWith(overflow: TextOverflow.ellipsis),
+                        maxLines: 3,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -130,70 +132,90 @@ class _TicketItemWidgetState extends State<TicketItemWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
-                child: (widget.element.available != 0)
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Quantity",
-                            style: theme.ticketCardConfig.labelStyle,
-                          ),
-                          SizedBox(
-                            width: 10.h,
-                          ),
-                          Row(
-                            children: [
-                              IconWithCircleBackground(
-                                  icon: Icons.remove,
-                                  onPressed: () {
-                                    if (quantity.value > 0) {
-                                      quantity.value--;
-                                      widget.onQuantityChanged(
-                                          quantity.value, widget.element.id!);
-                                    }
-                                  },
-                                  color: theme.ticketCardConfig
-                                      .qtyReduceBackgroundColor),
-                              SizedBox(
-                                width: 10.h,
-                              ),
-                              ValueListenableBuilder<int>(
-                                  valueListenable: quantity,
-                                  builder: (context, quantity, child) {
-                                    return Text(
-                                      quantity.toString(),
-                                      style: theme.labelStyle?.copyWith(
-                                        color: theme.primaryTextColor,
-                                      ),
-                                    );
-                                  }),
-                              SizedBox(
-                                width: 10.h,
-                              ),
-                              IconWithCircleBackground(
-                                  onPressed: () {
-                                    if (quantity.value <= 9) {
-                                      quantity.value++;
-                                      widget.onQuantityChanged(
-                                          quantity.value, widget.element.id!);
-                                    }
-                                  },
-                                  icon: Icons.add,
-                                  color: theme
-                                      .ticketCardConfig.qtyAddBackgroundColor),
-                            ],
-                          )
-                        ],
-                      )
-                    : Text("Sold Out!",
-                        style: theme.ticketCardConfig.labelStyle
-                            .copyWith(color: theme.errorColor)),
-              ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.v, horizontal: 20.h),
+                  child: _ticketCardFooter(widget.element)),
             ]),
           ),
         ),
       ),
     );
+  }
+
+  Widget _ticketCardFooter(SingleTicket ticket) {
+    if (ticket.available == 0 || ticket.status == "OUT_OF_STOCK") {
+      return Text("Sold Out!",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
+    } else if (DateTime.parse(ticket.availableTo!).isBefore(DateTime.now())) {
+      return Text("Expired",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
+    } else if (ticket.status == "UNAVAILABLE") {
+      return Text("Unavailable",
+          style: theme.ticketCardConfig.labelStyle
+              .copyWith(color: theme.errorColor));
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Quantity",
+            style: theme.ticketCardConfig.labelStyle,
+          ),
+          SizedBox(
+            width: 10.h,
+          ),
+          Row(
+            children: [
+              IconWithCircleBackground(
+                  icon: Icons.remove,
+                  onPressed: () {
+                    if (quantity.value > 0) {
+                      quantity.value--;
+                      widget.onQuantityChanged(
+                          quantity.value, widget.element.id!);
+                    }
+                  },
+                  color: theme.ticketCardConfig.qtyReduceBackgroundColor),
+              SizedBox(
+                width: 10.h,
+              ),
+              ValueListenableBuilder<int>(
+                  valueListenable: quantity,
+                  builder: (context, quantity, child) {
+                    return Text(
+                      quantity.toString(),
+                      style: theme.labelStyle?.copyWith(
+                        color: theme.primaryTextColor,
+                      ),
+                    );
+                  }),
+              SizedBox(
+                width: 10.h,
+              ),
+              IconWithCircleBackground(
+                  onPressed: () {
+                    if (widget.element.available == -1) {
+                      // Unlimited quantity allowed
+                      quantity.value++;
+                      widget.onQuantityChanged(
+                          quantity.value, widget.element.id!);
+                    } else if (widget.element.available > 0) {
+                      // Limited by available stock
+                      if (quantity.value < widget.element.available) {
+                        quantity.value++;
+                        widget.onQuantityChanged(
+                            quantity.value, widget.element.id!);
+                      }
+                    }
+                  },
+                  icon: Icons.add,
+                  color: theme.ticketCardConfig.qtyAddBackgroundColor),
+            ],
+          )
+        ],
+      );
+    }
   }
 }

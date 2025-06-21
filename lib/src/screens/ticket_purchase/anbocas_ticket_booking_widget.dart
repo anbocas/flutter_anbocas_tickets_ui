@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/components/add_coupon_widget.dart';
+import 'package:anbocas_tickets_ui/src/helper/debouncer.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/helper/snackbar_mixin.dart';
 import 'package:anbocas_tickets_ui/src/helper/string_helper_mixin.dart';
+import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_response.dart';
 import 'package:anbocas_tickets_ui/src/screens/ticket_purchase/anbocas_booking_success_screen.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
@@ -44,6 +46,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   AnbocasEventResponse? ticketResponse;
   AnbocasOrderResponse? placedOrderResponse;
   final _razorpay = Razorpay();
+  final Debounced<int> _debounces = Debounced(milliseconds: 400);
 
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
@@ -72,32 +75,41 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   }
 
   void _handleBuyPressed() async {
-    try {
-      placingOrder.value = true;
-      await _booking
-          ?.placeOrder(
-        coupon: appliedCoupon,
-        selectedTickets: selectedTickets,
-        name: userConfig.name ?? '',
-        phone: userConfig.phone,
-        email: userConfig.email ?? '',
-        shouldGeneratePaymentLink: false,
-      )
-          .then((order) {
-        if (order != null) {
-          placedOrderResponse = order;
-          handleNavigationAfterOrder(order);
-        } else {
-          showAlertSnackBar(
-              context, "Something went wrong, Unable to generate order");
-        }
-      }).whenComplete(() => placingOrder.value = false);
-    } catch (e) {
-      // log(e.toString());
-      if (!mounted) return;
-      showAlertSnackBar(context, e.toString());
+    placingOrder.value = true;
+    ApiResponse<AnbocasOrderResponse>? response = await _booking?.placeOrder(
+      coupon: appliedCoupon,
+      selectedTickets: selectedTickets,
+      name: userConfig.name ?? '',
+      phone: userConfig.phone,
+      email: userConfig.email ?? '',
+      shouldGeneratePaymentLink: false,
+    );
+
+    if (response != null) {
       placingOrder.value = false;
+      if (response.data != null) {
+        placedOrderResponse = response.data;
+        handleNavigationAfterOrder(response.data!);
+      }
+      if (response.error != null) {
+        if (!mounted) return;
+        refreshTheContent();
+        showAlertSnackBar(context,
+            response.error ?? "Something went wrong, Unable to generate order");
+        placingOrder.value = false;
+      }
     }
+  }
+
+  // --- refresh the content incase of place Order Error
+  void refreshTheContent() async {
+    selectedTickets.clear();
+    eventResponse.value = null;
+    itemsTotal.value = 0.00;
+    totalPrice.value = 0.00;
+    totalFee.value = 0.00;
+    discountPrice.value = 0.00;
+    await _fetchEvent();
   }
 
   void handleNavigationAfterOrder(AnbocasOrderResponse order) {
@@ -111,7 +123,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           context,
           MaterialPageRoute(
               builder: (context) => AnbocasBookingSuccessScreen(
-                    ticketResponse: eventResponse.value!,
+                    // ticketResponse: eventResponse.value!,
                     orderDetails: order.data!,
                     referenceEventId: widget.referenceEventId,
                   )),
@@ -174,14 +186,16 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     // Do something when payment succeeds
 
-    await _booking?.verifyOrderPayment(response.paymentId!);
+    Future.delayed(const Duration(seconds: 2), () {
+      _booking?.verifyOrderPayment(response.paymentId!);
+    });
 
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => AnbocasBookingSuccessScreen(
-                ticketResponse: eventResponse.value!,
+                // ticketResponse: eventResponse.value!,
                 orderDetails: placedOrderResponse!.data!,
                 referenceEventId: widget.referenceEventId,
               )),
@@ -208,20 +222,18 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
     selectedTickets.asMap().forEach((key, value) {
       info(value.selectedQuantity.toString());
     });
-    try {
-      calculatingSummary.value = true;
-      await _booking
-          ?.getCalculateAmount(
-              selectedTickets: selectedTickets, coupon: appliedCoupon)
-          .then((value) {
-        if (value != null) {
-          updateTheValue(value);
-        } else {
-          showAlertSnackBar(context, "Unable to update price");
-        }
-      }).whenComplete(() => calculatingSummary.value = false);
-    } catch (e) {
-      calculatingSummary.value = false;
+    calculatingSummary.value = true;
+    final ApiResponse<AnbocasOrderResponse>? response =
+        await _booking?.getCalculateAmount(
+            selectedTickets: selectedTickets, coupon: appliedCoupon);
+    calculatingSummary.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        updateTheValue(response.data!);
+      }
+      if (response.error != null) {
+        showAlertSnackBar(context, response.error.toString());
+      }
     }
   }
 
@@ -462,23 +474,31 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
           isSelected: selectedTickets.contains(element),
           element: element,
           onQuantityChanged: (newQuantity, ticketId) {
-            setState(() {
-              final index = selectedTickets
-                  .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
+            final index = selectedTickets
+                .indexWhere((SingleTicket ticket) => ticket.id == ticketId);
 
-              if (index == -1) {
+            if (index == -1 && newQuantity > 0) {
+              setState(() {
                 final selectedTicket =
                     ticketsResp.tickets.firstWhere((t) => t.id == ticketId);
-                selectedTickets.add(selectedTicket..selectedQuantity = 1);
-              } else {
-                if (newQuantity == 0) {
-                  selectedTickets.removeAt(index);
-                } else {
-                  selectedTickets[index].selectedQuantity = newQuantity;
-                }
-              }
-            });
-            fetchCalculatedAmount();
+                selectedTickets
+                    .add(selectedTicket..selectedQuantity = newQuantity);
+              });
+              fetchCalculatedAmount();
+            } else {
+              _debounces.run(newQuantity, (value) {
+                setState(() {
+                  if (index == -1) return;
+
+                  if (value == 0) {
+                    selectedTickets.removeAt(index);
+                  } else {
+                    selectedTickets[index].selectedQuantity = value;
+                  }
+                });
+                fetchCalculatedAmount();
+              });
+            }
           },
         );
       },
@@ -513,54 +533,70 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
             builder: (context, isLoading, child) {
               return isLoading
                   ? _buildLoader()
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 22.h),
-                          child: ValueListenableBuilder<AnbocasEventResponse?>(
-                              valueListenable: state.eventResponse,
-                              builder: (context, ticketsResp, child) {
-                                return state.eventResponse.value == null
-                                    ? const SizedBox.shrink()
-                                    : Text(
-                                        state.eventResponse.value?.name ?? "",
-                                        style: theme.headingStyle);
-                              }),
-                        ),
-                        SizedBox(
-                          height: 25.v,
-                        ),
-                        ValueListenableBuilder<AnbocasEventResponse?>(
-                            valueListenable: state.eventResponse,
-                            builder: (context, ticketsResp, child) {
-                              ticketResponse = ticketsResp;
-                              return ticketsResp == null ||
-                                      ticketsResp.tickets.isEmpty
-                                  ? Expanded(
-                                      child: Center(
-                                        child: Text(
-                                          "No tickets found",
-                                          style: theme.bodyStyle,
-                                        ),
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Expanded(
-                                              child: _buildTicketList(
-                                                  ticketsResp, state)),
-                                          _buildSummary()
-                                        ],
-                                      ),
-                                    );
-                            }),
-                      ],
-                    );
+                  : (state.eventResponse.value == null)
+                      ? Center(
+                          child: Text("This event is not found",
+                              style: theme.bodyStyle),
+                        )
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 22.h),
+                              child:
+                                  ValueListenableBuilder<AnbocasEventResponse?>(
+                                      valueListenable: state.eventResponse,
+                                      builder: (context, ticketsResp, child) {
+                                        return state.eventResponse.value == null
+                                            ? const SizedBox.shrink()
+                                            : Text(
+                                                state.eventResponse.value
+                                                        ?.name ??
+                                                    "",
+                                                style: theme.headingStyle);
+                                      }),
+                            ),
+                            SizedBox(
+                              height: 25.v,
+                            ),
+                            (state.eventResponse.value?.status == "PUBLISHED")
+                                ? ValueListenableBuilder<AnbocasEventResponse?>(
+                                    valueListenable: state.eventResponse,
+                                    builder: (context, ticketsResp, child) {
+                                      ticketResponse = ticketsResp;
+                                      return ticketsResp == null ||
+                                              ticketsResp.tickets.isEmpty
+                                          ? Expanded(
+                                              child: Center(
+                                                child: Text(
+                                                  "No tickets found",
+                                                  style: theme.bodyStyle,
+                                                ),
+                                              ),
+                                            )
+                                          : Expanded(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Expanded(
+                                                      child: _buildTicketList(
+                                                          ticketsResp, state)),
+                                                  _buildSummary()
+                                                ],
+                                              ),
+                                            );
+                                    })
+                                : Expanded(
+                                    child: Center(
+                                      child: Text(
+                                          "This event is ${state.eventResponse.value?.status}",
+                                          style: theme.bodyStyle),
+                                    ),
+                                  ),
+                          ],
+                        );
             },
           );
         }),
@@ -575,7 +611,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 }
 
 abstract class AnbocasTicketBookingState
-    extends State<AnbocasTicketBookingWidget> {
+    extends State<AnbocasTicketBookingWidget> with SnackbarMixin {
   ValueNotifier<bool> isLoading = ValueNotifier(false);
   final AnbocasBookingRepo? _booking = AnbocasServiceManager().bookingRepo;
 
@@ -589,21 +625,19 @@ abstract class AnbocasTicketBookingState
   List<SingleTicket> selectedTickets = [];
 
   Future<void> _fetchEvent() async {
-    try {
-      isLoading.value = true;
-      await _booking
-          ?.getEventById(
-        eventId: widget.eventId,
-      )
-          .then((value) {
-        eventResponse.value = value;
-      });
-      isLoading.value = false;
-    } catch (e) {
-      // if (e is DioException) {}
-      isLoading.value = false;
-      if (!mounted) return;
-      Navigator.pop(context);
+    isLoading.value = true;
+    ApiResponse<AnbocasEventResponse>? response = await _booking?.getEventById(
+      eventId: widget.eventId,
+    );
+    isLoading.value = false;
+    if (response != null) {
+      if (response.data != null) {
+        eventResponse.value = response.data!;
+      }
+      if (response.error != null) {
+        if (!mounted) return;
+        showAlertSnackBar(context, response.error ?? "Something went wrong");
+      }
     }
   }
 
