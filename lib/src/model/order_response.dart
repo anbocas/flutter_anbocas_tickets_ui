@@ -3,9 +3,12 @@ import 'package:anbocas_tickets_ui/src/model/event_guest.dart';
 import 'package:anbocas_tickets_ui/src/model/event_response.dart';
 import 'package:anbocas_tickets_ui/src/model/order_ticket.dart';
 import 'package:anbocas_tickets_ui/src/model/single_company.dart';
+
 class AnbocasOrderResponse {
   OrderData? data;
   String? paymentUrl;
+  String? razorpayOrderId;
+  Map<String, dynamic>? paymentNotes;
 
   AnbocasOrderResponse({this.data, this.paymentUrl});
 
@@ -16,12 +19,20 @@ class AnbocasOrderResponse {
     if (json["paymentUrl"] is String) {
       paymentUrl = json["paymentUrl"];
     }
+    if (json["razorpay_order_id"] is String) {
+      razorpayOrderId = json["razorpay_order_id"];
+    }
+    if (json["payment_notes"] is Map) {
+      paymentNotes = json["payment_notes"];
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> _data = <String, dynamic>{};
     _data["data"] = data?.toJson();
     _data["paymentUrl"] = paymentUrl;
+    _data["razorpay_order_id"] = razorpayOrderId;
+    _data["payment_notes"] = paymentNotes;
     return _data;
   }
 }
@@ -53,7 +64,6 @@ class OrderData {
   Company? company;
   Payment? payment;
   String? createdAt;
-  
 
   OrderData.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -214,7 +224,6 @@ class OrderData {
       payment =
           json["payment"] == null ? null : Payment.fromJson(json["payment"]);
     }
-    
   }
 
   Map<String, dynamic> toJson() {

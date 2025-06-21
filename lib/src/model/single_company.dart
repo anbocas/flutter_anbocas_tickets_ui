@@ -11,24 +11,27 @@ class Company {
   dynamic phone;
   String? taxId;
   String? status;
-  String brandColor='#000000';
+  String brandColor = '#000000';
 
   Currency? currency;
+  Company? parent;
 
-  Company(
-      {this.id,
-      this.userId,
-      this.currencyId,
-      this.name,
-      this.slug,
-      this.logo,
-      this.banner,
-      this.website,
-      this.location,
-      this.phone,
-      this.taxId,
-      this.status,
-      this.currency});
+  Company({
+    this.id,
+    this.userId,
+    this.currencyId,
+    this.name,
+    this.slug,
+    this.logo,
+    this.banner,
+    this.website,
+    this.location,
+    this.phone,
+    this.taxId,
+    this.status,
+    this.currency,
+    this.parent,
+  });
 
   Company.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -60,11 +63,13 @@ class Company {
       status = json["status"];
     }
     if (json["currency"] is Map) {
-      currency =
-          json["currency"] == null ? null : Currency.fromJson(json["currency"]);
+      currency = json["currency"] = Currency.fromJson(json["currency"]);
     }
-     if (json["brand_color"] is String) {
+    if (json["brand_color"] is String) {
       brandColor = json["brand_color"];
+    }
+    if (json["parent"] is Map) {
+      parent = json["parent"] = Company.fromJson(json["parent"]);
     }
   }
 

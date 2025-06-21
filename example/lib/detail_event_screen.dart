@@ -298,8 +298,8 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                             context: context,
                             userMetaData: UserConfig(
                                 name: "Saurabh Kumar",
-                                email: "saurabhTester35@gmail.com",
-                                phone: "9304678898",
+                                email: "rahulxx@yopmail.com",
+                                phone: "8789039188",
                                 countryCode: "+91"),
                           ),
 

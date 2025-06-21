@@ -22,7 +22,7 @@ class AnbocasTickets {
 
   void config({
     required String apikey,
-    ApiMode apiMode = ApiMode.sandbox,
+    ApiMode apiMode = ApiMode.development,
     AnbocasCustomTheme? customThemeConfig,
     required String anbocasRazorpayApiKey,
   }) {
@@ -31,6 +31,8 @@ class AnbocasTickets {
 
     if (apiMode == ApiMode.sandbox) {
       baseUrl = 'https://sandbox-api.anbocas.com';
+    } else if (apiMode == ApiMode.development) {
+      baseUrl = 'https://dev-api.anbocas.com';
     } else {
       baseUrl = 'https://api.anbocas.com';
     }

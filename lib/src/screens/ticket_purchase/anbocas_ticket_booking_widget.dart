@@ -154,16 +154,18 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         'email': order.data!.email,
         'name': order.data!.name,
       },
-      "notes": {
-        "order_id": order.data!.id,
-        "order_number": order.data!.orderNumber,
-        "event_id": order.data!.eventId,
-        "payer_name": order.data!.name
-      },
+      'order_id': order.razorpayOrderId,
+      "notes": order.paymentNotes ??
+          {
+            "order_id": order.data!.id,
+            "order_number": order.data!.orderNumber,
+            "event_id": order.data!.eventId,
+            "payer_name": order.data!.name
+          },
       "theme": {
         'color': order.data!.company!.brandColor,
       },
-      'image': order.data!.company!.logo,
+      'image': order.data!.company!.parent?.logo,
     };
 
     _razorpay.open(options);

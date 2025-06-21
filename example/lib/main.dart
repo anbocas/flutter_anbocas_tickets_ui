@@ -21,8 +21,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    AnbocasTicketsApi.instance
-        ?.config(token: dotenv.env['API_KEY'], enableLog: true);
+    AnbocasTicketsApi.instance?.config(
+      token: dotenv.env['API_KEY'],
+      enableLog: true,
+      mode: ApiMode.development,
+    );
     super.initState();
   }
 
