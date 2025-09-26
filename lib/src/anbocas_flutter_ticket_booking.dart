@@ -17,6 +17,7 @@ class AnbocasTickets {
   factory AnbocasTickets() => instance;
 
   String sandboxUrl = 'https://sandbox-api.anbocas.com';
+  String developmentUrl = 'https://dev-api.anbocas.com';
   String productionUrl = 'https://api.anbocas.com';
   String baseUrl = 'https://api.anbocas.com';
 
@@ -32,11 +33,11 @@ class AnbocasTickets {
     this.anbocasRazorpayApiKey = anbocasRazorpayApiKey;
 
     if (apiMode == ApiMode.sandbox) {
-      baseUrl = 'https://sandbox-api.anbocas.com';
+      baseUrl = sandboxUrl;
     } else if (apiMode == ApiMode.development) {
-      baseUrl = 'https://dev-api.anbocas.com';
+      baseUrl = developmentUrl;
     } else {
-      baseUrl = 'https://api.anbocas.com';
+      baseUrl = productionUrl;
     }
 
     serviceManager.initializeBookingRepo(baseUrl, apikey);
