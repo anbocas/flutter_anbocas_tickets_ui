@@ -117,6 +117,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       double totalPayable = order.data?.totalPayable ?? 0.00;
       if (totalPayable <= 0) {
         info("Navigating to Success screen while getting zero total payable");
+        Navigator.pop(context);
         Navigator.push(
           context,
           MaterialPageRoute(
