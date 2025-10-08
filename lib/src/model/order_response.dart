@@ -46,8 +46,6 @@ class OrderData {
   double subTotal = 0.0;
   double discountAmount = 0.0;
   double convenienceFee = 0.0;
-  double convenienceTax = 0.0;
-  double totalConvenienceFee = 0.0;
   double pgFee = 0.0;
   double parentOrganiserCommission = 0.0;
   double totalPayable = 0.0;
@@ -108,38 +106,6 @@ class OrderData {
     } else if (json["convenience_fee"] is String) {
       convenienceFee = json["convenience_fee"] != null
           ? double.tryParse(json["convenience_fee"]) ?? 0.0
-          : 0.0;
-    }
-
-    if (json["convenience_tax"] is double || json["convenience_tax"] is int) {
-      convenienceTax = json["convenience_tax"] is int
-          ? (json["convenience_tax"] as int).toDouble()
-          : json["convenience_tax"];
-    } else if (json["convenience_tax"] is String) {
-      convenienceTax = json["convenience_tax"] != null
-          ? double.tryParse(json["convenience_tax"]) ?? 0.0
-          : 0.0;
-    }
-
-    if (json["total_convenience_fee"] is double ||
-        json["total_convenience_fee"] is int) {
-      totalConvenienceFee = json["total_convenience_fee"] is int
-          ? (json["total_convenience_fee"] as int).toDouble()
-          : json["total_convenience_fee"];
-    } else if (json["total_convenience_fee"] is String) {
-      totalConvenienceFee = json["total_convenience_fee"] != null
-          ? double.tryParse(json["total_convenience_fee"]) ?? 0.0
-          : 0.0;
-    }
-
-    if (json["total_convenience_fee"] is double ||
-        json["total_convenience_fee"] is int) {
-      totalConvenienceFee = json["total_convenience_fee"] is int
-          ? (json["total_convenience_fee"] as int).toDouble()
-          : json["total_convenience_fee"];
-    } else if (json["total_convenience_fee"] is String) {
-      totalConvenienceFee = json["total_convenience_fee"] != null
-          ? double.tryParse(json["total_convenience_fee"]) ?? 0.0
           : 0.0;
     }
 
@@ -236,8 +202,6 @@ class OrderData {
     data["sub_total"] = subTotal;
     data["discount_amount"] = discountAmount;
     data["convenience_fee"] = convenienceFee;
-    data["convenience_tax"] = convenienceTax;
-    data["total_convenience_fee"] = totalConvenienceFee;
     data["pg_fee"] = pgFee;
     data["parent_organiser_commission"] = parentOrganiserCommission;
     data["total_payable"] = totalPayable;
@@ -308,7 +272,7 @@ class OrderData {
 
   @override
   String toString() {
-    return 'OrderData(id: $id, orderNumber: $orderNumber, companyId: $companyId, eventId: $eventId, subTotal: $subTotal, discountAmount: $discountAmount, convenienceFee: $convenienceFee, convenienceTax: $convenienceTax, totalConvenienceFee: $totalConvenienceFee, totalPayable: $totalPayable, userId: $userId, name: $name, email: $email, phone: $phone, currencyId: $currencyId)';
+    return 'OrderData(id: $id, orderNumber: $orderNumber, companyId: $companyId, eventId: $eventId, subTotal: $subTotal, discountAmount: $discountAmount, convenienceFee: $convenienceFee, totalPayable: $totalPayable, userId: $userId, name: $name, email: $email, phone: $phone, currencyId: $currencyId)';
   }
 }
 

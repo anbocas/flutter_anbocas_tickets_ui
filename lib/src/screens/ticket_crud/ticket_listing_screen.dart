@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
-import 'package:anbocas_tickets_ui/src/anbocas_flutter_ticket_booking.dart';
 import 'package:anbocas_tickets_ui/src/components/anbocas_form_field.dart';
 import 'package:anbocas_tickets_ui/src/components/custom_button.dart';
 import 'package:anbocas_tickets_ui/src/helper/common_utils.dart';
@@ -15,9 +14,9 @@ class TicketListingScreen extends StatefulWidget {
   final String eventId;
 
   const TicketListingScreen({
-    Key? key,
+    super.key,
     required this.eventId,
-  }) : super(key: key);
+  });
 
   @override
   TicketsScreenState createState() => TicketsScreenState();
@@ -36,7 +35,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchEvents();
+    _fetchEvent();
   }
 
   Future<void> _fetchTickets() async {
@@ -56,7 +55,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
     }
   }
 
-  Future<void> _fetchEvents() async {
+  Future<void> _fetchEvent() async {
     try {
       _eventDetails.value =
           await _eventApi.eventDetails(eventId: widget.eventId);
@@ -96,17 +95,40 @@ class TicketsScreenState extends State<TicketListingScreen> {
     }
   }
 
-  Future<void> _deleteTicket(String ticketId) async {
-    try {
-      final result = await _ticketsApi.deleteTicket(ticketId: ticketId);
-      if (result) {
-        _fetchTickets();
-      }
-    } on Exception catch (e) {
+  Future<void> _deleteTicket(
+      String ticketId, SingleTicketByEvent ticket) async {
+    if (ticket.sold > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: Colors.red, content: Text(e.toString())),
+        SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Ticket has been sold. Cannot delete.')),
       );
+      return;
     }
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => ScaffoldMessenger(
+        child: Builder(
+            builder: (context) => AlertDialog(
+                  title: Text('Delete Ticket'),
+                  content: Text('Are you sure you want to delete this ticket?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Cancel')),
+                    TextButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop(true);
+                          await _ticketsApi.deleteTicket(ticketId: ticketId);
+                          _fetchTickets();
+                        },
+                        child: Text('Delete')),
+                  ],
+                )),
+      ),
+    );
   }
 
   @override
@@ -176,7 +198,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Availability: ${ticket.getCurrentAvailablity()}',
+                                    'Sold: ${ticket.sold} | Availability: ${ticket.getCurrentAvailablity()}',
                                     style: theme.labelStyle?.copyWith(
                                         color: theme.secondaryTextColor,
                                         fontSize: 12.fSize),
@@ -224,7 +246,8 @@ class TicketsScreenState extends State<TicketListingScreen> {
                                     size: 18,
                                     color: Colors.red,
                                   ),
-                                  onTap: () => _deleteTicket(ticket.id ?? ""),
+                                  onTap: () =>
+                                      _deleteTicket(ticket.id ?? "", ticket),
                                 ),
                               ],
                             ),
@@ -255,7 +278,11 @@ class TicketDialog extends StatefulWidget {
   final DateTime eventDateTime;
   final SingleTicketByEvent? ticket;
 
-  TicketDialog({this.ticket, required this.event, required this.eventDateTime});
+  const TicketDialog(
+      {super.key,
+      this.ticket,
+      required this.event,
+      required this.eventDateTime});
 
   @override
   TicketDialogState createState() => TicketDialogState();
@@ -270,10 +297,12 @@ class TicketDialogState extends State<TicketDialog> {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _availableFrom = TextEditingController();
   final TextEditingController _availableTo = TextEditingController();
+  final TextEditingController _groupSize = TextEditingController();
   DateTime? availableFrom;
   DateTime? availableTo;
   String? _selectedStatus = 'AVAILABLE';
   final ValueNotifier<bool> _unlimitedCheckbox = ValueNotifier(false);
+  final ValueNotifier<bool> isGuestListTicket = ValueNotifier(false);
 
   @override
   void initState() {
@@ -295,13 +324,18 @@ class TicketDialogState extends State<TicketDialog> {
           DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);
       _availableTo.text = DateFormat('yyyy-MM-dd H:mm').format(availableTo!);
       _selectedStatus = widget.ticket?.status;
+      isGuestListTicket.value =
+          widget.ticket?.parentCommission == "100.00" ? true : false;
+      _groupSize.text = widget.ticket!.guestCount.toString();
     }
 
     if (widget.ticket == null) {
       availableFrom = DateTime.now();
       availableTo = DateTime.parse(widget.event.endDate!);
 
-      _capacity.text = '0';
+      _capacity.text = '-1';
+      _unlimitedCheckbox.value = true;
+      _groupSize.text = '1';
 
       _availableFrom.text =
           DateFormat('yyyy-MM-dd H:mm').format(availableFrom!);
@@ -327,6 +361,8 @@ class TicketDialogState extends State<TicketDialog> {
             availableFrom: _availableFrom.text,
             availableTo: _availableTo.text,
             status: _selectedStatus ?? "",
+            parentCommission: isGuestListTicket.value ? "100" : null,
+            guestCount: _groupSize.text,
           );
         } else {
           await api.updateTicket(
@@ -338,6 +374,8 @@ class TicketDialogState extends State<TicketDialog> {
             availableFrom: _availableFrom.text,
             availableTo: _availableTo.text,
             status: _selectedStatus ?? "",
+            parentCommission: isGuestListTicket.value ? "100" : null,
+            guestCount: _groupSize.text,
           );
         }
         _submitLoader.value = false;
@@ -446,7 +484,7 @@ class TicketDialogState extends State<TicketDialog> {
       backgroundColor: theme.secondaryBgColor,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Container(
-        width: 450,
+        width: double.infinity,
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
@@ -539,66 +577,122 @@ class TicketDialogState extends State<TicketDialog> {
                 SizedBox(
                   height: 15.v,
                 ),
-                AnbocasFormField(
-                  formCtr: _price,
-                  filled: false,
-                  // style: theme.bodyStyle?.copyWith(color: Colors.black),
-                  labelText: "Price",
-                  hintText: "0.0",
-                  inputType:
-                      const TextInputType.numberWithOptions(signed: false),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnbocasFormField(
+                        formCtr: _price,
+                        filled: false,
+                        // style: theme.bodyStyle?.copyWith(color: Colors.black),
+                        labelText: "Price",
+                        hintText: "0.0",
+                        inputType: const TextInputType.numberWithOptions(
+                            signed: false),
 
-                  fieldValidator: (newValue) {
-                    if (newValue == null || newValue.isEmpty) {
-                      return "Price is required";
-                    }
-                    if (!isValidPrice(newValue)) {
-                      return "Invalid Price format.";
-                    }
-                    return null;
-                  },
+                        fieldValidator: (newValue) {
+                          if (newValue == null || newValue.isEmpty) {
+                            return "Price is required";
+                          }
+                          if (!isValidPrice(newValue)) {
+                            return "Invalid Price format.";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        ValueListenableBuilder(
+                            valueListenable: isGuestListTicket,
+                            builder: (context, value, child) {
+                              return Checkbox(
+                                value: isGuestListTicket.value,
+                                onChanged: (widget.ticket?.sold ?? 0) > 0
+                                    ? null
+                                    : (value) {
+                                        isGuestListTicket.value = value!;
+                                      },
+                              );
+                            }),
+                        Text(
+                          'Is Guest List Ticket',
+                          style: theme.labelStyle,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 15.v,
                 ),
-                Visibility(
-                  visible: widget.ticket != null,
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedStatus,
-                    items: ['AVAILABLE', 'OUT_OF_STOCK', "UNAVAILABLE"]
-                        .map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(
-                          status,
-                          style: theme.textFormFieldConfig.style,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Visibility(
+                      visible: widget.ticket != null,
+                      child: Expanded(
+                        flex: 2,
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedStatus,
+                          items: ['AVAILABLE', 'OUT_OF_STOCK', "UNAVAILABLE"]
+                              .map((status) {
+                            return DropdownMenuItem<String>(
+                              value: status,
+                              child: Text(
+                                status,
+                                style: theme.textFormFieldConfig.style,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedStatus = value;
+                            });
+                          },
+                          dropdownColor: theme.backgroundColor,
+                          decoration: InputDecoration(
+                            labelText: "Status",
+                            labelStyle: theme.textFormFieldConfig.labelStyle,
+                            border: theme.textFormFieldConfig.border,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Status is required";
+                            }
+                            return null;
+                          },
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedStatus = value;
-                      });
-                    },
-                    dropdownColor: theme.backgroundColor,
-                    decoration: InputDecoration(
-                      labelText: "Status",
-                      labelStyle: theme.textFormFieldConfig.labelStyle,
-                      border: theme.textFormFieldConfig.border,
+                      ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Status is required";
-                      }
-                      return null;
-                    },
-                  ),
+                    Visibility(
+                      visible: widget.ticket != null,
+                      child: SizedBox(
+                        width: 10.h,
+                      ),
+                    ),
+                    Expanded(
+                      child: AnbocasFormField(
+                        formCtr: _groupSize,
+                        filled: false,
+                        labelText: "Group Size",
+                        hintText: "1",
+                        inputType:
+                            const TextInputType.numberWithOptions(signed: true),
+                        fieldValidator: (newValue) {
+                          if (newValue == null || newValue.isEmpty) {
+                            return "Group size is required";
+                          }
+                          if (int.tryParse(newValue) == null) {
+                            return "Invalid group size";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Visibility(
-                  visible: widget.ticket != null,
-                  child: SizedBox(
-                    height: 15.v,
-                  ),
+                SizedBox(
+                  height: 15.v,
                 ),
                 GestureDetector(
                   onTap: () => _pickAvailableFrom(),

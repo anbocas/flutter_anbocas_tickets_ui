@@ -155,11 +155,13 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   }
 
   Future<ApiResponse<CouponModel>> validateCoupon(
-      {required String code, required String eventId}) async {
+      {required String code,
+      required String eventId,
+      required List tickets}) async {
     try {
       info("$code - $eventId");
-      var resp =
-          await doPost(_validateCouponUrl, {"code": code, "event_id": eventId});
+      var resp = await doPost(_validateCouponUrl,
+          {"code": code, "event_id": eventId, "tickets": tickets});
       if (resp.data['data'] != null) {
         return ApiResponse(data: CouponModel.fromJson(resp.data['data']));
       } else {

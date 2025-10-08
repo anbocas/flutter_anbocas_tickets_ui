@@ -15,11 +15,13 @@ class AddCouponWidget extends StatefulWidget {
   final String eventId;
   final double totalAmount;
   final void Function(String value, double discountPrice) validatedCoupon;
+  final List tickets;
   const AddCouponWidget({
     Key? key,
     required this.eventId,
     required this.totalAmount,
     required this.validatedCoupon,
+    required this.tickets,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,9 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
   void validateCoupon(BuildContext context) async {
     isLoading.value = true;
     ApiResponse<CouponModel>? response = await _booking?.validateCoupon(
-        code: voucherCtr.text, eventId: widget.eventId);
+        code: voucherCtr.text,
+        eventId: widget.eventId,
+        tickets: widget.tickets);
     isLoading.value = false;
     if (response != null) {
       if (response.data != null) {

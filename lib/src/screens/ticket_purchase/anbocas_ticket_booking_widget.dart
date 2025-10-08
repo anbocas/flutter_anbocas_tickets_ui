@@ -51,7 +51,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
   void updateTheValue(AnbocasOrderResponse order) {
     info(order.data.toString());
     itemsTotal.value = order.data?.subTotal ?? 0.00;
-    totalFee.value = order.data?.totalConvenienceFee ?? 0.00;
+    totalFee.value = order.data?.convenienceFee ?? 0.00;
     totalPrice.value = order.data?.totalPayable ?? 0.00;
     discountPrice.value = order.data?.discountAmount ?? 0.00;
   }
@@ -278,7 +278,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                   ),
                                 ),
                                 Text(
-                                    "${selectedTickets.fold(0, (sum, element) => sum + element.selectedQuantity)}",
+                                    "${selectedTickets.fold(0, (sum, element) => sum + element.selectedQuantity)}x",
                                     style: theme.labelStyle)
                               ],
                             ),
@@ -306,7 +306,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                   );
                                 }),
                             SizedBox(
-                              height: 8.v,
+                              height: 4.v,
                             ),
                             ValueListenableBuilder(
                                 valueListenable: totalFee,
@@ -332,7 +332,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                       : const SizedBox.shrink();
                                 }),
                             SizedBox(
-                              height: 8.v,
+                              height: 16.v,
                             ),
                             appliedCoupon == null
                                 ? InkWell(
@@ -346,6 +346,9 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                             return AddCouponWidget(
                                               eventId: widget.eventId,
                                               totalAmount: totalPrice.value,
+                                              tickets: selectedTickets
+                                                  .map((e) => e.id)
+                                                  .toList(),
                                               validatedCoupon:
                                                   (String value, double price) {
                                                 appliedCoupon = value;

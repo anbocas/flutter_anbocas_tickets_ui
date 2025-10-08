@@ -68,12 +68,15 @@ class SingleTicketByEvent {
   String? price;
   late int capacity;
   late int available;
+  int sold = 0;
   String? availableFrom;
   String? availableTo;
   String? status;
   String? createdAt;
   String? updatedAt;
   String? formattedPrice;
+  String? parentCommission;
+  num? guestCount;
 
   String getCapacity() {
     if (capacity == -1) {
@@ -123,12 +126,15 @@ class SingleTicketByEvent {
       this.price,
       this.capacity = -1,
       this.available = -1,
+      this.sold = 0,
       this.availableFrom,
       this.availableTo,
       this.status,
       this.createdAt,
       this.updatedAt,
-      this.formattedPrice});
+      this.formattedPrice,
+      this.parentCommission,
+      this.guestCount});
 
   SingleTicketByEvent.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -173,6 +179,15 @@ class SingleTicketByEvent {
     if (json["formatted_price"] is String) {
       formattedPrice = json["formatted_price"];
     }
+    if (json["parent_commission"] is String) {
+      parentCommission = json["parent_commission"];
+    }
+    if (json["guest_count"] is num) {
+      guestCount = json["guest_count"];
+    }
+    if (json["sold"] is int) {
+      sold = json["sold"];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -190,6 +205,8 @@ class SingleTicketByEvent {
     _data["created_at"] = createdAt;
     _data["updated_at"] = updatedAt;
     _data["formatted_price"] = formattedPrice;
+    _data["parent_commission"] = parentCommission;
+    _data["guest_count"] = guestCount;
     return _data;
   }
 }

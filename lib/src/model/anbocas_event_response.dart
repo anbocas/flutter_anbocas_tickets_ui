@@ -25,6 +25,7 @@ class AnbocasEventResponse {
   int? isFree;
   int? isPublic;
   int? groupTicketingAllowed;
+  int absorbPlatformFee = 0;
   int? commission;
   String? status;
   List<SingleTicket> tickets = [];
@@ -59,6 +60,7 @@ class AnbocasEventResponse {
     this.isFree,
     this.isPublic,
     this.groupTicketingAllowed,
+    this.absorbPlatformFee = 0,
     this.commission,
     this.status,
     required this.tickets,
@@ -143,6 +145,9 @@ class AnbocasEventResponse {
       company =
           json["company"] == null ? null : Company.fromJson(json["company"]);
     }
+    if (json["absorb_platform_fee"] is int) {
+      absorbPlatformFee = json["absorb_platform_fee"];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -174,6 +179,7 @@ class AnbocasEventResponse {
     if (company != null) {
       _data["company"] = company?.toJson();
     }
+    _data["absorb_platform_fee"] = absorbPlatformFee;
     return _data;
   }
 
