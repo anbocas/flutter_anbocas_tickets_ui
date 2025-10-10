@@ -607,6 +607,7 @@ class TicketDialogState extends State<TicketDialog> {
                             builder: (context, value, child) {
                               return Checkbox(
                                 value: isGuestListTicket.value,
+                                activeColor: theme.primaryColor,
                                 onChanged: (widget.ticket?.sold ?? 0) > 0
                                     ? null
                                     : (value) {
