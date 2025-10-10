@@ -615,7 +615,7 @@ class TicketDialogState extends State<TicketDialog> {
                               );
                             }),
                         Text(
-                          'Is Guest List Ticket',
+                          'Guest List',
                           style: theme.labelStyle,
                         ),
                       ],
