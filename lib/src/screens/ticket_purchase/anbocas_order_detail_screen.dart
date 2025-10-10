@@ -511,6 +511,29 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                               )
                                             ],
                                           ),
+                                        if (orderResponse
+                                                .value!.convenienceFee >
+                                            0.0)
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                        if (orderResponse
+                                                .value!.convenienceFee >
+                                            0.0)
+                                          Row(
+                                            children: [
+                                              Text("Convenience Fee : ",
+                                                  style: theme.labelStyle),
+                                              SizedBox(
+                                                width: 10.h,
+                                              ),
+                                              const Spacer(),
+                                              Text(
+                                                "${orderResponse.value!.company?.currency?.symbol ?? "\u20B9"} ${changePrice(orderResponse.value!.convenienceFee.toString())}",
+                                                style: theme.labelStyle,
+                                              )
+                                            ],
+                                          ),
                                         // SizedBox(
                                         //   height: 5.v,
                                         // ),

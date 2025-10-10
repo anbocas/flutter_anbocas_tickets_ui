@@ -21,14 +21,11 @@
 #-renamesourcefileattribute SourceFile
 
 # Razorpay ProGuard rules
--dontwarn proguard.annotation.**
--keep class proguard.annotation.** { *; }
--keepclassmembers class * {
-    @proguard.annotation.Keep *;
-    @proguard.annotation.KeepClassMembers *;
-}
-
-# Keep Razorpay classes
--keep class com.razorpay.** { *; }
+-keepattributes *Annotation*
 -dontwarn com.razorpay.**
+-keep class com.razorpay.** {*;}
+-optimizations !method/inlining/
+-keepclasseswithmembers class * {
+  public void onPayment*(...);
+}
 

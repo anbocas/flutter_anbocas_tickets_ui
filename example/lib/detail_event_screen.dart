@@ -313,6 +313,32 @@ class _DetailEventScreenState extends State<DetailEventScreen> {
                         minimumSize: WidgetStateProperty.all<Size>(
                             const Size(double.infinity, 50)),
                       ),
+                      onPressed: () => AnbocasTickets.instance.viewMyBooking(
+                            emailID: "rahulxx@yopmail.com",
+                            context: context,
+                          ),
+                      child: const Text(
+                        "My Bookings",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700, color: Colors.white),
+                      )),
+                ),
+                Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.black),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        minimumSize: WidgetStateProperty.all<Size>(
+                            const Size(double.infinity, 50)),
+                      ),
                       onPressed: () => AnbocasTickets.instance.manageAttendees(
                           context: context, eventId: widget.model.id ?? ""),
                       child: const Text(

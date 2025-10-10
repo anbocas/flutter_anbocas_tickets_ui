@@ -20,11 +20,10 @@ class AnbocasBookingSuccessScreen extends StatefulWidget {
   final String? referenceEventId;
   final bool detailFlow;
   const AnbocasBookingSuccessScreen(
-      {Key? key,
+      {super.key,
       required this.orderDetails,
       this.referenceEventId,
-      this.detailFlow = false})
-      : super(key: key);
+      this.detailFlow = false});
 
   @override
   State<AnbocasBookingSuccessScreen> createState() =>
@@ -639,9 +638,9 @@ class _AnbocasBookingSuccessScreenState
 class PaymentOverviewWidget extends StatelessWidget with StringHelperMixin {
   final OrderData order;
   const PaymentOverviewWidget({
-    Key? key,
+    super.key,
     required this.order,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -700,9 +699,24 @@ class PaymentOverviewWidget extends StatelessWidget with StringHelperMixin {
                       )
                     ],
                   ),
-                // SizedBox(
-                //   height: 5.v,
-                // ),
+                if (order.convenienceFee > 0.0)
+                  const SizedBox(
+                    height: 5,
+                  ),
+                if (order.convenienceFee > 0.0)
+                  Row(
+                    children: [
+                      Text("Convenience Fee : ", style: theme.labelStyle),
+                      SizedBox(
+                        width: 10.h,
+                      ),
+                      const Spacer(),
+                      Text(
+                        "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.convenienceFee.toString())}",
+                        style: theme.labelStyle,
+                      )
+                    ],
+                  ),
               ],
             ),
           ),

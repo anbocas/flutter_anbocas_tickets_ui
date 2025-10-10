@@ -24,8 +24,7 @@ class AnbocasTicketBookingWidget extends StatefulWidget {
   final String eventId;
   final String? referenceEventId;
   const AnbocasTicketBookingWidget(
-      {Key? key, required this.eventId, this.referenceEventId})
-      : super(key: key);
+      {super.key, required this.eventId, this.referenceEventId});
 
   @override
   State<AnbocasTicketBookingWidget> createState() =>
@@ -165,7 +164,6 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
         'email': order.data!.email,
         'name': order.data!.name,
       },
-      'order_id': order.razorpayOrderId,
       "notes": order.paymentNotes ??
           {
             "order_id": order.data!.id,
@@ -178,6 +176,10 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       },
       'image': order.data!.company!.parent?.logo,
     };
+
+    if (order.razorpayOrderId != null) {
+      options['order_id'] = order.razorpayOrderId;
+    }
 
     _razorpay.open(options);
   }

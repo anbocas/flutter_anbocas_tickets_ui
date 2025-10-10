@@ -13,10 +13,10 @@ class AnbocasMyBookingScreen extends StatefulWidget {
   final String emailID;
   final String? referenceEventId;
   const AnbocasMyBookingScreen({
-    Key? key,
+    super.key,
     required this.emailID,
     this.referenceEventId,
-  }) : super(key: key);
+  });
 
   @override
   State<AnbocasMyBookingScreen> createState() => _AnbocasMyBookingWidgetState();
