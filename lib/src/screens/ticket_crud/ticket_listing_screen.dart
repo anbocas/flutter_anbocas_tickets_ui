@@ -187,8 +187,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
                           final ticket = tickets[index];
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: Text(
-                                '${ticket.name}  (${ticket.formattedPrice})',
+                            title: Text('${ticket.name}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.subHeadingStyle),
@@ -198,7 +197,7 @@ class TicketsScreenState extends State<TicketListingScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Sold: ${ticket.sold} | Availability: ${ticket.getCurrentAvailablity()}',
+                                    'Price: ${ticket.formattedPrice} | Sold: ${ticket.sold}/${ticket.getCapacity()}',
                                     style: theme.labelStyle?.copyWith(
                                         color: theme.secondaryTextColor,
                                         fontSize: 12.fSize),
