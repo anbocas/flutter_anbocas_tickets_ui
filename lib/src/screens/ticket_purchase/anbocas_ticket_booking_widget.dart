@@ -313,7 +313,8 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                             ValueListenableBuilder(
                                 valueListenable: totalFee,
                                 builder: (context, value, child) {
-                                  return value > 0
+                                  return value > 0 &&
+                                          ticketResponse?.absorbPlatformFee == 0
                                       ? Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -437,10 +438,14 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
                                       "Total Payable",
                                       style: theme.labelStyle,
                                     ),
-                                    Text(
-                                      "${ticketResponse?.company?.currency?.symbol ?? "\u20B9"} ${totalPrice.value.toStringAsFixed(2)}",
-                                      style: theme.labelStyle,
-                                    )
+                                    ValueListenableBuilder(
+                                        valueListenable: totalPrice,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            "${ticketResponse?.company?.currency?.symbol ?? "\u20B9"} ${totalPrice.value.toStringAsFixed(2)}",
+                                            style: theme.labelStyle,
+                                          );
+                                        }),
                                   ],
                                 ),
                               ),
