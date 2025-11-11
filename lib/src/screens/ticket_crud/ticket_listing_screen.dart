@@ -157,111 +157,114 @@ class TicketsScreenState extends State<TicketListingScreen> {
           ),
         ],
       ),
-      body: ValueListenableBuilder<bool>(
-        valueListenable: _isLoadingNotifier,
-        builder: (context, isLoading, child) {
-          if (isLoading) {
-            return Center(
-                child: CircularProgressIndicator(
-              strokeWidth: 4.adaptSize,
-              color: theme.accentColor,
-              backgroundColor: Colors.white,
-            ));
-          }
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _isLoadingNotifier,
+          builder: (context, isLoading, child) {
+            if (isLoading) {
+              return Center(
+                  child: CircularProgressIndicator(
+                strokeWidth: 4.adaptSize,
+                color: theme.accentColor,
+                backgroundColor: Colors.white,
+              ));
+            }
 
-          return ValueListenableBuilder<List<SingleTicketByEvent>>(
-            valueListenable: _ticketsNotifier,
-            builder: (context, tickets, child) {
-              return tickets.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No tickets found",
-                        style: theme.bodyStyle,
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.fromLTRB(22.h, 0, 22.h, 15.v),
-                      child: ListView.separated(
-                        itemCount: tickets.length,
-                        itemBuilder: (context, index) {
-                          final ticket = tickets[index];
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text('${ticket.name}',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: theme.subHeadingStyle),
-                            subtitle: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5.v),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+            return ValueListenableBuilder<List<SingleTicketByEvent>>(
+              valueListenable: _ticketsNotifier,
+              builder: (context, tickets, child) {
+                return tickets.isEmpty
+                    ? Center(
+                        child: Text(
+                          "No tickets found",
+                          style: theme.bodyStyle,
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.fromLTRB(22.h, 0, 22.h, 15.v),
+                        child: ListView.separated(
+                          itemCount: tickets.length,
+                          itemBuilder: (context, index) {
+                            final ticket = tickets[index];
+                            return ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text('${ticket.name}',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.subHeadingStyle),
+                              subtitle: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.v),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Price: ${ticket.formattedPrice} | Sold: ${ticket.sold}/${ticket.getCapacity()}',
+                                      style: theme.labelStyle?.copyWith(
+                                          color: theme.secondaryTextColor,
+                                          fontSize: 12.fSize),
+                                    ),
+                                    SizedBox(
+                                      height: 3.v,
+                                    ),
+                                    Text(
+                                      'Status: ${ticket.status}',
+                                      style: theme.labelStyle?.copyWith(
+                                          color: theme.secondaryTextColor,
+                                          fontSize: 12.fSize),
+                                    ),
+
+                                    // Text('Closes: ${ticket.getAvailableTo()}',
+                                    //     style: theme.labelStyle),
+                                  ],
+                                ),
+                              ),
+                              leading: Text(
+                                '${index + 1}.',
+                                style: theme.bodyStyle?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14.fSize,
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    'Price: ${ticket.formattedPrice} | Sold: ${ticket.sold}/${ticket.getCapacity()}',
-                                    style: theme.labelStyle?.copyWith(
-                                        color: theme.secondaryTextColor,
-                                        fontSize: 12.fSize),
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 18,
+                                      color: theme.iconColor,
+                                    ),
+                                    onTap: () =>
+                                        _addOrUpdateTicket(ticket: ticket),
                                   ),
                                   SizedBox(
-                                    height: 3.v,
+                                    width: 10.h,
                                   ),
-                                  Text(
-                                    'Status: ${ticket.status}',
-                                    style: theme.labelStyle?.copyWith(
-                                        color: theme.secondaryTextColor,
-                                        fontSize: 12.fSize),
+                                  InkWell(
+                                    child: const Icon(
+                                      Icons.delete,
+                                      size: 18,
+                                      color: Colors.red,
+                                    ),
+                                    onTap: () =>
+                                        _deleteTicket(ticket.id ?? "", ticket),
                                   ),
-
-                                  // Text('Closes: ${ticket.getAvailableTo()}',
-                                  //     style: theme.labelStyle),
                                 ],
                               ),
-                            ),
-                            leading: Text(
-                              '${index + 1}.',
-                              style: theme.bodyStyle?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14.fSize,
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                InkWell(
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 18,
-                                    color: theme.iconColor,
-                                  ),
-                                  onTap: () =>
-                                      _addOrUpdateTicket(ticket: ticket),
-                                ),
-                                SizedBox(
-                                  width: 10.h,
-                                ),
-                                InkWell(
-                                  child: const Icon(
-                                    Icons.delete,
-                                    size: 18,
-                                    color: Colors.red,
-                                  ),
-                                  onTap: () =>
-                                      _deleteTicket(ticket.id ?? "", ticket),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
-                            color: theme.dividerColor,
-                          );
-                        },
-                      ),
-                    );
-            },
-          );
-        },
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Divider(
+                              color: theme.dividerColor,
+                            );
+                          },
+                        ),
+                      );
+              },
+            );
+          },
+        ),
       ),
     );
   }

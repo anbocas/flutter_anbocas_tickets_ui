@@ -118,23 +118,26 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
-          body: Stack(
-            children: [
-              WebViewWidget(controller: controller),
-              ValueListenableBuilder(
-                  valueListenable: urlLoading,
-                  builder: (context, loader, child) {
-                    return loader == false
-                        ? const SizedBox.shrink()
-                        : Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4.adaptSize,
-                              color: theme.primaryColor,
-                              backgroundColor: Colors.white,
-                            ),
-                          );
-                  }),
-            ],
+          body: SafeArea(
+            maintainBottomViewPadding: true,
+            child: Stack(
+              children: [
+                WebViewWidget(controller: controller),
+                ValueListenableBuilder(
+                    valueListenable: urlLoading,
+                    builder: (context, loader, child) {
+                      return loader == false
+                          ? const SizedBox.shrink()
+                          : Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 4.adaptSize,
+                                color: theme.primaryColor,
+                                backgroundColor: Colors.white,
+                              ),
+                            );
+                    }),
+              ],
+            ),
           )),
     );
   }

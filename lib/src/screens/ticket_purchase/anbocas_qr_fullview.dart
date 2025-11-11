@@ -27,56 +27,59 @@ class _QrFullviewState extends State<QrFullview> {
         ),
       ),
       backgroundColor: theme.backgroundColor,
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-                itemCount: widget.ticketCodes.length,
-                onPageChanged: (value) {
-                  if (mounted) {
-                    setState(() {
-                      currentPage = value + 1;
-                    });
-                  }
-                },
-                itemBuilder: (context, index) {
-                  final ticketCode = widget.ticketCodes[index];
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(16.adaptSize),
-                        child: QrImageView(
-                          data: ticketCode,
-                          version: QrVersions.auto,
-                          dataModuleStyle: QrDataModuleStyle(
-                              dataModuleShape: QrDataModuleShape.square,
-                              color: theme.qrcodeColor),
-                          eyeStyle: QrEyeStyle(
-                              eyeShape: QrEyeShape.square,
-                              color: theme.qrcodeColor),
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                  itemCount: widget.ticketCodes.length,
+                  onPageChanged: (value) {
+                    if (mounted) {
+                      setState(() {
+                        currentPage = value + 1;
+                      });
+                    }
+                  },
+                  itemBuilder: (context, index) {
+                    final ticketCode = widget.ticketCodes[index];
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16.adaptSize),
+                          child: QrImageView(
+                            data: ticketCode,
+                            version: QrVersions.auto,
+                            dataModuleStyle: QrDataModuleStyle(
+                                dataModuleShape: QrDataModuleShape.square,
+                                color: theme.qrcodeColor),
+                            eyeStyle: QrEyeStyle(
+                                eyeShape: QrEyeShape.square,
+                                color: theme.qrcodeColor),
+                          ),
                         ),
-                      ),
-                      Text(
-                        ticketCode,
-                        style: theme.headingStyle,
-                      ),
-                    ],
-                  );
-                }),
-          ),
-          Divider(
-            color: theme.dividerColor,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.v),
-            child: Text(
-              '$currentPage/${widget.ticketCodes.length}',
-              style: theme.labelStyle,
-              textAlign: TextAlign.center,
+                        Text(
+                          ticketCode,
+                          style: theme.headingStyle,
+                        ),
+                      ],
+                    );
+                  }),
             ),
-          )
-        ],
+            Divider(
+              color: theme.dividerColor,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.v),
+              child: Text(
+                '$currentPage/${widget.ticketCodes.length}',
+                style: theme.labelStyle,
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -41,139 +41,147 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
             icon: _iconBack(theme.iconColor!),
           ),
         ),
-        body: Builder(builder: (context) {
-          final state = AnbocasMyBookingScreen.of(context)!;
-          return ValueListenableBuilder<bool>(
-              valueListenable: state.isLoading,
-              builder: (context, isLoading, child) {
-                return isLoading
-                    ? _buildLoader()
-                    : state.orderList.value.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No Booking Found",
-                              style: theme.labelStyle,
-                            ),
-                          )
-                        : ListView.separated(
-                            padding: EdgeInsets.symmetric(horizontal: 22.h),
-                            itemCount: state.orderList.value.length,
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                color: theme.dividerColor,
-                              );
-                            },
-                            itemBuilder: (context, index) {
-                              var element = state.orderList.value[index];
-                              return ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        AnbocasOrderDetailScreen(
-                                      anbocasOrderId: element.id!,
+        body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: Builder(builder: (context) {
+            final state = AnbocasMyBookingScreen.of(context)!;
+            return ValueListenableBuilder<bool>(
+                valueListenable: state.isLoading,
+                builder: (context, isLoading, child) {
+                  return isLoading
+                      ? _buildLoader()
+                      : state.orderList.value.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No Booking Found",
+                                style: theme.labelStyle,
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: EdgeInsets.symmetric(horizontal: 22.h),
+                              itemCount: state.orderList.value.length,
+                              separatorBuilder: (context, index) {
+                                return Divider(
+                                  color: theme.dividerColor,
+                                );
+                              },
+                              itemBuilder: (context, index) {
+                                var element = state.orderList.value[index];
+                                return ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AnbocasOrderDetailScreen(
+                                        anbocasOrderId: element.id!,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      element.event?.name ?? "",
-                                      style: theme.subHeadingStyle,
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        // (element.event?.imageUrl != null &&
-                                        //         element.event!.imageUrl!
-                                        //             .contains("http"))
-                                        //     ? ClipRRect(
-                                        //         borderRadius:
-                                        //             BorderRadius.circular(15),
-                                        //         child: DecoratedBox(
-                                        //           decoration: BoxDecoration(
-                                        //               color:
-                                        //                   theme.secondaryBgColor),
-                                        //           child: Image.network(
-                                        //             element.event?.imageUrl ?? "",
-                                        //             height: 90.v,
-                                        //             width: 75.h,
-                                        //             fit: BoxFit.fill,
-                                        //           ),
-                                        //         ),
-                                        //       )
-                                        //     : Container(
-                                        //         height: 90.v,
-                                        //         width: 75.h,
-                                        //         decoration: BoxDecoration(
-                                        //             color: theme.secondaryBgColor,
-                                        //             borderRadius:
-                                        //                 BorderRadius.circular(15)),
-                                        //       ),
-                                        // const SizedBox(
-                                        //   width: 20,
-                                        // ),
-                                        Expanded(
-                                          child: Column(
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        element.event?.name ?? "",
+                                        style: theme.subHeadingStyle,
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        children: [
+                                          // (element.event?.imageUrl != null &&
+                                          //         element.event!.imageUrl!
+                                          //             .contains("http"))
+                                          //     ? ClipRRect(
+                                          //         borderRadius:
+                                          //             BorderRadius.circular(15),
+                                          //         child: DecoratedBox(
+                                          //           decoration: BoxDecoration(
+                                          //               color:
+                                          //                   theme.secondaryBgColor),
+                                          //           child: Image.network(
+                                          //             element.event?.imageUrl ?? "",
+                                          //             height: 90.v,
+                                          //             width: 75.h,
+                                          //             fit: BoxFit.fill,
+                                          //           ),
+                                          //         ),
+                                          //       )
+                                          //     : Container(
+                                          //         height: 90.v,
+                                          //         width: 75.h,
+                                          //         decoration: BoxDecoration(
+                                          //             color: theme.secondaryBgColor,
+                                          //             borderRadius:
+                                          //                 BorderRadius.circular(15)),
+                                          //       ),
+                                          // const SizedBox(
+                                          //   width: 20,
+                                          // ),
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    '${element.event?.startDate!}',
+                                                    style:
+                                                        theme.smallLabelStyle),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  "Booking ID: ${element.orderNumber}",
+                                                  style: theme.smallLabelStyle,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  '${element.event?.startDate!}',
-                                                  style: theme.smallLabelStyle),
-                                              const SizedBox(
-                                                height: 5,
+                                                '₹${element.totalPayable.toStringAsFixed(2)}',
+                                                style: theme.labelStyle
+                                                    ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w700),
                                               ),
                                               Text(
-                                                "Booking ID: ${element.orderNumber}",
-                                                style: theme.smallLabelStyle,
+                                                "${element.status}",
+                                                style:
+                                                    theme.labelStyle?.copyWith(
+                                                  fontSize: 10.adaptSize,
+                                                  color: element.status ==
+                                                          'COMPLETED'
+                                                      ? Colors.green
+                                                      : element.status ==
+                                                              'PENDING'
+                                                          ? Colors.yellow
+                                                          : Colors.red,
+                                                ),
                                               ),
                                             ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '₹${element.totalPayable.toStringAsFixed(2)}',
-                                              style: theme.labelStyle?.copyWith(
-                                                  fontWeight: FontWeight.w700),
-                                            ),
-                                            Text(
-                                              "${element.status}",
-                                              style: theme.labelStyle?.copyWith(
-                                                fontSize: 10.adaptSize,
-                                                color: element.status ==
-                                                        'COMPLETED'
-                                                    ? Colors.green
-                                                    : element.status ==
-                                                            'PENDING'
-                                                        ? Colors.yellow
-                                                        : Colors.red,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              );
-                            });
-              });
-        }));
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                });
+          }),
+        ));
   }
 
   Icon _iconBack(Color color) => Icon(

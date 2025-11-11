@@ -644,99 +644,103 @@ class PaymentOverviewWidget extends StatelessWidget with StringHelperMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: theme.secondaryBgColor,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0.h, vertical: 10.v),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Payment Overview:", style: theme.subHeadingStyle),
-                SizedBox(
-                  height: 20.v,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Sub Total",
-                      style: theme.labelStyle,
+    return SafeArea(
+      maintainBottomViewPadding: true,
+      child: Container(
+        width: double.infinity,
+        color: theme.secondaryBgColor,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0.h, vertical: 10.v),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Payment Overview:", style: theme.subHeadingStyle),
+                  SizedBox(
+                    height: 20.v,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Sub Total",
+                        style: theme.labelStyle,
+                      ),
+                      Text(
+                          "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.subTotal.toString())}",
+                          style: theme.labelStyle)
+                    ],
+                  ),
+                  if (order.discountAmount > 0.0)
+                    const SizedBox(
+                      height: 5,
                     ),
-                    Text(
-                        "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.subTotal.toString())}",
-                        style: theme.labelStyle)
-                  ],
-                ),
-                if (order.discountAmount > 0.0)
-                  const SizedBox(
-                    height: 5,
-                  ),
-                if (order.discountAmount > 0.0)
-                  Row(
-                    children: [
-                      Text("Coupon : ", style: theme.labelStyle),
-                      if (order.coupon != null)
-                        Chip(
-                          labelStyle: theme.labelStyle,
-                          label: Text(order.coupon.toString()),
-                          backgroundColor: theme.primaryColor,
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                                color: Colors.black), // Border color
-                            borderRadius: BorderRadius.circular(16.0),
+                  if (order.discountAmount > 0.0)
+                    Row(
+                      children: [
+                        Text("Coupon : ", style: theme.labelStyle),
+                        if (order.coupon != null)
+                          Chip(
+                            labelStyle: theme.labelStyle,
+                            label: Text(order.coupon.toString()),
+                            backgroundColor: theme.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  color: Colors.black), // Border color
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
                           ),
+                        SizedBox(
+                          width: 10.h,
                         ),
-                      SizedBox(
-                        width: 10.h,
-                      ),
-                      const Spacer(),
-                      Text(
-                        "- ${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.discountAmount.toString())}",
-                        style: theme.labelStyle,
-                      )
-                    ],
-                  ),
-                if (order.convenienceFee > 0.0)
-                  const SizedBox(
-                    height: 5,
-                  ),
-                if (order.convenienceFee > 0.0)
-                  Row(
-                    children: [
-                      Text("Convenience Fee : ", style: theme.labelStyle),
-                      SizedBox(
-                        width: 10.h,
-                      ),
-                      const Spacer(),
-                      Text(
-                        "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.convenienceFee.toString())}",
-                        style: theme.labelStyle,
-                      )
-                    ],
-                  ),
-              ],
+                        const Spacer(),
+                        Text(
+                          "- ${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.discountAmount.toString())}",
+                          style: theme.labelStyle,
+                        )
+                      ],
+                    ),
+                  if (order.convenienceFee > 0.0)
+                    const SizedBox(
+                      height: 5,
+                    ),
+                  if (order.convenienceFee > 0.0)
+                    Row(
+                      children: [
+                        Text("Convenience Fee : ", style: theme.labelStyle),
+                        SizedBox(
+                          width: 10.h,
+                        ),
+                        const Spacer(),
+                        Text(
+                          "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.convenienceFee.toString())}",
+                          style: theme.labelStyle,
+                        )
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-          DecoratedBox(
-              decoration:
-                  BoxDecoration(color: theme.secondaryBgColor?.withAlpha(80)),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 10.v),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Total Amount Paid", style: theme.labelStyle),
-                    Text(
-                      "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.totalPayable.toString())}",
-                      style: theme.labelStyle,
-                    )
-                  ],
-                ),
-              )),
-        ],
+            DecoratedBox(
+                decoration:
+                    BoxDecoration(color: theme.secondaryBgColor?.withAlpha(80)),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.h, vertical: 10.v),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Total Amount Paid", style: theme.labelStyle),
+                      Text(
+                        "${order.company?.currency?.symbol ?? "\u20B9"} ${changePrice(order.totalPayable.toString())}",
+                        style: theme.labelStyle,
+                      )
+                    ],
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }

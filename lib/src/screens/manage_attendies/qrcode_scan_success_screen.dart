@@ -40,54 +40,57 @@ class QrCodeScanSuccessScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.green,
-        body: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 25,
-              ),
-              QrImageView(
-                data: barcode,
-                version: QrVersions.auto,
-                size: 200,
-                backgroundColor: Colors.white,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Text(
-                name,
-                textAlign: TextAlign.center,
-                style: theme.headingStyle?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text("Ticket Name - $ticketName", style: theme.labelStyle),
-              const SizedBox(
-                height: 5,
-              ),
-              Text("Ticket Price - $price", style: theme.labelStyle),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Status',
-                textAlign: TextAlign.center,
-                style: theme.bodyStyle?.copyWith(color: Colors.black),
-              ),
-              Text(
-                status,
-                textAlign: TextAlign.center,
-                style: theme.bodyStyle?.copyWith(color: Colors.white),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-            ],
+        body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(25),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 25,
+                ),
+                QrImageView(
+                  data: barcode,
+                  version: QrVersions.auto,
+                  size: 200,
+                  backgroundColor: Colors.white,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: theme.headingStyle?.copyWith(color: Colors.white),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text("Ticket Name - $ticketName", style: theme.labelStyle),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text("Ticket Price - $price", style: theme.labelStyle),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Status',
+                  textAlign: TextAlign.center,
+                  style: theme.bodyStyle?.copyWith(color: Colors.black),
+                ),
+                Text(
+                  status,
+                  textAlign: TextAlign.center,
+                  style: theme.bodyStyle?.copyWith(color: Colors.white),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
           ),
         ),
       ),

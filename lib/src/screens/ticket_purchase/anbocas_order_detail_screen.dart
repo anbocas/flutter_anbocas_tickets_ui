@@ -76,6 +76,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
           ),
         ),
         body: SafeArea(
+          maintainBottomViewPadding: true,
           child: ValueListenableBuilder<bool>(
               valueListenable: loading,
               builder: (context, isLoading, child) {

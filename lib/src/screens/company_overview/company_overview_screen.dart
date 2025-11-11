@@ -25,19 +25,21 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: theme.backgroundColor,
+      appBar: AppBar(
         backgroundColor: theme.backgroundColor,
-        appBar: AppBar(
-          backgroundColor: theme.backgroundColor,
-          title: Text("Dashboard", style: theme.headingStyle),
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: _iconBack(theme.iconColor!),
-          ),
+        title: Text("Dashboard", style: theme.headingStyle),
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: _iconBack(theme.iconColor!),
         ),
-        body: Builder(builder: (context) {
+      ),
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: Builder(builder: (context) {
           final state = CompanyOverviewWidget.of(context)!;
           return ValueListenableBuilder<bool>(
               valueListenable: state.isLoading,
@@ -133,7 +135,9 @@ class _CompanyOverviewWidgetState extends CompanyOverviewWidgetState {
                             ),
                           );
               });
-        }));
+        }),
+      ),
+    );
   }
 
   Icon _iconBack(Color color) => Icon(

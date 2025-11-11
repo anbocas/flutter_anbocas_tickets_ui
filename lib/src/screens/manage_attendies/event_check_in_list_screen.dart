@@ -85,145 +85,154 @@ class _EventCheckInListScreenState extends State<EventCheckInListScreen> {
             ),
           ],
         ),
-        body: ValueListenableBuilder<bool>(
-            valueListenable: _isLoadingNotifier,
-            builder: (context, isLoading, child) {
-              if (isLoading) {
-                return Center(
-                    child: CircularProgressIndicator(
-                  strokeWidth: 4.adaptSize,
-                  color: theme.accentColor,
-                  backgroundColor: Colors.white,
-                ));
-              }
+        body: SafeArea(
+          maintainBottomViewPadding: true,
+          child: ValueListenableBuilder<bool>(
+              valueListenable: _isLoadingNotifier,
+              builder: (context, isLoading, child) {
+                if (isLoading) {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    strokeWidth: 4.adaptSize,
+                    color: theme.accentColor,
+                    backgroundColor: Colors.white,
+                  ));
+                }
 
-              return ValueListenableBuilder<EventGuestsResponse?>(
-                  valueListenable: _eventGuestsNotifier,
-                  builder: (context, response, child) {
-                    return (response == null)
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 30.0),
-                            child: Center(
-                              child: Text(
-                                "Unable to fetch Attendees",
-                                style: theme.bodyStyle,
+                return ValueListenableBuilder<EventGuestsResponse?>(
+                    valueListenable: _eventGuestsNotifier,
+                    builder: (context, response, child) {
+                      return (response == null)
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 30.0),
+                              child: Center(
+                                child: Text(
+                                  "Unable to fetch Attendees",
+                                  style: theme.bodyStyle,
+                                ),
                               ),
-                            ),
-                          )
-                        : Column(
-                            children: [
-                              if (response.status != null)
-                                Builder(builder: (context) {
-                                  final totalSales = response.data.fold(
-                                      0.0,
-                                      (double sum, e) =>
-                                          sum + e.orderTicket!.price);
+                            )
+                          : Column(
+                              children: [
+                                if (response.status != null)
+                                  Builder(builder: (context) {
+                                    final totalSales = response.data.fold(
+                                        0.0,
+                                        (double sum, e) =>
+                                            sum + e.orderTicket!.price);
 
-                                  return Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        22.h, 22.h, 30.h, 15.v),
-                                    child: EventAttendeesCount(
-                                        totalGuests:
-                                            response.status!.all.toString(),
-                                        totalCheckIn: response.status!.checkedIn
-                                            .toString(),
-                                        totalSales: totalSales.toStringAsFixed(2)),
-                                  );
-                                }),
-                              response.data.isEmpty
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Center(
-                                        child: Text(
-                                          "No Attendees Check-In",
-                                          style: theme.bodyStyle,
+                                    return Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                          22.h, 22.h, 30.h, 15.v),
+                                      child: EventAttendeesCount(
+                                          totalGuests:
+                                              response.status!.all.toString(),
+                                          totalCheckIn: response
+                                              .status!.checkedIn
+                                              .toString(),
+                                          totalSales:
+                                              totalSales.toStringAsFixed(2)),
+                                    );
+                                  }),
+                                response.data.isEmpty
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 20.0),
+                                        child: Center(
+                                          child: Text(
+                                            "No Attendees Check-In",
+                                            style: theme.bodyStyle,
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  : Expanded(
-                                      child: Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              22.h, 0, 22.h, 15.v),
-                                          child: ListView.separated(
-                                            itemCount: response.data.length,
-                                            itemBuilder: (context, index) {
-                                              final guest =
-                                                  response.data[index];
-                                              return ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                trailing: Column(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.check_circle,
-                                                      color:
-                                                          guest.checkInTime !=
-                                                                  null
-                                                              ? theme
-                                                                  .primaryColor
-                                                              : Colors.grey,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    if (guest.checkInTime !=
-                                                        null)
-                                                      Text(
-                                                        DateFormat()
-                                                            .add_Hm()
-                                                            .format(DateTime
-                                                                .parse(guest
-                                                                    .checkInTime!)),
-                                                        style: theme
-                                                            .smallLabelStyle
-                                                            ?.copyWith(
-                                                                color: theme
-                                                                    .primaryColor),
+                                      )
+                                    : Expanded(
+                                        child: Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                22.h, 0, 22.h, 15.v),
+                                            child: ListView.separated(
+                                              itemCount: response.data.length,
+                                              itemBuilder: (context, index) {
+                                                final guest =
+                                                    response.data[index];
+                                                return ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  trailing: Column(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.check_circle,
+                                                        color:
+                                                            guest.checkInTime !=
+                                                                    null
+                                                                ? theme
+                                                                    .primaryColor
+                                                                : Colors.grey,
                                                       ),
-                                                  ],
-                                                ),
-                                                leading: Text(
-                                                  '${index + 1}.',
-                                                  style: theme.labelStyle,
-                                                ),
-                                                title: Text(
-                                                  guest.name ?? "",
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style:
-                                                      theme.bodyStyle?.copyWith(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 16.fSize,
+                                                      const SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      if (guest.checkInTime !=
+                                                          null)
+                                                        Text(
+                                                          DateFormat()
+                                                              .add_Hm()
+                                                              .format(DateTime
+                                                                  .parse(guest
+                                                                      .checkInTime!)),
+                                                          style: theme
+                                                              .smallLabelStyle
+                                                              ?.copyWith(
+                                                                  color: theme
+                                                                      .primaryColor),
+                                                        ),
+                                                    ],
                                                   ),
-                                                ),
-                                                subtitle: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      '${guest.orderTicket?.ticket?.name} | ${guest.orderTicket?.ticket?.formattedPrice}',
-                                                      style:
-                                                          theme.smallLabelStyle,
+                                                  leading: Text(
+                                                    '${index + 1}.',
+                                                    style: theme.labelStyle,
+                                                  ),
+                                                  title: Text(
+                                                    guest.name ?? "",
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: theme.bodyStyle
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 16.fSize,
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                            separatorBuilder:
-                                                (BuildContext context,
-                                                    int index) {
-                                              return Divider(
-                                                color: theme.dividerColor,
-                                              );
-                                            },
-                                          )),
-                                    )
-                            ],
-                          );
-                  });
-            }));
+                                                  ),
+                                                  subtitle: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        '${guest.orderTicket?.ticket?.name} | ${guest.orderTicket?.ticket?.formattedPrice}',
+                                                        style: theme
+                                                            .smallLabelStyle,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Divider(
+                                                  color: theme.dividerColor,
+                                                );
+                                              },
+                                            )),
+                                      )
+                              ],
+                            );
+                    });
+              }),
+        ));
   }
 
   // static void showScanPicker(BuildContext context, String eventId) {

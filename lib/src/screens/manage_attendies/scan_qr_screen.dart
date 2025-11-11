@@ -52,115 +52,120 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SizedBox(
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Container(
-            color: theme.backgroundColor,
-            alignment: Alignment.center,
-            child: MobileScanner(
-              controller: cameraController,
-              onDetect: (capture) {
-                final barcode = capture.barcodes.firstOrNull?.rawValue;
-                debugPrint(barcode);
-                if (barcode == null) {
-                  return;
-                }
+      body: SafeArea(
+        maintainBottomViewPadding: true,
+        child: SizedBox(
+          width: double.infinity,
+          child: Stack(
+            children: [
+              Container(
+                color: theme.backgroundColor,
+                alignment: Alignment.center,
+                child: MobileScanner(
+                  controller: cameraController,
+                  onDetect: (capture) {
+                    final barcode = capture.barcodes.firstOrNull?.rawValue;
+                    debugPrint(barcode);
+                    if (barcode == null) {
+                      return;
+                    }
 
-                _handleScanResult(barcode,
-                    (message, statusCode, name, ticketName, price) {
-                  Navigator.pop(context);
-                  if (statusCode == 200) {
-                    // fire success event
-                    AnbocasEventManager.instance
-                        .emit(AnbocasEventManager.guestScanSuccess, null);
-                    // show success screen
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, _, __) =>
-                            QrCodeScanSuccessScreen(
-                          barcode: barcode,
-                          status: message!,
-                          eventId: widget.eventId,
-                          ticketName: ticketName ?? '',
-                          name: name ?? '',
-                          price: price ?? '',
-                        ),
-                      ),
-                    );
-                  } else if (statusCode == 201) {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, _, __) =>
-                            QrCodeAlreadyScannedScreen(
-                          barcode: barcode,
-                          status: message!,
-                          eventId: widget.eventId,
-                          ticketName: ticketName ?? '',
-                          name: name ?? '',
-                          price: price ?? '',
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, _, __) => QrCodeScanErrorScreen(
-                          barcode: barcode,
-                          status: message!,
-                          eventId: widget.eventId,
-                        ),
-                      ),
-                    );
-                  }
-                });
-              },
-              overlayBuilder: (context, constraints) {
-                return QRScannerOverlay();
-              },
-            ),
-          ),
-          SafeArea(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              height: kToolbarHeight,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
-                      Icons.clear,
-                      color: theme.iconColor,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => cameraController.toggleTorch(),
-                    icon: ValueListenableBuilder(
-                        builder: (context, torchState, child) => Icon(
-                              torchState == TorchState.off
-                                  ? Icons.flash_off
-                                  : Icons.flash_on,
-                              color: theme.iconColor,
+                    _handleScanResult(barcode,
+                        (message, statusCode, name, ticketName, price) {
+                      Navigator.pop(context);
+                      if (statusCode == 200) {
+                        // fire success event
+                        AnbocasEventManager.instance
+                            .emit(AnbocasEventManager.guestScanSuccess, null);
+                        // show success screen
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                QrCodeScanSuccessScreen(
+                              barcode: barcode,
+                              status: message!,
+                              eventId: widget.eventId,
+                              ticketName: ticketName ?? '',
+                              name: name ?? '',
+                              price: price ?? '',
                             ),
-                        valueListenable: ValueNotifier(
-                          cameraController.torchEnabled
-                              ? TorchState.on
-                              : TorchState.off,
-                        )),
-                  ),
-                  const SizedBox(),
-                ],
+                          ),
+                        );
+                      } else if (statusCode == 201) {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                QrCodeAlreadyScannedScreen(
+                              barcode: barcode,
+                              status: message!,
+                              eventId: widget.eventId,
+                              ticketName: ticketName ?? '',
+                              name: name ?? '',
+                              price: price ?? '',
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                QrCodeScanErrorScreen(
+                              barcode: barcode,
+                              status: message!,
+                              eventId: widget.eventId,
+                            ),
+                          ),
+                        );
+                      }
+                    });
+                  },
+                  overlayBuilder: (context, constraints) {
+                    return QRScannerOverlay();
+                  },
+                ),
               ),
-            ),
-          )
-        ],
+              SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  height: kToolbarHeight,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: Icon(
+                          Icons.clear,
+                          color: theme.iconColor,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => cameraController.toggleTorch(),
+                        icon: ValueListenableBuilder(
+                            builder: (context, torchState, child) => Icon(
+                                  torchState == TorchState.off
+                                      ? Icons.flash_off
+                                      : Icons.flash_on,
+                                  color: theme.iconColor,
+                                ),
+                            valueListenable: ValueNotifier(
+                              cameraController.torchEnabled
+                                  ? TorchState.on
+                                  : TorchState.off,
+                            )),
+                      ),
+                      const SizedBox(),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
-    ));
+    );
   }
 
   void _handleScanResult(
