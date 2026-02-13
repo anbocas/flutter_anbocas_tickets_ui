@@ -1,1 +1,9 @@
 *.lock
+build/
+example/build/
+example/.dart_tool/
+example/android/.gradle/
+example/android/app/build/
+example/flutter_01.log
+example/ios/Flutter/ephemeral/
+example/ios/Flutter/flutter_export_environment.sh
