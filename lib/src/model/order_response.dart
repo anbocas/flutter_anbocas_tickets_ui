@@ -62,6 +62,7 @@ class OrderData {
   Company? company;
   Payment? payment;
   String? createdAt;
+  Currency? currency;
 
   OrderData.fromJson(Map<String, dynamic> json) {
     if (json["id"] is String) {
@@ -190,6 +191,10 @@ class OrderData {
       payment =
           json["payment"] == null ? null : Payment.fromJson(json["payment"]);
     }
+    if (json["currency"] is Map) {
+      currency =
+          json["currency"] == null ? null : Currency.fromJson(json["currency"]);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -221,6 +226,9 @@ class OrderData {
     }
     if (payment != null) {
       data["payment"] = payment?.toJson();
+    }
+    if (currency != null) {
+      data["currency"] = currency?.toJson();
     }
     return data;
   }

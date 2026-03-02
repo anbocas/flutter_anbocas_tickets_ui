@@ -109,7 +109,7 @@ class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       });
-      var resp = await doGet("/v1/orders/$orderId", options: options);
+      var resp = await doGet("/webapp/v1/order/$orderId", options: options);
       info(resp.data.toString());
       if (resp.data['data'] != null) {
         var order = OrderData.fromJson(resp.data['data']);

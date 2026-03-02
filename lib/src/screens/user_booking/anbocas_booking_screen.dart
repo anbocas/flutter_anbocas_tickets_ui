@@ -151,7 +151,7 @@ class _AnbocasMyBookingWidgetState extends AnbocasMyBookingWidgetState {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                '₹${element.totalPayable.toStringAsFixed(2)}',
+                                                '${element.currency?.symbol} ${element.totalPayable.toStringAsFixed(2)}',
                                                 style: theme.labelStyle
                                                     ?.copyWith(
                                                         fontWeight:
