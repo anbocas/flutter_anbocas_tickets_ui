@@ -1,3 +1,8 @@
+## 0.0.9
+
+* API Updates
+* Stability improvements
+
 ## 0.0.8
 
 * API Updates
