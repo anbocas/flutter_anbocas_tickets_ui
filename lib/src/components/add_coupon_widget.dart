@@ -17,12 +17,12 @@ class AddCouponWidget extends StatefulWidget {
   final void Function(String value, double discountPrice) validatedCoupon;
   final List tickets;
   const AddCouponWidget({
-    Key? key,
+    super.key,
     required this.eventId,
     required this.totalAmount,
     required this.validatedCoupon,
     required this.tickets,
-  }) : super(key: key);
+  });
 
   @override
   State<AddCouponWidget> createState() => _AddCouponWidgetState();
@@ -44,9 +44,9 @@ class _AddCouponWidgetState extends State<AddCouponWidget> with SnackbarMixin {
     isLoading.value = false;
     if (response != null) {
       if (response.data != null) {
-        if (response.data?.couponType() == CouponTypeEnum.FIXED) {
+        if (response.data?.couponType() == CouponTypeEnum.fixed) {
           widget.validatedCoupon.call(voucherCtr.text, response.data!.discount);
-        } else if (response.data?.couponType() == CouponTypeEnum.PERCENTAGE) {
+        } else if (response.data?.couponType() == CouponTypeEnum.percentage) {
           widget.validatedCoupon.call(voucherCtr.text,
               (widget.totalAmount * (response.data!.discount / 100)));
         } else {

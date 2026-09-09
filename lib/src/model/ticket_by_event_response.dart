@@ -18,11 +18,11 @@ class Status {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["ALL"] = all;
-    _data["AVAILABLE"] = available;
-    _data["OUT_OF_STOCK"] = outOfStock;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["ALL"] = all;
+    data["AVAILABLE"] = available;
+    data["OUT_OF_STOCK"] = outOfStock;
+    return data;
   }
 }
 
@@ -46,17 +46,15 @@ class TicketByEventData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
+    final Map<String, dynamic> jsonMap = <String, dynamic>{};
 
-    if (data != null) {
-      _data["data"] = data?.map((e) => e.toJson()).toList();
-    }
+    jsonMap["data"] = data?.map((e) => e.toJson()).toList();
 
     if (status != null) {
-      _data["status"] = status?.toJson();
+      jsonMap["status"] = status?.toJson();
     }
 
-    return _data;
+    return jsonMap;
   }
 }
 
@@ -191,22 +189,22 @@ class SingleTicketByEvent {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["id"] = id;
-    _data["event_id"] = eventId;
-    _data["name"] = name;
-    _data["description"] = description;
-    _data["price"] = price;
-    _data["capacity"] = capacity;
-    _data["available"] = available;
-    _data["available_from"] = availableFrom;
-    _data["available_to"] = availableTo;
-    _data["status"] = status;
-    _data["created_at"] = createdAt;
-    _data["updated_at"] = updatedAt;
-    _data["formatted_price"] = formattedPrice;
-    _data["parent_commission"] = parentCommission;
-    _data["guest_count"] = guestCount;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["id"] = id;
+    data["event_id"] = eventId;
+    data["name"] = name;
+    data["description"] = description;
+    data["price"] = price;
+    data["capacity"] = capacity;
+    data["available"] = available;
+    data["available_from"] = availableFrom;
+    data["available_to"] = availableTo;
+    data["status"] = status;
+    data["created_at"] = createdAt;
+    data["updated_at"] = updatedAt;
+    data["formatted_price"] = formattedPrice;
+    data["parent_commission"] = parentCommission;
+    data["guest_count"] = guestCount;
+    return data;
   }
 }

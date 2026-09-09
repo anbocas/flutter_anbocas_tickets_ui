@@ -28,12 +28,12 @@ class AnbocasOrderResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["data"] = data?.toJson();
-    _data["paymentUrl"] = paymentUrl;
-    _data["razorpay_order_id"] = razorpayOrderId;
-    _data["payment_notes"] = paymentNotes;
-    return _data;
+    final Map<String, dynamic> jsonMap = <String, dynamic>{};
+    jsonMap["data"] = data?.toJson();
+    jsonMap["paymentUrl"] = paymentUrl;
+    jsonMap["razorpay_order_id"] = razorpayOrderId;
+    jsonMap["payment_notes"] = paymentNotes;
+    return jsonMap;
   }
 }
 
@@ -362,22 +362,22 @@ class Payment {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["id"] = id;
-    _data["gateway_provider"] = gatewayProvider;
-    _data["gateway_transaction_id"] = gatewayTransactionId;
-    _data["event_id"] = eventId;
-    _data["order_id"] = orderId;
-    _data["method"] = method;
-    _data["email"] = email;
-    _data["phone"] = phone;
-    _data["amount"] = amount;
-    _data["payer_name"] = payerName;
-    _data["fee"] = fee;
-    _data["tax"] = tax;
-    _data["created_at"] = createdAt;
-    _data["updated_at"] = updatedAt;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["id"] = id;
+    data["gateway_provider"] = gatewayProvider;
+    data["gateway_transaction_id"] = gatewayTransactionId;
+    data["event_id"] = eventId;
+    data["order_id"] = orderId;
+    data["method"] = method;
+    data["email"] = email;
+    data["phone"] = phone;
+    data["amount"] = amount;
+    data["payer_name"] = payerName;
+    data["fee"] = fee;
+    data["tax"] = tax;
+    data["created_at"] = createdAt;
+    data["updated_at"] = updatedAt;
+    return data;
   }
 }
 
@@ -423,14 +423,14 @@ class Status {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["ALL"] = all;
-    _data["COMPLETED"] = completed;
-    _data["PENDING"] = pending;
-    _data["FAILED"] = failed;
-    _data["CANCELLED"] = cancelled;
-    _data["REFUNDED"] = refunded;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["ALL"] = all;
+    data["COMPLETED"] = completed;
+    data["PENDING"] = pending;
+    data["FAILED"] = failed;
+    data["CANCELLED"] = cancelled;
+    data["REFUNDED"] = refunded;
+    return data;
   }
 }
 
@@ -462,10 +462,10 @@ class PaginatedOrderData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["current_page"] = currentPage;
-    _data["data"] = data.map((e) => e.toJson()).toList();
-    _data["last_page"] = lastPage;
-    return _data;
+    final Map<String, dynamic> jsonMap = <String, dynamic>{};
+    jsonMap["current_page"] = currentPage;
+    jsonMap["data"] = data.map((e) => e.toJson()).toList();
+    jsonMap["last_page"] = lastPage;
+    return jsonMap;
   }
 }

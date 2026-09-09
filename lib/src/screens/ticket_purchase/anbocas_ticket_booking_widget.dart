@@ -232,7 +232,7 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
       if (response.data != null) {
         updateTheValue(response.data!);
       }
-      if (response.error != null) {
+      if (mounted && response.error != null) {
         showAlertSnackBar(context, response.error.toString());
       }
     }
@@ -516,12 +516,8 @@ class _AnbocasTicketBookingWidgetState extends AnbocasTicketBookingState
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        Navigator.of(context).pop();
-
-        return Future.value(true);
-      },
+    return PopScope(
+      canPop: true,
       child: Scaffold(
         backgroundColor: theme.backgroundColor,
         appBar: AppBar(

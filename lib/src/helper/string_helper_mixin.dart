@@ -71,7 +71,7 @@ mixin StringHelperMixin {
   Color generateRandomColor(Color color, int index, int totalGenerateLength) {
     final double shadeFactor = (index + 1) / totalGenerateLength;
     final Color randomShadeColor = Color.lerp(
-      color.withOpacity(0.3), // Lighter shade
+      color.withValues(alpha: 0.3), // Lighter shade
       color, // Darker shade
       shadeFactor,
     )!;

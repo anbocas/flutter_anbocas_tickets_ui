@@ -52,11 +52,11 @@ class CompanyOverviewResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["onboarding"] = onboarding.map((e) => e.toJson()).toList();
-    _data["statistics"] = statistics.map((e) => e.toJson()).toList();
-    _data["charts"] = charts.map((e) => e.toJson()).toList();
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["onboarding"] = onboarding.map((e) => e.toJson()).toList();
+    data["statistics"] = statistics.map((e) => e.toJson()).toList();
+    data["charts"] = charts.map((e) => e.toJson()).toList();
+    return data;
   }
 }
 
@@ -107,13 +107,13 @@ class CompanyCharts {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["type"] = type;
-    _data["title"] = title;
-    _data["keys"] = keys;
-    _data["data"] = timeSeriesData.map((e) => e.toJson()).toList();
-    _data["yearly_data"] = yearlyData;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["type"] = type;
+    data["title"] = title;
+    data["keys"] = keys;
+    data["data"] = timeSeriesData.map((e) => e.toJson()).toList();
+    data["yearly_data"] = yearlyData;
+    return data;
   }
 }
 
@@ -157,15 +157,13 @@ class ChartData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["year"] = year;
-    _data["date"] = date;
-    _data["tickets_sold"] = ticketsSold;
-    _data["sales_volume"] = salesVolume;
-    if (data != null) {
-      _data["data"] = data?.map((e) => e.toJson()).toList();
-    }
-    return _data;
+    final Map<String, dynamic> jsonMap = <String, dynamic>{};
+    jsonMap["year"] = year;
+    jsonMap["date"] = date;
+    jsonMap["tickets_sold"] = ticketsSold;
+    jsonMap["sales_volume"] = salesVolume;
+    jsonMap["data"] = data?.map((e) => e.toJson()).toList();
+    return jsonMap;
   }
 }
 
@@ -196,10 +194,10 @@ class CompanyStatistics {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["title"] = title;
-    _data["total"] = total;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["title"] = title;
+    data["total"] = total;
+    return data;
   }
 }
 
@@ -223,10 +221,10 @@ class CompanyOnboarding {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["key"] = key;
-    _data["value"] = value;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["key"] = key;
+    data["value"] = value;
+    return data;
   }
 }
 
@@ -265,9 +263,9 @@ class ChartData2 {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["name"] = name;
-    _data["data"] = data;
-    return _data;
+    final Map<String, dynamic> jsonMap = <String, dynamic>{};
+    jsonMap["name"] = name;
+    jsonMap["data"] = data;
+    return jsonMap;
   }
 }

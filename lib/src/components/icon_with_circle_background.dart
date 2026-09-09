@@ -7,11 +7,11 @@ class IconWithCircleBackground extends StatelessWidget {
   final void Function()? onPressed;
 
   const IconWithCircleBackground({
-    Key? key,
+    super.key,
     required this.icon,
     required this.color,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

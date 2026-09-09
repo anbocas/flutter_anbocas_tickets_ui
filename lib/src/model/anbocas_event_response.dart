@@ -151,36 +151,36 @@ class AnbocasEventResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["id"] = id;
-    _data["category_id"] = categoryId;
-    _data["company_id"] = companyId;
-    _data["name"] = name;
-    _data["slug"] = slug;
-    _data["image_url"] = imageUrl;
-    _data["description"] = description;
-    _data["website"] = website;
-    _data["venue"] = venue;
-    _data["location"] = location;
-    _data["latitude"] = latitude;
-    _data["longitude"] = longitude;
-    _data["location_type"] = locationType;
-    _data["meeting_link"] = meetingLink;
-    _data["start_date"] = startDate;
-    _data["end_date"] = endDate;
-    _data["is_booking_open"] = isBookingOpen;
-    _data["is_free"] = isFree;
-    _data["is_public"] = isPublic;
-    _data["group_ticketing_allowed"] = groupTicketingAllowed;
-    _data["commission"] = commission;
-    _data["status"] = status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["id"] = id;
+    data["category_id"] = categoryId;
+    data["company_id"] = companyId;
+    data["name"] = name;
+    data["slug"] = slug;
+    data["image_url"] = imageUrl;
+    data["description"] = description;
+    data["website"] = website;
+    data["venue"] = venue;
+    data["location"] = location;
+    data["latitude"] = latitude;
+    data["longitude"] = longitude;
+    data["location_type"] = locationType;
+    data["meeting_link"] = meetingLink;
+    data["start_date"] = startDate;
+    data["end_date"] = endDate;
+    data["is_booking_open"] = isBookingOpen;
+    data["is_free"] = isFree;
+    data["is_public"] = isPublic;
+    data["group_ticketing_allowed"] = groupTicketingAllowed;
+    data["commission"] = commission;
+    data["status"] = status;
 
-    _data["tickets"] = tickets.map((e) => e.toJson()).toList();
+    data["tickets"] = tickets.map((e) => e.toJson()).toList();
     if (company != null) {
-      _data["company"] = company?.toJson();
+      data["company"] = company?.toJson();
     }
-    _data["absorb_platform_fee"] = absorbPlatformFee;
-    return _data;
+    data["absorb_platform_fee"] = absorbPlatformFee;
+    return data;
   }
 
   AnbocasEventResponse copyWithSelectedTickets({

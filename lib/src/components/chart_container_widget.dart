@@ -8,9 +8,9 @@ import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
 class ChartYearlyContainerWidget extends StatefulWidget {
   final CompanyCharts charts;
   const ChartYearlyContainerWidget({
-    Key? key,
+    super.key,
     required this.charts,
-  }) : super(key: key);
+  });
 
   @override
   State<ChartYearlyContainerWidget> createState() =>

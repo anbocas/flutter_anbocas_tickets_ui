@@ -67,10 +67,12 @@ class TicketsScreenState extends State<TicketListingScreen> {
       }
     } catch (e) {
       _isLoadingNotifier.value = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            backgroundColor: Colors.red, content: Text('Invalid Event ID')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              backgroundColor: Colors.red, content: Text('Invalid Event ID')),
+        );
+      }
       debugPrint(e.toString());
     }
   }
@@ -345,7 +347,7 @@ class TicketDialogState extends State<TicketDialog> {
     }
   }
 
-  ValueNotifier<bool> _submitLoader = ValueNotifier(false);
+  final ValueNotifier<bool> _submitLoader = ValueNotifier(false);
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _submitLoader.value = true;
@@ -387,14 +389,18 @@ class TicketDialogState extends State<TicketDialog> {
           'reference_event_id': widget.event.referenceId,
           'is_updated': widget.ticket == null ? false : true
         });
-        Navigator.of(context).pop(true);
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
       } catch (e) {
         _submitLoader.value = false;
         if (e is AnbocasAPIException) {
           log(e.cause);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(backgroundColor: Colors.red, content: Text(e.cause)),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(backgroundColor: Colors.red, content: Text(e.cause)),
+            );
+          }
         }
       }
     }
@@ -415,6 +421,7 @@ class TicketDialogState extends State<TicketDialog> {
     );
 
     if (pickedDate != null) {
+      if (!mounted) return;
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(initialDate),
@@ -636,7 +643,7 @@ class TicketDialogState extends State<TicketDialog> {
                       child: Expanded(
                         flex: 2,
                         child: DropdownButtonFormField<String>(
-                          value: _selectedStatus,
+                          initialValue: _selectedStatus,
                           items: ['AVAILABLE', 'OUT_OF_STOCK', "UNAVAILABLE"]
                               .map((status) {
                             return DropdownMenuItem<String>(

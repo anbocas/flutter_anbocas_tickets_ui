@@ -1,4 +1,4 @@
-enum CouponTypeEnum { FIXED, PERCENTAGE, NOTVALID }
+enum CouponTypeEnum { fixed, percentage, notValid }
 
 class CouponModel {
   String? id;
@@ -13,11 +13,11 @@ class CouponModel {
   CouponTypeEnum couponType() {
     switch (type) {
       case "FIXED":
-        return CouponTypeEnum.FIXED;
+        return CouponTypeEnum.fixed;
       case "PERCENT":
-        return CouponTypeEnum.PERCENTAGE;
+        return CouponTypeEnum.percentage;
       default:
-        return CouponTypeEnum.NOTVALID;
+        return CouponTypeEnum.notValid;
     }
   }
 
@@ -49,15 +49,15 @@ class CouponModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["id"] = id;
-    _data["company_id"] = companyId;
-    _data["code"] = code;
-    _data["description"] = description;
-    _data["type"] = type;
-    _data["discount"] = discount;
-    _data["expires_on"] = expiresOn;
-    _data["status"] = status;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["id"] = id;
+    data["company_id"] = companyId;
+    data["code"] = code;
+    data["description"] = description;
+    data["type"] = type;
+    data["discount"] = discount;
+    data["expires_on"] = expiresOn;
+    data["status"] = status;
+    return data;
   }
 }

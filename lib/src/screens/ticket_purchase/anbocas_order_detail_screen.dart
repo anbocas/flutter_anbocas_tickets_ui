@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:anbocas_tickets_ui/anbocas_tickets_ui.dart';
 import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
@@ -16,10 +15,10 @@ class AnbocasOrderDetailScreen extends StatefulWidget {
   final String anbocasOrderId;
   final String? referenceEventId;
   const AnbocasOrderDetailScreen({
-    Key? key,
+    super.key,
     required this.anbocasOrderId,
     this.referenceEventId,
-  }) : super(key: key);
+  });
 
   @override
   State<AnbocasOrderDetailScreen> createState() =>
@@ -48,7 +47,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
       if (response.data != null) {
         orderResponse.value = response.data;
       }
-      if (response.error != null) {
+      if (mounted && response.error != null) {
         showAlertSnackBar(context, response.error ?? "Something went wrong");
       }
     }
@@ -433,7 +432,7 @@ class _AnbocasOrderDetailScreenState extends State<AnbocasOrderDetailScreen>
                                               ),
                                             ),
                                           ))
-                                      .toList(),
+                                      ,
                                 ],
                               ),
                             ),

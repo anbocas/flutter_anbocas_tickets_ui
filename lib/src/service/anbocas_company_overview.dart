@@ -3,16 +3,15 @@ import 'package:anbocas_tickets_ui/src/helper/logger_utils.dart';
 import 'package:anbocas_tickets_ui/src/model/api_response.dart';
 import 'package:anbocas_tickets_ui/src/model/company_overview_response.dart';
 import 'package:anbocas_tickets_ui/src/service/anbocas_service.dart';
-import 'package:dio/dio.dart';
 
 const _companyOverViewUrl = "/v1/company/overview";
 
 class AnbocasCompanyOverviewRepo extends AnbocasService with LoggerUtils {
   AnbocasCompanyOverviewRepo({
-    required String baseUrl,
-    Dio? dio,
-    Map<String, String>? apiHeaders,
-  }) : super(dio: dio, baseUrl: baseUrl, apiHeaders: apiHeaders);
+    required super.baseUrl,
+    super.dio,
+    super.apiHeaders,
+  });
 
   Future<ApiResponse<CompanyOverviewResponse>> getCompanyOverview({
     required String companyId,

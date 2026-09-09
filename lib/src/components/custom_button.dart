@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
-    Key? key,
+    super.key,
     this.onPressedCallback,
     this.buttonSize,
     required this.centerText,
-  }) : super(key: key);
+  });
 
   final void Function()? onPressedCallback;
   final String centerText;

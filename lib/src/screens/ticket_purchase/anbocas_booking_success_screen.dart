@@ -108,11 +108,8 @@ class _AnbocasBookingSuccessScreenState
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context);
-        return true;
-      },
+    return PopScope(
+      canPop: true,
       child: Scaffold(
           backgroundColor: theme.backgroundColor,
           appBar: AppBar(
@@ -422,15 +419,16 @@ class _AnbocasBookingSuccessScreenState
                                                     GestureDetector(
                                                       onLongPress: () async {
                                                         await Clipboard.setData(
-                                                                ClipboardData(
-                                                                    text: value
-                                                                            .event!
-                                                                            .meetingLink ??
-                                                                        "N/A"))
-                                                            .then((value) =>
-                                                                showSnackBar(
-                                                                    context,
-                                                                    "Link Copied"));
+                                                            ClipboardData(
+                                                                text: value
+                                                                        .event!
+                                                                        .meetingLink ??
+                                                                    "N/A"));
+                                                        if (context.mounted) {
+                                                          showSnackBar(
+                                                              context,
+                                                              "Link Copied");
+                                                        }
                                                       },
                                                       child: Text(
                                                           value.event

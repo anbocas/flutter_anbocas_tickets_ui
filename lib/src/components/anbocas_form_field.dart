@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 
 class AnbocasFormField extends StatefulWidget {
   const AnbocasFormField(
-      {Key? key,
+      {super.key,
       required this.formCtr,
       this.hintText = "Type Here",
       this.labelText,
@@ -28,8 +28,7 @@ class AnbocasFormField extends StatefulWidget {
       : assert(
             !showCountryPicker ||
                 (showCountryPicker && onCountryChanged != null),
-            'onChanged callback must be provided when showCountryPicker is true'),
-        super(key: key);
+            'onChanged callback must be provided when showCountryPicker is true');
 
   final TextEditingController formCtr;
   final String hintText;

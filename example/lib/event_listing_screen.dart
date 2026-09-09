@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 class EventListingScreen extends StatefulWidget {
   final AnbocasCompanyModel company;
   const EventListingScreen({
-    Key? key,
+    super.key,
     required this.company,
-  }) : super(key: key);
+  });
 
   @override
   State<EventListingScreen> createState() => _EventListingScreenState();

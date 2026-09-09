@@ -1,3 +1,9 @@
+## 0.0.10
+
+* Support latest Flutter and Dart versions
+* Migrate deprecated WillPopScope to PopScope
+* Improve code quality, mounted context checks, and stability
+
 ## 0.0.9
 
 * API Updates

@@ -14,14 +14,13 @@ class PriceBreakDownWidget extends StatelessWidget with StringHelperMixin {
   final Currency currency;
   final double discountPrice;
   const PriceBreakDownWidget(
-      {Key? key,
+      {super.key,
       required this.itemTotal,
       required this.totalFee,
       required this.totalPrice,
       this.appliedCouponCode,
       required this.currency,
-      this.discountPrice = 0.00})
-      : super(key: key);
+      this.discountPrice = 0.00});
 
   @override
   Widget build(BuildContext context) {

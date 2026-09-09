@@ -27,11 +27,11 @@ class PieSeriesChartWidget extends StatefulWidget {
   final List<String> keys;
   final List<double> pieChartData;
   const PieSeriesChartWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.keys,
     required this.pieChartData,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => PieChartSample1State();
@@ -107,7 +107,7 @@ class PieChartSample1State extends State<PieSeriesChartWidget>
                             isSquare: false,
                           ),
                         )
-                        .toList()
+                        
                   ],
                 ),
               ],

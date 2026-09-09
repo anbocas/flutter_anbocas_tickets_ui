@@ -14,12 +14,11 @@ class AnbocasWebviewPayment extends StatefulWidget {
   final String webUrl;
   final String? referenceEventId;
   const AnbocasWebviewPayment(
-      {Key? key,
+      {super.key,
       required this.orderDetails,
       required this.selectedTickets,
       required this.webUrl,
-      this.referenceEventId})
-      : super(key: key);
+      this.referenceEventId});
 
   @override
   State<AnbocasWebviewPayment> createState() => _AnbocasWebviewPaymentState();
@@ -99,10 +98,11 @@ class _AnbocasWebviewPaymentState extends State<AnbocasWebviewPayment>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
         _handleCancel();
-        return false;
       },
       child: Scaffold(
           backgroundColor: theme.backgroundColor,

@@ -1,4 +1,4 @@
-library anbocas_tickets_ui;
+library;
 
 export 'src/screens/ticket_purchase/anbocas_ticket_booking_widget.dart';
 export 'src/anbocas_flutter_ticket_booking.dart';

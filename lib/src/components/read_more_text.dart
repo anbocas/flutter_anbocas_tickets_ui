@@ -9,14 +9,14 @@ class ReadMoreText extends StatefulWidget {
   final int maxLines;
 
   const ReadMoreText({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.maxLines = 3,
-  }) : super(key: key);
+  });
 
   @override
-  _ReadMoreTextState createState() => _ReadMoreTextState();
+  State<ReadMoreText> createState() => _ReadMoreTextState();
 }
 
 class _ReadMoreTextState extends State<ReadMoreText> {

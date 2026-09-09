@@ -8,9 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 class DetailEventScreen extends StatefulWidget {
   final AnbocasEventModel model;
   const DetailEventScreen({
-    Key? key,
+    super.key,
     required this.model,
-  }) : super(key: key);
+  });
 
   @override
   State<DetailEventScreen> createState() => _DetailEventScreenState();

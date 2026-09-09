@@ -20,10 +20,10 @@ const _listOrderEmail = "/v1/ordersByEmail";
 
 class AnbocasBookingRepo extends AnbocasService with LoggerUtils {
   AnbocasBookingRepo({
-    required String baseUrl,
-    Dio? dio,
-    Map<String, String>? apiHeaders,
-  }) : super(dio: dio, baseUrl: baseUrl, apiHeaders: apiHeaders);
+    required super.baseUrl,
+    super.dio,
+    super.apiHeaders,
+  });
 
   Future<ApiResponse<AnbocasEventResponse>> getEventById({
     required String eventId,
